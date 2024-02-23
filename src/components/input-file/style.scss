@@ -1,71 +1,77 @@
-*{
-    margin: 50;
+* {
+    margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
-p,span{
+
+p, span {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 25px;
 }
 
-body{
+body {
     display: flex;
     padding: 10px;
     background: #1aaa4c;
-
 }
-.upload-box > p{
+
+.upload-box > p {
     text-align: center;
     font-weight: 500;
     margin-top: 10px;
+    
+    
 }
 
-img{
+img {
     width: 100%;
 }
 
-.icon{
+.icon {
     width: 90px;
     height: 90px;
 }
 
-.upload-box{
+.upload-box {
     width: 100%;
     background: #fff;
     border-radius: 5px;
     padding: 15px;
-    box-shadow: 7px 7px 12px rgba(0,0,0,0.05);
+     
 }
 
-.upload-box form{
-    height: 170px;
+.upload-box form.drag-over {
+    background-color: #1aaa4c46;
+    border: 2px dashed #ccc;
+}
+
+.upload-box form {
+    height: 250px;
     display: flex;
     cursor: pointer;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin: 2% 20%;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     border-radius: 5px;
     border: 2px dashed #29ba2a;
-
 }
 
-form :where(i, p){
+form :where(i, p) {
     color: #29ba2a;
 }
 
-form i{
+form i {
     font-size: 50px;
 }
 
-form p{
+form p {
     margin-top: 15px;
     font-size: 16px;
 }
 
-section .row{
+section .row {
     margin-bottom: 10px;
     background: #e1f8e3;
     list-style: none;
@@ -74,30 +80,27 @@ section .row{
     display: flex;
     align-items: center;
     justify-content: space-between;
+    
 }
 
-section .row i{
+section .row i {
     color: #1aaa4c;
     font-size: 40px;
 }
 
-section .details span{
-    font-size: 13px;
-}
-
-.loading-area .row .content{
+.loading-area .row .content {
     width: 100%;
     margin-left: 15px;
 }
 
-.loading-area .details{
+.name {
     display: flex;
-    align-items: center;
-    margin-bottom: 7px;
     justify-content: space-between;
+    font-size: 13px;
+    
 }
 
-.loading-area .content .loading-bar{
+.loading-area .content .loading-bar {
     height: 6px;
     width: 100%;
     margin-bottom: 4px;
@@ -105,44 +108,100 @@ section .details span{
     border-radius: 30px;
 }
 
-.content .loading-bar .loading{
+.content .loading-bar .loading {
     height: 100%;
     width: 20%;
     background: #4ac073;
     border-radius: inherit;
 }
 
+.uploaded-area {
+    height: 100%;
+    min-width: 100%;
 
-
-.uploaded-area{
-    max-height: 232px;
-    overflow-y: scroll;
 }
 
-.uploaded-area.onprogress{
+.uploaded-area.onprogress {
     max-height: 250px;
+    
+    
 }
 
-.uploaded-area::-webkit-scrollbar{
+.uploaded-area::-webkit-scrollbar {
     width: 0px;
+    
 }
 
-.uploaded-area .row .content{
+.uploaded-area .row .content {
     display: flex;
     align-items: center;
+    flex-direction: row;
+    
 }
 
-.uploaded-area .row .details{
-    display: flex;
-    margin-left: 15px;
-    flex-direction: column;
-}
-
-.uploaded-area .row .details .size{
+.size {
     color: #404040;
     font-size: 11px;
+    
+    
 }
 
-.uploaded-area i.mdi-check-bold{
+.uploaded-area i.mdi-check-bold {
     font-size: 16px;
+    margin-left: 1%;
+    margin-right: 1%;
 }
+
+.uploaded-area .mdi-file-document{
+    font-size: 180%;
+    margin-right: 1%;
+}
+
+.progress-bar {
+    width: 100%;
+    background: #ddd;
+    height: 10px;
+    border-radius: 5px;
+   
+}
+
+.progress {
+    height: 100%;
+    background: #4ac073;
+    border-radius: 5px;
+}
+
+.fileUpload{
+    width: 100%;
+    
+}
+
+.buttonUpload {
+    display: inline-block;
+    padding: 13px 15px;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    text-transform: none;
+    outline: none;
+    color: #fff;
+    background-color: #078640;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px #999;
+    margin-top: 1%;
+  }
+  
+  .button:hover {background-color: #3e8e41}
+  
+  .button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(1px);
+  }
+
+  .buttonSubmit{
+    text-align: center;
+    margin-bottom: 50px;
+  }

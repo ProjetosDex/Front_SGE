@@ -1,7 +1,9 @@
 <template>
     <div class="main">
-    <formTCE/>
-  </div>
+      <div class="form">
+      <formTCE/>
+      </div>
+    </div>
   </template>
   <script lang="ts" setup>
   

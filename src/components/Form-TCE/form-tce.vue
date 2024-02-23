@@ -343,9 +343,10 @@
                     </v-row>
                   </v-container>
           </div>
-          <v-btn class="btn" >
-            <router-link to="/Termo/Compromisso" class="router">Enviar</router-link>
-            </v-btn>
+            <div class="main-btn">
+              <v-btn type="submit" class="buttonTCE" to="/inicio/estagio">Voltar</v-btn>
+              <v-btn type="submit" class="buttonTCE" to="/Termo/Compromisso">Cadastrar</v-btn>
+            </div>
         </v-form>
       </div>
   </div>

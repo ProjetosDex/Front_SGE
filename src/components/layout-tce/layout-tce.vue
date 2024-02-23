@@ -1,7 +1,7 @@
 <template>
-  <div class="pdf-template">
+  <div class="main">
      
-    <div>
+    <div class="pdf-template">
     
     <p class="calisto_bold_center">
       <span  >TERMO DE COMPROMISSO DE ESTÁGIO</span>
@@ -86,6 +86,7 @@
     </table>
   </div>
   </div>
+  
 </template>
 
 <script setup lang="ts">
