@@ -65,8 +65,6 @@ const isFileAlreadyUploading = (fileName: string) => {
         if (alertTimeout) {
             clearTimeout(alertTimeout);
         }
-
-        // Definir novo timer
         alertTimeout = setTimeout(() => {
             showAlert.value = false;
         }, 3000);
@@ -83,7 +81,7 @@ const uploadFile = () => {
     for (let i = 0; i < selectedFiles.length; i++) {
         const file = selectedFiles[i];
         if (isFileAlreadyUploading(file.name)) {
-            continue; // A mensagem de alerta já é configurada em isFileAlreadyUploading
+            continue; 
         }
         uploadFiles.value.push({ name: file.name, progress: 0, loading: 0 });
         const formData = new FormData();
@@ -119,7 +117,7 @@ const handleDrop = (event: DragEvent) => {
     for (let i = 0; i < droppedFiles.length; i++) {
         const file = droppedFiles[i];
         if (isFileAlreadyUploading(file.name)) {
-            continue; // A mensagem de alerta já é configurada em isFileAlreadyUploading
+            continue;
         }
         uploadFiles.value.push({ name: file.name, progress: 0, loading: 0 });
         const formData = new FormData();
