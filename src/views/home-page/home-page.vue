@@ -62,16 +62,16 @@ mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla 
 <script lang="ts" setup>
   const items = [
     {
-      src: 'src/assets/ifpa-front.png',
+      src: 'src\\assets\\ifpa-front.png',
     },
     {
-      src: 'src/assets/ifpa-fachada.png',
+      src: 'src\\assets\\ifpa-fachada.png',
     },
     {
-      src: 'src/assets/biblioteca-ifpa.png',
+      src: 'src\\assets\\biblioteca-ifpa.png',
     },
     {
-      src: 'src/assets/fachada-dti.png',
+      src: 'src\\assets\\fachada-dti.png',
     },
     ]
 </script>
