@@ -15,7 +15,6 @@ export default {
     generatePDF() {
       const doc = new jsPDF();
 
-      // URL da imagem de fundo (substitua pela sua própria imagem)
       const backgroundImageUrl = 'src/assets/brasaooficial.png';
 
       // Carregar a imagem
