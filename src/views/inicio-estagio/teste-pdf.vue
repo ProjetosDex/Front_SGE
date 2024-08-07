@@ -217,7 +217,7 @@ export default {
         doc.text(funcaoRepresentanteCedenteLabel, foneX + 10, 167);
         doc.text(funcaoRepresentanteCedente, foneX + 10, 172);
 
-        const supervisorLabel = 'Representante legal:';
+        const supervisorLabel = 'Supervisor:';
         const supervisor = 'Jair Alcindo Lobo de Melo';
         doc.text(supervisorLabel, cnpjX, 179);
         doc.text(supervisor, cnpjX, 184);
@@ -232,6 +232,56 @@ export default {
         const tituloEstagiario = 'ESTAGIÁRIO';
         doc.text(tituloEstagiario, 9.3, 192);
         doc.setFont('arial', 'normal');
+
+        const nomeAlunoLabel = 'Nome:';
+        const nomeAluno = 'Jair Alcindo Lobo de Melo';
+        doc.text(nomeAlunoLabel, cnpjX, 198);
+        doc.text(nomeAluno, cnpjX, 203);
+
+        const matriculaAlunoLabel = 'Matrícula:';
+        const matriculaAluno = 'Diretor de Extensão';
+        doc.text(matriculaAlunoLabel, foneX + 10, 198);
+        doc.text(matriculaAluno, foneX + 10, 203);
+
+        const cursoLabel = 'Curso:';
+        const curso = 'Análise e Desenvolvimento de Sistemas';
+        doc.text(cursoLabel, cnpjX, 210);
+        doc.text(curso, cnpjX, 215);
+
+        const emailLabel = 'Email:';
+        const email = 'teste@email.com';
+        doc.text(emailLabel, pageWidth / 2, 210);
+        doc.text(email, pageWidth / 2, 215);
+
+        const cpfEstagiarioLabel = 'Cpf:';
+        const cpfEstagiario = '000.000.000-00';
+        doc.text(cpfEstagiarioLabel, cnpjX, 223);
+        doc.text(cpfEstagiario, cnpjX, 228);
+
+        const rgLabel = 'RG:';
+        const rg = '1234567';
+        doc.text(rgLabel, cidadeX, 223);
+        doc.text(rg, cidadeX, 228);
+
+        const dataNascimentoLabel = 'Data Nasc:';
+        const dataNascimento = '18/04/2001';
+        doc.text(dataNascimentoLabel, ufX, 223);
+        doc.text(dataNascimento, ufX, 228);
+
+        const celularLabel = 'Celular:';
+        const celular = '91 98455-7644';
+        doc.text(celularLabel, foneX + 10, 223);
+        doc.text(celular, foneX + 10, 228);
+
+        const enderecoEstagiarioLabel = 'Endereço:';
+        const enderecoEstagiario = 'qd.teste casa teste bloco teste';
+        doc.text(enderecoEstagiarioLabel, cnpjX, 235);
+        doc.text(enderecoEstagiario, cnpjX, 240);
+
+        const cepEstagiarioLabel = 'CEP:';
+        const cepEstagiario = '98455-644';
+        doc.text(cepEstagiarioLabel, foneX + 10, 235);
+        doc.text(cepEstagiario, foneX + 10, 240);
 
         doc.setFontSize(16);
         doc.setTextColor(0, 0, 0);
