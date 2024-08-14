@@ -13,60 +13,72 @@ export default {
   name: 'PdfGenerator',
   methods: {
     generatePDF() {
-      const doc = new jsPDF();
+  const doc = new jsPDF();
 
-      const backgroundImageUrl = 'src/assets/brasaooficial.png';
+  const backgroundImageUrl = 'src/assets/brasaooficial.png';
 
-      // Carregar a imagem
-      const backgroundImg = new Image();
-      backgroundImg.src = backgroundImageUrl;
-      doc.setFont('arial');
-      backgroundImg.onload = () => {
-        const logoUrl = 'src/assets/logo_pdf_ifpa.png';
-        const logo = new Image();
-        logo.src = logoUrl;
-        const logoWidth = 20;
-        const logoHeigth = 10;
+  // Função adicionar o logo/texto ao lado + background brasão
+  const addLogoWithTextAndBrasao = () => {
+    const logoUrl = 'src/assets/logo_pdf_ifpa.png';
+    const logo = new Image();
+    logo.src = logoUrl;
+    const logoWidth = 20;
+    const logoHeigth = 10;
 
-        const imgWidth = 250;
-        const imgHeight = 150;
+    // Adicionar o logo com opacidade alterada
+    doc.setGState(new doc.GState({ opacity: 0.5 })); 
+    doc.addImage(logo, 'PNG', 10, 5, logoWidth, logoHeigth);
 
-        const xPos = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
-        const yPos = (doc.internal.pageSize.getHeight() - imgHeight) / 2;
+    // Restaurar opacidade ao valor padrão
+    doc.setGState(new doc.GState({ opacity: 1 }));
 
-        // Adicionar a imagem ao PDF com transparência
-        doc.addImage(logo, 'PNG', 10, 5, logoWidth, logoHeigth);
-        doc.setGState(new doc.GState({ opacity: 0.1 }));
-        doc.addImage(backgroundImg, 'PNG', xPos, yPos, imgWidth, imgHeight);
-        doc.setGState(new doc.GState({ opacity: 1 }));
+    // Adicionar o texto ao lado do logo
+    doc.setFontSize(6);
+    const cabecalho =
+      'GOVERNO FEDERAL\nMINISTÉRIO DA EDUCAÇÃO\nINSTITUTO FEDERAL DO PARÁ - CAMPUS BELÉM\nDIRETORIA DE EXTENSÃO (DEX)/DIVISÃO DE INTEGRAÇÃO CAMPUS EMPRESAS DICAE';
+    doc.text(cabecalho, 35, 6.5);
+    // Adicionar o brasão no centro da página com opacidade
+    const backgroundImg = new Image();
+    backgroundImg.src = backgroundImageUrl;
+    
+    const imgWidth = 250;
+    const imgHeight = 150;
 
-        doc.setFontSize(6);
-        const cabecalho =
-          'GOVERNO FEDERAL\nMINISTÉRIO DA EDUCAÇÃO\nINSTITUTO FEDERAL DO PARÁ - CAMPUS BELÉM\nDIRETORIA DE EXTENSÃO (DEX)/DIVISÃO DE INTEGRAÇÃO CAMPUS EMPRESAS DICAE';
-        doc.text(cabecalho, 35, 6.5);
+    const xPos = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
+    const yPos = (doc.internal.pageSize.getHeight() - imgHeight) / 2;
 
-        doc.setFont('arial', 'bold');
-        const title = 'TERMO DE COMPROMISSO DE ESTÁGIO';
-        const subtitle = '(INSTRUMENTO JURÍDICO PREVISTO NA LEI Nº 11.788/08)';
-        doc.setFontSize(13);
-        const xPosteste =
-          (doc.internal.pageSize.getWidth() - doc.getTextWidth(title)) / 2;
-        const yPosteste =
-          (doc.internal.pageSize.getHeight() - doc.getTextWidth(title)) / 2;
-        doc.setTextColor(0, 0, 0);
-        doc.text(title, xPosteste, 22);
-        doc.setFont('arial', 'normal');
-        doc.setFontSize(7);
-        const posicaoXSubtitulo =
-          (doc.internal.pageSize.getWidth() - doc.getTextWidth(subtitle)) / 2;
-        doc.text(subtitle, posicaoXSubtitulo, 25);
+    doc.setGState(new doc.GState({ opacity: 0.1 })); 
+    doc.addImage(backgroundImg, 'PNG', xPos, yPos, imgWidth, imgHeight);
+    doc.setGState(new doc.GState({ opacity: 1 }));
+  };
 
-        const lineStartX = 10;
-        const lineEndX = doc.internal.pageSize.getWidth() - 10;
-        const lineYPos = 23 + 3;
-        doc.setLineWidth(0.2);
-        doc.line(lineStartX, lineYPos, lineEndX, lineYPos);
-        // Conteúdo
+  // Carrega a imagem de fundo
+  const backgroundImg = new Image();
+  backgroundImg.src = backgroundImageUrl;
+  doc.setFont('arial');
+  backgroundImg.onload = () => {
+
+    doc.setFont('arial', 'bold');
+    const title = 'TERMO DE COMPROMISSO DE ESTÁGIO';
+    const subtitle = '(INSTRUMENTO JURÍDICO PREVISTO NA LEI Nº 11.788/08)';
+    doc.setFontSize(13);
+    const xPosteste =
+      (doc.internal.pageSize.getWidth() - doc.getTextWidth(title)) / 2;
+    doc.text(title, xPosteste, 22);
+    doc.setFont('arial', 'normal');
+    doc.setFontSize(7);
+    const posicaoXSubtitulo =
+      (doc.internal.pageSize.getWidth() - doc.getTextWidth(subtitle)) / 2;
+    doc.text(subtitle, posicaoXSubtitulo, 25);
+
+    const lineStartX = 10;
+    const lineEndX = doc.internal.pageSize.getWidth() - 10;
+    const lineYPos = 23 + 3;
+    doc.setLineWidth(0.2);
+    doc.line(lineStartX, lineYPos, lineEndX, lineYPos);
+
+        addLogoWithTextAndBrasao();
+        // Conteúdo Página 1
         doc.setFontSize(11);
         const apresentacaoTCE = `Em ${''}, na cidade de Belém, as partes a seguir qualificadas, resolvem celebrar o Termo de Compromisso de Estágio ${'obrigatório'}, conforme a Lei nº 11.788/08 (LEI DE ESTÁGIO)`;
         const pageWidth = doc.internal.pageSize.getWidth();
@@ -549,7 +561,121 @@ export default {
         doc.setTextColor(0, 0, 0);
         doc.addPage();
 
-         
+        // Conteúdo Página 2
+
+        addLogoWithTextAndBrasao();
+
+        //Função para ajustar espaçamento e posição dos paragráfos
+        function addClausula(doc, title, textoArray, xPos, startY, maxWidth) {
+          doc.setFont('arial', 'bold');
+          doc.text(title, xPos, startY);
+
+          doc.setFont('arial', 'normal');
+          let yPos = startY + 4; // Espaço entre o título e o primeiro item
+          const lineSpacing = 4; // Espaçamento entre as linhas
+          const paragraphSpacing = 1; // Espaçamento entre os parágrafos
+
+          textoArray.forEach((item) => {
+              const lines = doc.splitTextToSize(item, maxWidth);
+              lines.forEach((line, lineIndex) => {
+                  doc.text(line, xPos, yPos + (lineIndex * lineSpacing));
+              });
+              yPos += lines.length * lineSpacing + paragraphSpacing; // Ajuste a posição vertical com base no número de linhas
+          });
+
+          return yPos; // Retorna a posição vertical final para continuar com o próximo conteúdo
+        }
+
+        doc.setFontSize(10);
+        const clausula3TextoPag2 = [
+            'd) Indicar professor orientador, da área a ser desenvolvida no Estágio, como responsável pelo acompanhamento e avaliação do relatório das atividades do Estagiário.',
+            'e) Comunicar à parte concedente do Estágio, no início do período letivo, as datas de realização de avaliações escolares ou acadêmica.'
+        ];
+        let currentY = 22; // Posição inicial na página
+        currentY = addClausula(doc, 'Cláusula 3ª – Cabe ao IFPA:', clausula3TextoPag2, cnpjX, currentY, maxWidth);
+
+        // Adiciona cláusula 4
+        const clausula4Texto = [
+          'a) Zelar pelo cumprimento do presente Termo de Compromisso;',
+          'b) Proporcionar ao Estagiário condições de exercícios de atividades práticas compatíveis com o Plano de atividades de estágio;',
+          'c) Designar um supervisor que seja funcionário de seu quadro de pessoal, com formação ou experiência profissional na área de conhecimento desenvolvida no curso do Estagiário, para orientá-lo e acompanhá-lo no desenvolvimento das atividades do estágio;',
+          'd) Solicitar ao Estagiário, a qualquer tempo, documentos comprobatórios da regularidade da situação escola, uma vez que trancamento de matrícula, abandono, conclusão de curso ou transferência de Instituição de Ensino constituem motivos de imediata rescisão;',
+          'e) Conceder bolsa-estágio e auxílio transporte no caso de estágio não obrigatório, sendo que o pagamento destes valores deverá ser feito diretamente ao estagiário;',
+          'f) No caso do estágio obrigatório, se houver a concessão da bolsa-auxílio e do auxílio transporte, ou de um dos dois, o pagamento deverá ser feito diretamente ao estagiário;',
+          'g) Assegurar ao Estagiário recesso nos termos da Lei 11.788/08, bem como, remunerá-lo conforme haja pagamento de bolsa auxílio;',
+          'h) Reduzir as jornadas de estágio nos períodos de avaliação, previamente informados pelo Estagiário;',
+          'i) Encaminhar para o IFPA o relatório individual de atividades, assinado pelo supervisor, com periodicidade mínima de 06 meses, com vista obrigatória do Estagiário;',
+          'j) Entregar, por ocasião de desligamento, termo de realização do estágio com indicação resumida das atividades desenvolvidas, dos períodos e da avaliação de desempenho;',
+          'k) Manter em arquivo e à disposição da fiscalização os documentos firmados que comprovem a relação de estágio;',
+          'l) Informar ao IFPA (DICAE/DEX) a rescisão antecipada deste instrumento, para as devidas providências administrativas que se fizerem necessárias;',
+          'm) Permitir o início das atividades de estágio apenas após o recebimento das 04 vias deste instrumento assinada pelas três partes signatárias.'
+        ];
+        currentY = addClausula(doc, 'Cláusula 4ª – Cabe à concedente:', clausula4Texto, cnpjX, currentY + 1, maxWidth);
+
+        // Adiciona cláusula 5
+        const clausula5Texto = [
+          'a) Cumprir, com todo empenho e interesse, toda programação estabelecida para seu Estágio;',
+          'b) Observar, obedecer e cumprir as normas internas de Concedente, preservando o sigilo e a confidencialidade das informações que tiver acesso;',
+          'c) Apresentar documentos comprobatórios da regularidade da sua situação escolar, sempre que solicitado pela Concedente;',
+          'd) Manter rigorosamente atualizados seus dados cadastrais e escolares, junto à Concedente;',
+          'e) Informar de imediato, qualquer alteração na sua situação escolar, tais como: trancamento de matrícula, abandono, conclusão de curso ou transferência de Instituição de Ensino;',
+          'f) Entregar, obrigatoriamente, ao IFPA e à Concedente uma via do presente instrumento, devidamente assinada pelas partes;',
+          'g) Informar previamente à Concedente os períodos de avaliação no IFPA, para fins de redução da jornada de estágio;',
+          'h) Preencher os relatórios de estágio a fim de subsidiar o IFPA com informações sobre seu estágio.'
+        ];
+        currentY = addClausula(doc, 'Cláusula 5ª – Cabe ao Estagiário:', clausula5Texto, cnpjX, currentY + 1, maxWidth);
+
+        // Adiciona cláusula 6
+        const clausula6Texto = [
+          'O presente instrumento e o Plano de Atividades de Estágio serão alterados ou prorrogados através de Termos Aditivos.',
+          'Parágrafo Primeiro - O presente Termo de Compromisso de Estágio pode ser reincidido ou denunciado, a qualquer tempo, mediante comunicação escrita, pelo IFPA, pela Concedente ou pelo Estagiário, sendo a vontade deste último, a comunicação para rescisão deverá ocorrer pelos menos 15 (quinze) dias antes do desligamento efetivo.',
+          'Parágrafo Segundo - O Não cumprimento de quaisquer cláusulas do presente Termo de Compromisso de Estágio constitui motivo de imediata rescisão.'
+        ];
+        currentY = addClausula(doc, 'Cláusula 6ª – Alterações e Rescisão:', clausula6Texto, cnpjX, currentY + 1, maxWidth);
+
+        // Adiciona cláusula 7
+        const clausula7Texto = [
+          'O Estagiário durante a vigência do presente Termo de Compromisso de Estágio estará segurado contra acidentes pessoais conforme apólice nº 666999, da seguradora Teste de Seguradora.'
+        ];
+        currentY = addClausula(doc, 'Cláusula 7ª – Seguro:', clausula7Texto, cnpjX, currentY + 1, maxWidth);
+
+        // Texto final em negrito
+        doc.setFontSize(11);
+        doc.setFont('arial', 'bold');
+        const textoFinal = 'E, por estarem de inteiro e comum acordo com o Plano de Atividades de Estágio e com as demais condições estabelecidas neste Termo de Compromisso de Estágio, as partes assinam em 04 vias de igual teor.';
+        doc.text(doc.splitTextToSize(textoFinal, maxWidth), cnpjX, currentY + 2);
+
+        // Configurações Assinatura
+        const pageWidthAssinatura = doc.internal.pageSize.getWidth();
+        const marginX = 10;
+        const contentWidthAssinatura = pageWidthAssinatura - 2 * marginX;
+
+        // Posição Y para as assinaturas (ajuste conforme necessário)
+        const yPosition = doc.internal.pageSize.getHeight() - 27;
+
+        // Largura e posição das linhas
+        const lineLength = 50;
+        const spacingBetweenSignatures = 20; // Ajuste conforme necessário para espaçar as assinaturas corretamente
+
+        const firstLineX = marginX; // Alinhar com a margem esquerda
+        const secondLineX = firstLineX + lineLength + spacingBetweenSignatures; // Alinhar a um terço da página, com espaçamento
+        const thirdLineX = secondLineX + lineLength + spacingBetweenSignatures; // Alinhar a dois terços da página
+
+        // Desenhar as linhas para assinaturas
+        doc.setLineWidth(0.2);
+        doc.line(firstLineX, yPosition, firstLineX + lineLength, yPosition); // Linha para ESTAGIÁRIO
+        doc.line(secondLineX, yPosition, secondLineX + lineLength, yPosition); // Linha para SUPERVISOR
+        doc.line(thirdLineX, yPosition, thirdLineX + lineLength, yPosition); // Linha para COORDENADOR
+
+        // Adicionar os textos abaixo das linhas
+        doc.setFont('arial', 'normal');
+        doc.setFontSize(8);
+
+        doc.text('ESTAGIÁRIO', firstLineX + lineLength / 2, yPosition + 5, { align: 'center' });
+        doc.text('SUPERVISOR (com CARIMBO)', secondLineX + lineLength / 2, yPosition + 5, { align: 'center' });
+        doc.text('IFPA – COORDENADOR DO CURSO', thirdLineX + lineLength / 2, yPosition + 5, { align: 'center' });
+
+
 
         const pdfBlob = doc.output('blob');
         const pdfUrl = URL.createObjectURL(pdfBlob);
