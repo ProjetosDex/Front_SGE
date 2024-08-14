@@ -650,32 +650,31 @@ export default {
         const marginX = 10;
         const contentWidthAssinatura = pageWidthAssinatura - 2 * marginX;
 
-        // Posição Y para as assinaturas (ajuste conforme necessário)
+        // Posição Y para as assinaturas
         const yPosition = doc.internal.pageSize.getHeight() - 27;
 
         // Largura e posição das linhas
         const lineLength = 50;
-        const spacingBetweenSignatures = 20; // Ajuste conforme necessário para espaçar as assinaturas corretamente
+        const spacingBetweenSignatures = 20; //espaçamento das assinaturas
 
-        const firstLineX = marginX; // Alinhar com a margem esquerda
-        const secondLineX = firstLineX + lineLength + spacingBetweenSignatures; // Alinhar a um terço da página, com espaçamento
-        const thirdLineX = secondLineX + lineLength + spacingBetweenSignatures; // Alinhar a dois terços da página
+        // Alinhamento
+        const firstLineX = marginX;
+        const secondLineX = firstLineX + lineLength + spacingBetweenSignatures; o
+        const thirdLineX = secondLineX + lineLength + spacingBetweenSignatures;
 
-        // Desenhar as linhas para assinaturas
+        // Linhas para assinaturas
         doc.setLineWidth(0.2);
-        doc.line(firstLineX, yPosition, firstLineX + lineLength, yPosition); // Linha para ESTAGIÁRIO
-        doc.line(secondLineX, yPosition, secondLineX + lineLength, yPosition); // Linha para SUPERVISOR
-        doc.line(thirdLineX, yPosition, thirdLineX + lineLength, yPosition); // Linha para COORDENADOR
+        doc.line(firstLineX, yPosition, firstLineX + lineLength, yPosition); // Linha ESTAGIÁRIO
+        doc.line(secondLineX, yPosition, secondLineX + lineLength, yPosition); // Linha SUPERVISOR
+        doc.line(thirdLineX, yPosition, thirdLineX + lineLength, yPosition); // Linha COORDENADOR
 
-        // Adicionar os textos abaixo das linhas
+        // Descrição das Assinaturas
         doc.setFont('arial', 'normal');
         doc.setFontSize(8);
 
         doc.text('ESTAGIÁRIO', firstLineX + lineLength / 2, yPosition + 5, { align: 'center' });
         doc.text('SUPERVISOR (com CARIMBO)', secondLineX + lineLength / 2, yPosition + 5, { align: 'center' });
         doc.text('IFPA – COORDENADOR DO CURSO', thirdLineX + lineLength / 2, yPosition + 5, { align: 'center' });
-
-
 
         const pdfBlob = doc.output('blob');
         const pdfUrl = URL.createObjectURL(pdfBlob);
@@ -691,5 +690,5 @@ export default {
 </script>
 
 <style scoped>
-/* Adicione seus estilos aqui */
+
 </style>
