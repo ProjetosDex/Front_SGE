@@ -52,7 +52,7 @@ export default {
     doc.setGState(new doc.GState({ opacity: 1 }));
   };
 
-  // Carrega a imagem de fundo
+  // Carrega a imagem de Fundo
   const backgroundImg = new Image();
   backgroundImg.src = backgroundImageUrl;
   doc.setFont('arial');
@@ -659,7 +659,7 @@ export default {
 
         // Alinhamento
         const firstLineX = marginX;
-        const secondLineX = firstLineX + lineLength + spacingBetweenSignatures; o
+        const secondLineX = firstLineX + lineLength + spacingBetweenSignatures;
         const thirdLineX = secondLineX + lineLength + spacingBetweenSignatures;
 
         // Linhas para assinaturas
