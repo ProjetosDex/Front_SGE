@@ -1,88 +1,89 @@
 <template>
   <div class="info-processo-container">
-      <h1 class="title1">Processo De Estágio</h1>
-      <v-container>
-          <div class="steps-container">
-              <div
-                  v-for="(step, index) in steps"
-                  :key="index"
-                  class="step-item"
-                  @click="updateCurrentStepContent(index)"
-              >
-                  <div class="circle-container">
-                      <div :class="['circle', stepClasses[step.status as keyof typeof stepClasses]]">
-                          <template v-if="step.status === 'CONCLUÍDO'">
-                              <v-icon small color="white">mdi-check</v-icon>
-                          </template>
-                          <template v-else>
-                              {{ index + 1 }}
-                          </template>
-                      </div>
-                      <div
-                          v-if="index < steps.length - 1"
-                          class="connector"
-                          :style="connectorStyles[index]"
-                      ></div>
-                  </div>
-                  <div class="step-text">
-                      <div class="step-label">{{ step.label }}</div>
-                      <div class="step-status">{{ step.status }}</div>
-                  </div>
-              </div>
+    <h1 class="title1">Processo De Estágio</h1>
+    <v-container>
+      <div class="steps-container">
+        <div
+          v-for="(step, index) in steps"
+          :key="index"
+          class="step-item"
+          @click="updateCurrentStepContent(index)"
+        >
+          <div class="circle-container">
+            <div :class="['circle', stepClasses[step.status as keyof typeof stepClasses]]">
+              <template v-if="step.status === 'CONCLUÍDO'">
+                <v-icon small color="white">mdi-check</v-icon>
+              </template>
+              <template v-else>
+                {{ index + 1 }}
+              </template>
+            </div>
+            <div v-if="index < steps.length - 1" class="connector" :style="connectorStyles[index]"></div>
           </div>
-
-          <!-- Seção para exibir conteúdo com base na etapa atual -->
-          <div class="step-content" v-if="currentStepContent">
-              <h2>{{ currentStepContent.title }}</h2>
-              <p>{{ currentStepContent.description }}</p>
-
-              <!-- Informações adicionais com base na etapa -->
-              <div v-if="currentStepContent.additionalInfo">
-                  <h3>Informações adicionais:</h3>
-                  <p>{{ currentStepContent.additionalInfo }}</p>
-              </div>
-
-              <!-- Ação necessária com base no status da etapa -->
-              <div v-if="currentStepContent.actionRequired">
-                  <h3>Ação necessária:</h3>
-                  <p>{{ currentStepContent.actionRequired }}</p>
-              </div>
-
-              <!-- Substituindo o upload inline pelo componente de upload -->
-              <div v-if="currentStepContent.showUploadButton">
-                  <input-file :uploadUrl="uploadUrl" />
-              </div>
-
-              <!-- Documentos do processo - exibido quando o status é CONCLUÍDO -->
-              <div v-if="currentStepContent.status === 'CONCLUÍDO' && processDocuments.length > 0" class="process-documents">
-                  <h3>Documentos do processo:</h3>
-                  <section class="uploaded-area">
-                      <li class="row" v-for="(doc, index) in processDocuments" :key="index">
-                          <div class="fileUpload">
-                              <div class="content upload">
-                                  <i class="mdi mdi-file-document"></i>
-                                  <span class="name">{{ doc.name }}</span>
-                                  <a :href="doc.url" download class="download-link">
-                                      <v-icon small color="green">mdi-download</v-icon>
-                                  </a>
-                              </div>
-                          </div>
-                      </li>
-                  </section>
-              </div>
+          <div class="step-text">
+            <div class="step-label">{{ step.label }}</div>
+            <div class="step-status">{{ step.status }}</div>
           </div>
-      </v-container>
+        </div>
+      </div>
+
+      <!-- Seção para exibir conteúdo com base na etapa atual -->
+      <div class="step-content" v-if="currentStepContent">
+        <h2>{{ currentStepContent.title }}</h2>
+        <p>{{ currentStepContent.description }}</p>
+
+        <div v-if="currentStepContent.additionalInfo">
+          <h3>Informações adicionais:</h3>
+          <p>{{ currentStepContent.additionalInfo }}</p>
+        </div>
+
+        <div v-if="currentStepContent.actionRequired">
+          <h3>Ação necessária:</h3>
+          <p>{{ currentStepContent.actionRequired }}</p>
+        </div>
+
+        <div v-if="currentStepContent.showUploadButton">
+          <input-file :uploadUrl="uploadUrlComputed" />
+        </div>
+
+        <!-- Documentos do processo - exibido quando o status é CONCLUÍDO -->
+        <div v-if="isCompleted && relatedDocuments.length" class="process-documents">
+          <h3>Documentos do processo:</h3>
+          <section class="uploaded-area">
+            <li class="row" v-for="(doc, index) in relatedDocuments" :key="index">
+              <div class="fileUpload">
+                <div class="content upload">
+                  <i class="mdi mdi-file-document"></i>
+                  <span class="name">{{ doc.name }}</span>
+                  <a :href="doc.url" download class="download-link">
+                    <v-icon small class="download-icon">mdi-download</v-icon>
+                  </a>
+                </div>
+              </div>
+            </li>
+          </section>
+        </div>
+      </div>
+    </v-container>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import type { InternshipProcess } from '@/api/internshipProcess.interface';
 import axiosInstance from '@/interceptors/axios-interceptor';
-
-// Importando o componente de upload
 import InputFile from '../../components/input-file/input-file.vue';
+
+// Tipos para o conteúdo da etapa
+interface StepContent {
+  title: string;
+  description: string;
+  additionalInfo?: string;
+  actionRequired?: string;
+  showUploadButton?: boolean;
+  status: string;
+}
 
 const router = useRouter();
 const internshipProcessID = router.currentRoute.value.params?.id;
@@ -103,10 +104,25 @@ const stepClasses: Record<string, string> = {
 };
 
 const connectorStyles = ref<{ width: string; animation: string; backgroundColor: string }[]>([]);
-const currentStepContent = ref<{ title: string; description: string; additionalInfo?: string; actionRequired?: string; showUploadButton?: boolean; status?: string } | null>(null);
-const uploadUrl = ref('https://minha-api.com/upload'); // URL para onde os arquivos serão enviados
+const currentStepContent = ref<StepContent | null>(null);
 
-// Mapeamento dos documentos relacionados a cada etapa
+// Propriedade computada para retornar a URL de upload correta
+const uploadUrlComputed = computed(() => {
+  if (!currentStepContent.value) return '';
+
+  switch (currentStepContent.value.title) {
+    case 'INÍCIO DE ESTÁGIO':
+      return 'https://minha-api.com/upload/inicio-estagio';
+    case 'RENOVAÇÃO DE ESTÁGIO':
+      return 'https://minha-api.com/upload/renovacao-estagio';
+    case 'FIM DE ESTÁGIO':
+      return 'https://minha-api.com/upload/fim-estagio';
+    default:
+      return '';
+  }
+});
+
+// Documentos relacionados a cada etapa
 const documentMap: Record<string, { name: string; url: string }[]> = {
   'INÍCIO DE ESTÁGIO': [
     { name: 'Termo de Compromisso de Estágio', url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512' },
@@ -122,123 +138,106 @@ const documentMap: Record<string, { name: string; url: string }[]> = {
   ],
 };
 
-const processDocuments = ref<{ name: string; url: string }[]>([]);
+// Propriedade computada para verificar se a etapa atual está concluída
+const isCompleted = computed(() => currentStepContent.value?.status === 'CONCLUÍDO');
 
-const contentMap: Record<string, (status: string) => { title: string; description: string; additionalInfo?: string; actionRequired?: string; showUploadButton?: boolean; status?: string }> = {
-  'INÍCIO DE ESTÁGIO': (status: string) => {
-      let description = 'Esta etapa é crucial para o início do seu estágio, no qual deverá ser realizado o preenchimento de todos os dados necessários para concluir o processo.';
-      let additionalInfo = 'Documentos necessários, preparação para o primeiro dia, etc.';
-      let actionRequired = '';
-      let showUploadButton = false;
+// Propriedade computada para obter os documentos relacionados à etapa atual
+const relatedDocuments = computed(() => {
+  return isCompleted.value ? documentMap[currentStepContent.value?.title || ''] || [] : [];
+});
 
+// Função para mapear o conteúdo baseado na etapa
+const getContentForStep = (label: string, status: string): StepContent => {
+  const baseContent: StepContent = {
+    title: label,
+    description: '',
+    additionalInfo: '',
+    actionRequired: '',
+    showUploadButton: false,
+    status,
+  };
+
+  switch (label) {
+    case 'INÍCIO DE ESTÁGIO':
+      baseContent.description = 'Esta etapa é crucial para o início do seu estágio, no qual deverá ser realizado o preenchimento de todos os dados necessários para concluir o processo.';
+      baseContent.additionalInfo = 'Documentos necessários, preparação para o primeiro dia, etc.';
       if (status === 'EM ANDAMENTO') {
-          description = 'Você está no início do estágio. Por favor, finalize o preenchimento do TCE, obtenha as assinaturas do aluno e da concedente, e realize o upload para análise.';
-          actionRequired = 'Finalize o preenchimento do TCE e realize o upload do documento assinado.';
-          showUploadButton = true;
-      } else if (status === 'EM_ANALISE') {
-          description = 'O seu documento foi enviado e está em análise pela gestão de estágio.';
-          additionalInfo = 'Aguarde o retorno da análise para os próximos passos.';
+        baseContent.description = 'Finalize o preenchimento do TCE e realize o upload do documento assinado.';
+        baseContent.showUploadButton = true;
       } else if (status === 'RECUSADO') {
-          description = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
-          actionRequired = 'Corrija as informações no TCE e realize o upload do documento corrigido.';
-          showUploadButton = true;
+        baseContent.description = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
+        baseContent.actionRequired = 'Corrija as informações no TCE e realize o upload do documento corrigido.';
+        baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
-          description = 'Esta etapa foi concluída com sucesso.';
-          additionalInfo = 'Você pode prosseguir para a próxima etapa do processo.';
-          processDocuments.value = documentMap['INÍCIO DE ESTÁGIO'];
+        baseContent.additionalInfo = 'Você pode prosseguir para a próxima etapa do processo.';
       }
+      break;
 
-      return { title: 'Início de Estágio', description, additionalInfo, actionRequired, showUploadButton, status };
-  },
-  'RENOVAÇÃO DE ESTÁGIO': (status: string) => {
-      let description = 'Esta etapa é para a renovação do seu contrato de estágio.';
-      let additionalInfo = 'Reveja os termos, atualize sua documentação.';
-      let actionRequired = '';
-      let showUploadButton = false;
-
+    case 'RENOVAÇÃO DE ESTÁGIO':
+      baseContent.description = 'Esta etapa é para a renovação do seu contrato de estágio.';
+      baseContent.additionalInfo = 'Reveja os termos, atualize sua documentação.';
       if (status === 'EM ANDAMENTO') {
-          description = 'Você está no processo de renovação do estágio. Certifique-se de revisar os termos e atualizar a documentação necessária.';
-          actionRequired = 'Atualize a documentação e realize o upload para análise.';
-          showUploadButton = true;
-      } else if (status === 'EM_ANALISE') {
-          description = 'Os documentos de renovação foram enviados e estão em análise.';
-          additionalInfo = 'Aguarde a aprovação para continuar.';
+        baseContent.description = 'Atualize a documentação e realize o upload para análise.';
+        baseContent.showUploadButton = true;
       } else if (status === 'RECUSADO') {
-          description = 'Os documentos enviados para renovação foram recusados. Por favor, revise-os e realize o upload novamente.';
-          actionRequired = 'Corrija os documentos e realize o upload novamente.';
-          showUploadButton = true;
+        baseContent.description = 'Os documentos enviados para renovação foram recusados. Por favor, revise-os e realize o upload novamente.';
+        baseContent.actionRequired = 'Corrija os documentos e realize o upload novamente.';
+        baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
-          description = 'A renovação do estágio foi concluída com sucesso.';
-          additionalInfo = 'Seu contrato de estágio foi renovado com sucesso.';
-          processDocuments.value = documentMap['RENOVAÇÃO DE ESTÁGIO'];
+        baseContent.additionalInfo = 'Seu contrato de estágio foi renovado com sucesso.';
       }
+      break;
 
-      return { title: 'Renovação de Estágio', description, additionalInfo, actionRequired, showUploadButton, status };
-  },
-  'FIM DE ESTÁGIO': (status: string) => {
-      let description = 'Esta etapa finaliza o seu período de estágio.';
-      let additionalInfo = 'Procedimentos de saída, entrega de relatórios finais, etc.';
-      let actionRequired = '';
-      let showUploadButton = false;
-
+    case 'FIM DE ESTÁGIO':
+      baseContent.description = 'Esta etapa finaliza o seu período de estágio.';
+      baseContent.additionalInfo = 'Procedimentos de saída, entrega de relatórios finais, etc.';
       if (status === 'EM ANDAMENTO') {
-          description = 'Você está na etapa final do estágio. Por favor, entregue todos os relatórios finais e a documentação necessária.';
-          actionRequired = 'Submeta os relatórios finais e a documentação para conclusão.';
-          showUploadButton = true;
-      } else if (status === 'EM_ANALISE') {
-          description = 'Os relatórios finais foram enviados e estão em análise.';
-          additionalInfo = 'Aguarde a aprovação para finalizar o estágio.';
+        baseContent.description = 'Submeta os relatórios finais e a documentação para conclusão.';
+        baseContent.showUploadButton = true;
       } else if (status === 'RECUSADO') {
-          description = 'Os relatórios finais foram recusados. Revise-os e realize o upload novamente.';
-          actionRequired = 'Corrija os relatórios e realize o upload novamente.';
-          showUploadButton = true;
+        baseContent.description = 'Os relatórios finais foram recusados. Revise-os e realize o upload novamente.';
+        baseContent.actionRequired = 'Corrija os relatórios e realize o upload novamente.';
+        baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
-          description = 'Você concluiu o estágio com sucesso. Parabéns!';
-          additionalInfo = 'Todos os requisitos foram cumpridos e o estágio está encerrado.';
-          processDocuments.value = documentMap['FIM DE ESTÁGIO'];
+        baseContent.additionalInfo = 'Todos os requisitos foram cumpridos e o estágio está encerrado.';
       }
+      break;
 
-      return { title: 'Fim de Estágio', description, additionalInfo, actionRequired, showUploadButton, status };
+    default:
+      break;
   }
+
+  return baseContent;
 };
 
 // Função para atualizar o conteúdo exibido com base na etapa selecionada
-function updateCurrentStepContent(stepIndex: number) {
+const updateCurrentStepContent = (stepIndex: number) => {
   const step = steps.value[stepIndex];
-  const { title, description, additionalInfo, actionRequired, showUploadButton, status } = contentMap[step.label](step.status);
-
-  currentStepContent.value = {
-      title,
-      description,
-      additionalInfo,
-      actionRequired,
-      showUploadButton,
-      status
-  };
-}
+  currentStepContent.value = getContentForStep(step.label, step.status);
+};
 
 // Buscar informações do processo de estágio ao montar o componente
-async function findinternshipProcessById() {
+const findinternshipProcessById = async () => {
   const { data } = await axiosInstance.get(`processo/estagio/${internshipProcessID}`);
   internshipProcess.value = data;
 
   const currentStepIndex = steps.value.findIndex(s => s.label === internshipProcess.value?.movement);
 
   steps.value.forEach((step, index) => {
-      step.status = index < currentStepIndex ? 'CONCLUÍDO' : step.status === 'NÃO INICIADO' && step.label === internshipProcess.value?.movement ? internshipProcess.value?.status || 'NÃO INICIADO' : step.status;
+    step.status = index < currentStepIndex ? 'CONCLUÍDO' : step.status === 'NÃO INICIADO' && step.label === internshipProcess.value?.movement ? internshipProcess.value?.status || 'NÃO INICIADO' : step.status;
   });
 
   updateCurrentStepContent(currentStepIndex);
 
   connectorStyles.value = steps.value.slice(0, -1).map((_, index) => {
-      const nextStepStatus = steps.value[index + 1]?.status;
-      return {
-          width: '100%',
-          animation: 'grow 2s ease-out forwards',
-          backgroundColor: nextStepStatus === 'CONCLUÍDO' ? 'green' : nextStepStatus === 'EM ANDAMENTO' || nextStepStatus === 'EM ANALISE' ? 'orange' : '#d3d3d3',
-      };
+    const nextStepStatus = steps.value[index + 1]?.status;
+    return {
+      width: '100%',
+      animation: 'grow 2s ease-out forwards',
+      backgroundColor: nextStepStatus === 'CONCLUÍDO' ? 'green' : nextStepStatus === 'EM ANDAMENTO' || nextStepStatus === 'EM ANALISE' ? 'orange' : '#d3d3d3',
+    };
   });
-}
+};
 
 onMounted(findinternshipProcessById);
 </script>
