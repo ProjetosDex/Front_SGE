@@ -12,7 +12,8 @@ import { jsPDF } from 'jspdf';
 export default {
   name: 'PdfGenerator',
   methods: {
-    generatePDF() {
+
+  generatePDF() {
   const doc = new jsPDF();
 
   const backgroundImageUrl = 'src/assets/brasaooficial.png';
@@ -307,7 +308,7 @@ export default {
         doc.text(supervisorLabel, cnpjX, 127);
 
         doc.setFont('arial', 'normal');
-        const supervisor = 'Jalim Rabei mohammed';
+        const supervisor = 'Jair Alcindo Lobo de Melo';
         doc.text(supervisor, cnpjX, 131);
 
         // Cargo do Supervisor

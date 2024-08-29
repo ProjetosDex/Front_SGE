@@ -89,7 +89,12 @@ const columns = reactive([
 ]);
 
 function formatarDataBrasileira(data: string | Date): string {
+
+  if (!data) {
+    return '';
+  }
   const fortmatDate = typeof data === 'string' ? new Date(data) : data;
+
 
   const dataUTC = new Date(fortmatDate.getUTCFullYear(), fortmatDate.getUTCMonth(), fortmatDate.getUTCDate());
 

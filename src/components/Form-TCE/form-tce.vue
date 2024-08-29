@@ -345,7 +345,7 @@
           </div>
             <div class="main-btn">
               <v-btn type="submit" class="buttonTCE" to="/inicio/estagio">Voltar</v-btn>
-              <v-btn type="submit" class="buttonTCE" to="/Termo/Compromisso">Cadastrar</v-btn>
+              <v-btn type="submit" class="buttonTCE" to="/teste">Cadastrar</v-btn>
             </div>
         </v-form>
       </div>
@@ -353,6 +353,8 @@
   </template>
   <script lang="ts" setup>
     import { ref } from 'vue';
+    
+
     const show = ref(false);
   </script>
   
