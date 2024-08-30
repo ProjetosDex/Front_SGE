@@ -26,7 +26,7 @@
 <script setup lang="ts">
     import inputFile from "../../components/input-file/input-file.vue";
 
-    // Defina a URL de upload aqui
+    // URL de upload
     const uploadUrl = 'https://minha-api.com/upload';
 
     // Arquivos modelo
