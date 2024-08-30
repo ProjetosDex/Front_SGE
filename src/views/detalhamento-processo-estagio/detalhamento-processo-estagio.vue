@@ -135,6 +135,7 @@ const documentMap: Record<string, { name: string; url: string }[]> = {
     { name: 'Auto-Avaliação do Aluno', url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512' },
     { name: 'Avaliação da Concedente', url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512' },
     { name: 'Avaliação do Orientador', url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512' },
+    { name: 'Atestado de Estágio', url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512' },
   ],
 };
 
@@ -160,16 +161,17 @@ const getContentForStep = (label: string, status: string): StepContent => {
   switch (label) {
     case 'INÍCIO DE ESTÁGIO':
       baseContent.description = 'Esta etapa é crucial para o início do seu estágio, no qual deverá ser realizado o preenchimento de todos os dados necessários para concluir o processo.';
-      baseContent.additionalInfo = 'Documentos necessários, preparação para o primeiro dia, etc.';
       if (status === 'EM ANDAMENTO') {
-        baseContent.description = 'Finalize o preenchimento do TCE e realize o upload do documento assinado.';
+        baseContent.actionRequired = 'Finalize o preenchimento do TCE com as assinaturas do Aluno e Concedente e realize o upload do documento preenchido.';
         baseContent.showUploadButton = true;
+      } else if (status === 'EM ANALISE') {
+        baseContent.additionalInfo = 'O documento está sendo analisado pelo departamento de estágio. Aguarde o retorno do Termo de Compromisso de Estágio assinado, caso tudo esteja em conformidade.';
       } else if (status === 'RECUSADO') {
-        baseContent.description = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
+        baseContent.additionalInfo = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
         baseContent.actionRequired = 'Corrija as informações no TCE e realize o upload do documento corrigido.';
         baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
-        baseContent.additionalInfo = 'Você pode prosseguir para a próxima etapa do processo.';
+        baseContent.additionalInfo = 'Etapa concluída com sucesso! Seu estágio está ativo. Você pode avançar para a próxima etapa do processo, seja para renovação ou finalização do estágio, conforme necessário.';
       }
       break;
 
@@ -177,29 +179,32 @@ const getContentForStep = (label: string, status: string): StepContent => {
       baseContent.description = 'Esta etapa é para a renovação do seu contrato de estágio.';
       baseContent.additionalInfo = 'Reveja os termos, atualize sua documentação.';
       if (status === 'EM ANDAMENTO') {
-        baseContent.description = 'Atualize a documentação e realize o upload para análise.';
+        baseContent.actionRequired = 'Atualize a documentação do Termo de Compromisso de Estágio e realize o upload para análise.';
         baseContent.showUploadButton = true;
+      } else if (status === 'EM ANALISE') {
+        baseContent.additionalInfo = 'O documento está sendo analisado pelo departamento de estágio. Aguarde o retorno do documento de renovação assinado, caso tudo esteja em conformidade.';
       } else if (status === 'RECUSADO') {
-        baseContent.description = 'Os documentos enviados para renovação foram recusados. Por favor, revise-os e realize o upload novamente.';
+        baseContent.additionalInfo = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
         baseContent.actionRequired = 'Corrija os documentos e realize o upload novamente.';
         baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
-        baseContent.additionalInfo = 'Seu contrato de estágio foi renovado com sucesso.';
+        baseContent.additionalInfo = 'Etapa concluída com sucesso! Seu estágio foi renovado. Você pode avançar para a próxima etapa do processo, para finalização do estágio, conforme a data prevista no TCE.';
       }
       break;
 
     case 'FIM DE ESTÁGIO':
-      baseContent.description = 'Esta etapa finaliza o seu período de estágio.';
-      baseContent.additionalInfo = 'Procedimentos de saída, entrega de relatórios finais, etc.';
+      baseContent.description = 'Esta é a última etapa do processo para a conclusão do seu período de estágio.';
       if (status === 'EM ANDAMENTO') {
-        baseContent.description = 'Submeta os relatórios finais e a documentação para conclusão.';
+        baseContent.actionRequired = 'Submeta os relatórios finais e a documentação para conclusão.';
         baseContent.showUploadButton = true;
+      } else if (status === 'EM ANALISE') {
+        baseContent.additionalInfo = 'O documento está em análise pelo departamento de estágio, aguarde a validação e o retorno do Atestado de Estágio. ';
       } else if (status === 'RECUSADO') {
-        baseContent.description = 'Os relatórios finais foram recusados. Revise-os e realize o upload novamente.';
-        baseContent.actionRequired = 'Corrija os relatórios e realize o upload novamente.';
+        baseContent.additionalInfo = 'Os relatórios finais foram recusados por algumas inconsistências de informações.';
+        baseContent.actionRequired = 'Revise-os e realize o upload novamente.';
         baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
-        baseContent.additionalInfo = 'Todos os requisitos foram cumpridos e o estágio está encerrado.';
+        baseContent.additionalInfo = 'Etapa concluída com sucesso! Todos os requisitos foram cumpridos e o seu estágio foi finalizado.';
       }
       break;
 
