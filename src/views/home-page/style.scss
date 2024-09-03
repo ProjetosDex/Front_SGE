@@ -6,25 +6,34 @@
     padding: 2% 10%
 }
 
-.row{
-    
-    flex-basis: calc(50% - 10px);
-    padding: 20px;
-    margin: 5px;
-    text-align: left;
-
+.row {
+  flex-basis: calc(50% - 10px);
+  padding: 20px;
+  margin: 5px;
+  text-align: left;
 }
 
-.row h1{
-    font-family:Arial, Helvetica, sans-serif ;
-    font-size: 18px;
+.title-container {
+  display: inline-flex;
+  align-items: center; 
+  margin-bottom: 1px;
 }
 
-.row i{
-    font-size: 30px;
-    
+.title-container i {
+  font-size: 30px;
+  margin-right: 5px;
 }
 
+.title-container h1 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+}
+
+.row a {
+  margin-top: 10px;
+  display: inline-block;
+  color: blue;
+}
 
 .image_overlay{
     position: absolute;
