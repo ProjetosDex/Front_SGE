@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <h1>Gerar PDF com Imagem de Fundo</h1>
     <button @click="generatePDF">Gerar PDF</button>
@@ -12,71 +12,69 @@ import { jsPDF } from 'jspdf';
 export default {
   name: 'PdfGenerator',
   methods: {
+    generatePDF() {
+      const doc = new jsPDF();
 
-  generatePDF() {
-  const doc = new jsPDF();
+      const backgroundImageUrl = 'src/assets/brasaooficial.png';
 
-  const backgroundImageUrl = 'src/assets/brasaooficial.png';
+      // Função adicionar o logo/texto ao lado + background brasão
+      const addLogoWithTextAndBrasao = () => {
+        const logoUrl = 'src/assets/logo_pdf_ifpa.png';
+        const logo = new Image();
+        logo.src = logoUrl;
+        const logoWidth = 20;
+        const logoHeigth = 10;
 
-  // Função adicionar o logo/texto ao lado + background brasão
-  const addLogoWithTextAndBrasao = () => {
-    const logoUrl = 'src/assets/logo_pdf_ifpa.png';
-    const logo = new Image();
-    logo.src = logoUrl;
-    const logoWidth = 20;
-    const logoHeigth = 10;
+        // Adicionar o logo com opacidade alterada
+        doc.setGState(new doc.GState({ opacity: 0.5 }));
+        doc.addImage(logo, 'PNG', 10, 5, logoWidth, logoHeigth);
 
-    // Adicionar o logo com opacidade alterada
-    doc.setGState(new doc.GState({ opacity: 0.5 })); 
-    doc.addImage(logo, 'PNG', 10, 5, logoWidth, logoHeigth);
+        // Restaurar opacidade ao valor padrão
+        doc.setGState(new doc.GState({ opacity: 1 }));
 
-    // Restaurar opacidade ao valor padrão
-    doc.setGState(new doc.GState({ opacity: 1 }));
+        // Adicionar o texto ao lado do logo
+        doc.setFontSize(6);
+        const cabecalho =
+          'GOVERNO FEDERAL\nMINISTÉRIO DA EDUCAÇÃO\nINSTITUTO FEDERAL DO PARÁ - CAMPUS BELÉM\nDIRETORIA DE EXTENSÃO (DEX)/DIVISÃO DE INTEGRAÇÃO CAMPUS EMPRESAS DICAE';
+        doc.text(cabecalho, 35, 6.5);
+        // Adicionar o brasão no centro da página com opacidade
+        const backgroundImg = new Image();
+        backgroundImg.src = backgroundImageUrl;
 
-    // Adicionar o texto ao lado do logo
-    doc.setFontSize(6);
-    const cabecalho =
-      'GOVERNO FEDERAL\nMINISTÉRIO DA EDUCAÇÃO\nINSTITUTO FEDERAL DO PARÁ - CAMPUS BELÉM\nDIRETORIA DE EXTENSÃO (DEX)/DIVISÃO DE INTEGRAÇÃO CAMPUS EMPRESAS DICAE';
-    doc.text(cabecalho, 35, 6.5);
-    // Adicionar o brasão no centro da página com opacidade
-    const backgroundImg = new Image();
-    backgroundImg.src = backgroundImageUrl;
-    
-    const imgWidth = 250;
-    const imgHeight = 150;
+        const imgWidth = 250;
+        const imgHeight = 150;
 
-    const xPos = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
-    const yPos = (doc.internal.pageSize.getHeight() - imgHeight) / 2;
+        const xPos = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
+        const yPos = (doc.internal.pageSize.getHeight() - imgHeight) / 2;
 
-    doc.setGState(new doc.GState({ opacity: 0.1 })); 
-    doc.addImage(backgroundImg, 'PNG', xPos, yPos, imgWidth, imgHeight);
-    doc.setGState(new doc.GState({ opacity: 1 }));
-  };
+        doc.setGState(new doc.GState({ opacity: 0.1 }));
+        doc.addImage(backgroundImg, 'PNG', xPos, yPos, imgWidth, imgHeight);
+        doc.setGState(new doc.GState({ opacity: 1 }));
+      };
 
-  // Carrega a imagem de Fundo
-  const backgroundImg = new Image();
-  backgroundImg.src = backgroundImageUrl;
-  doc.setFont('arial');
-  backgroundImg.onload = () => {
+      // Carrega a imagem de Fundo
+      const backgroundImg = new Image();
+      backgroundImg.src = backgroundImageUrl;
+      doc.setFont('arial');
+      backgroundImg.onload = () => {
+        doc.setFont('arial', 'bold');
+        const title = 'TERMO DE COMPROMISSO DE ESTÁGIO';
+        const subtitle = '(INSTRUMENTO JURÍDICO PREVISTO NA LEI Nº 11.788/08)';
+        doc.setFontSize(13);
+        const xPosteste =
+          (doc.internal.pageSize.getWidth() - doc.getTextWidth(title)) / 2;
+        doc.text(title, xPosteste, 22);
+        doc.setFont('arial', 'normal');
+        doc.setFontSize(7);
+        const posicaoXSubtitulo =
+          (doc.internal.pageSize.getWidth() - doc.getTextWidth(subtitle)) / 2;
+        doc.text(subtitle, posicaoXSubtitulo, 25);
 
-    doc.setFont('arial', 'bold');
-    const title = 'TERMO DE COMPROMISSO DE ESTÁGIO';
-    const subtitle = '(INSTRUMENTO JURÍDICO PREVISTO NA LEI Nº 11.788/08)';
-    doc.setFontSize(13);
-    const xPosteste =
-      (doc.internal.pageSize.getWidth() - doc.getTextWidth(title)) / 2;
-    doc.text(title, xPosteste, 22);
-    doc.setFont('arial', 'normal');
-    doc.setFontSize(7);
-    const posicaoXSubtitulo =
-      (doc.internal.pageSize.getWidth() - doc.getTextWidth(subtitle)) / 2;
-    doc.text(subtitle, posicaoXSubtitulo, 25);
-
-    const lineStartX = 10;
-    const lineEndX = doc.internal.pageSize.getWidth() - 10;
-    const lineYPos = 23 + 3;
-    doc.setLineWidth(0.2);
-    doc.line(lineStartX, lineYPos, lineEndX, lineYPos);
+        const lineStartX = 10;
+        const lineEndX = doc.internal.pageSize.getWidth() - 10;
+        const lineYPos = 23 + 3;
+        doc.setLineWidth(0.2);
+        doc.line(lineStartX, lineYPos, lineEndX, lineYPos);
 
         addLogoWithTextAndBrasao();
         // Conteúdo Página 1
@@ -88,11 +86,11 @@ export default {
 
         const lines = doc.splitTextToSize(apresentacaoTCE, maxWidth);
 
-        doc.text(lines, margin, 33); 
+        doc.text(lines, margin, 33);
         doc.setFontSize(11);
         doc.setFont('arial', 'bold');
         const tituloIntituicao = 'INSTITUIÇÃO DE ENSINO';
-        doc.text(tituloIntituicao, 9.3, 43); 
+        doc.text(tituloIntituicao, 9.3, 43);
         doc.setFont('arial', 'normal');
 
         doc.setFontSize(10);
@@ -100,9 +98,10 @@ export default {
         // Razão Social
         doc.setFont('arial', 'bold');
         const razaoSocialTitle = 'Razão Social:';
-        doc.text(razaoSocialTitle, 9.3, 47); 
+        doc.text(razaoSocialTitle, 9.3, 47);
         doc.setFont('arial', 'normal');
-        const razaoSocial = 'INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO PARÁ';
+        const razaoSocial =
+          'INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO PARÁ';
         doc.text(razaoSocial, 9.3, 51);
 
         const totalWidth = pageWidth - 2 * margin;
@@ -118,15 +117,15 @@ export default {
 
         doc.setFont('arial', 'bold');
         const cnpjLabel = 'CNPJ:';
-        doc.text(cnpjLabel, cnpjX, 55); 
+        doc.text(cnpjLabel, cnpjX, 55);
 
         doc.setFont('arial', 'normal');
         const cnpj = '00.000.000/0000-00';
-        doc.text(cnpj, cnpjX, 59); 
+        doc.text(cnpj, cnpjX, 59);
 
         doc.setFont('arial', 'bold');
         const cidadeLabel = 'Cidade:';
-        doc.text(cidadeLabel, cidadeX, 55); 
+        doc.text(cidadeLabel, cidadeX, 55);
 
         doc.setFont('arial', 'normal');
         const cidade = 'Belém';
@@ -142,7 +141,7 @@ export default {
 
         doc.setFont('arial', 'bold');
         const foneLabel = 'Fone:';
-        doc.text(foneLabel, foneX + 10, 55); 
+        doc.text(foneLabel, foneX + 10, 55);
 
         doc.setFont('arial', 'normal');
         const fone = '91 3201-1763/1712';
@@ -198,16 +197,16 @@ export default {
 
         doc.setFont('arial', 'bold');
         const siapeLabel = 'SIAPE:';
-        doc.text(siapeLabel, foneX + 10, 79); 
+        doc.text(siapeLabel, foneX + 10, 79);
 
         doc.setFont('arial', 'normal');
         const siape = '12345678';
-        doc.text(siape, foneX + 10, 83); 
+        doc.text(siape, foneX + 10, 83);
 
         doc.setFontSize(11);
         doc.setFont('arial', 'bold');
         const tituloConcedente = 'CONCEDENTE';
-        doc.text(tituloConcedente, 9.3, 90); 
+        doc.text(tituloConcedente, 9.3, 90);
         doc.setFont('arial', 'normal');
 
         doc.setFontSize(10);
@@ -215,43 +214,43 @@ export default {
         // Razão Social
         doc.setFont('arial', 'bold');
         const razaoSocialCedenteTitle = 'Razão Social:';
-        doc.text(razaoSocialCedenteTitle, 9.3, 94); 
+        doc.text(razaoSocialCedenteTitle, 9.3, 94);
 
         doc.setFont('arial', 'normal');
         const razaoSocialCedente = 'Advocacia Geral da União';
-        doc.text(razaoSocialCedente, 9.3, 98); 
+        doc.text(razaoSocialCedente, 9.3, 98);
 
         // CNPJ
         doc.setFont('arial', 'bold');
         const cnpjCedenteLabel = 'CNPJ:';
-        doc.text(cnpjCedenteLabel, cnpjX, 103); 
+        doc.text(cnpjCedenteLabel, cnpjX, 103);
 
         doc.setFont('arial', 'normal');
         const cnpjCedente = '00.000.000/0000-00';
-        doc.text(cnpjCedente, cnpjX, 107); 
+        doc.text(cnpjCedente, cnpjX, 107);
 
         // Cidade
         doc.setFont('arial', 'bold');
         const cidadeCedenteLabel = 'Cidade:';
-        doc.text(cidadeCedenteLabel, cidadeX, 103); 
+        doc.text(cidadeCedenteLabel, cidadeX, 103);
 
         doc.setFont('arial', 'normal');
         const cidadeCedente = 'Belém';
-        doc.text(cidadeCedente, cidadeX, 107); 
+        doc.text(cidadeCedente, cidadeX, 107);
 
         // UF
         doc.setFont('arial', 'bold');
         const ufCedenteLabel = 'UF:';
-        doc.text(ufCedenteLabel, ufX, 103); 
+        doc.text(ufCedenteLabel, ufX, 103);
 
         doc.setFont('arial', 'normal');
         const ufCedente = 'PA';
-        doc.text(ufCedente, ufX, 107); 
+        doc.text(ufCedente, ufX, 107);
 
         // Fone
         doc.setFont('arial', 'bold');
         const foneCedenteLabel = 'Fone:';
-        doc.text(foneCedenteLabel, foneX + 10, 103); 
+        doc.text(foneCedenteLabel, foneX + 10, 103);
 
         doc.setFont('arial', 'normal');
         const foneCedente = '91 3201-1763/1712';
@@ -264,7 +263,7 @@ export default {
 
         doc.setFont('arial', 'normal');
         const enderecoCedente = 'Av. Almirante Barroso, 1155';
-        doc.text(enderecoCedente, cnpjX, 115); 
+        doc.text(enderecoCedente, cnpjX, 115);
 
         // Bairro
         doc.setFont('arial', 'bold');
@@ -287,11 +286,11 @@ export default {
         // Representante legal
         doc.setFont('arial', 'bold');
         const representanteLegalCedenteLabel = 'Representante legal:';
-        doc.text(representanteLegalCedenteLabel, cnpjX, 119); 
+        doc.text(representanteLegalCedenteLabel, cnpjX, 119);
 
         doc.setFont('arial', 'normal');
         const representanteLegalCedente = 'Jair Alcindo Lobo de Melo';
-        doc.text(representanteLegalCedente, cnpjX, 123); 
+        doc.text(representanteLegalCedente, cnpjX, 123);
 
         // Cargo
         doc.setFont('arial', 'bold');
@@ -308,7 +307,7 @@ export default {
         doc.text(supervisorLabel, cnpjX, 127);
 
         doc.setFont('arial', 'normal');
-        const supervisor = 'Jair Alcindo Lobo de Melo';
+        const supervisor = 'Jalim Rabei mohammed';
         doc.text(supervisor, cnpjX, 131);
 
         // Cargo do Supervisor
@@ -358,16 +357,16 @@ export default {
         // Email
         doc.setFont('arial', 'bold');
         const emailLabel = 'Email:';
-        doc.text(emailLabel, foneX + 10, 149); 
+        doc.text(emailLabel, foneX + 10, 149);
 
         doc.setFont('arial', 'normal');
         const email = 'jair.melo@ifpa.edu.br';
-        doc.text(email, foneX + 10, 153); 
+        doc.text(email, foneX + 10, 153);
 
         // CPF
         doc.setFont('arial', 'bold');
         const cpfEstagiarioLabel = 'CPF:';
-        doc.text(cpfEstagiarioLabel, cnpjX, 157); 
+        doc.text(cpfEstagiarioLabel, cnpjX, 157);
 
         doc.setFont('arial', 'normal');
         const cpfEstagiario = '123.456.789-00';
@@ -389,7 +388,7 @@ export default {
 
         doc.setFont('arial', 'normal');
         const dataNascimento = '18/04/2001';
-        doc.text(dataNascimento, ufX, 161); 
+        doc.text(dataNascimento, ufX, 161);
 
         // Celular
         doc.setFont('arial', 'bold');
@@ -398,36 +397,36 @@ export default {
 
         doc.setFont('arial', 'normal');
         const celular = '91 98455-7644';
-        doc.text(celular, foneX + 10, 161); 
+        doc.text(celular, foneX + 10, 161);
 
         // Endereço
         doc.setFont('arial', 'bold');
         const enderecoEstagiarioLabel = 'Endereço:';
-        doc.text(enderecoEstagiarioLabel, cnpjX, 165); 
+        doc.text(enderecoEstagiarioLabel, cnpjX, 165);
 
         doc.setFont('arial', 'normal');
         const enderecoEstagiario = 'Rua do Estagiário, 123';
-        doc.text(enderecoEstagiario, cnpjX, 169); 
+        doc.text(enderecoEstagiario, cnpjX, 169);
 
         // CEP
         doc.setFont('arial', 'bold');
         const cepEstagiarioLabel = 'CEP:';
-        doc.text(cepEstagiarioLabel, foneX + 10, 165); 
+        doc.text(cepEstagiarioLabel, foneX + 10, 165);
 
         doc.setFont('arial', 'normal');
         const cepEstagiario = '66093-032';
-        doc.text(cepEstagiario, foneX + 10, 169); 
+        doc.text(cepEstagiario, foneX + 10, 169);
 
         const sectionWidthEstag = pageWidth / 3;
 
         // Bairro Estagiário
         doc.setFont('arial', 'bold');
         const bairroEstagLabel = 'Bairro:';
-        doc.text(bairroEstagLabel, cnpjX, 173); 
+        doc.text(bairroEstagLabel, cnpjX, 173);
 
         doc.setFont('arial', 'normal');
         const bairroEstag = 'Curuçambá';
-        doc.text(bairroEstag, cnpjX, 177); 
+        doc.text(bairroEstag, cnpjX, 177);
 
         doc.setFont('arial', 'bold');
         const cidadeEstagLabel = 'Cidade:';
@@ -436,29 +435,30 @@ export default {
 
         doc.setFont('arial', 'normal');
         const cidadeEstag = 'Ananindeua';
-        doc.text(cidadeEstag, cidadeEstagX, 177);7
+        doc.text(cidadeEstag, cidadeEstagX, 177);
+        7;
 
         doc.setFont('arial', 'bold');
         const ufEstagLabel = 'UF:';
         const ufEstagX = foneX + 10;
-        doc.text(ufEstagLabel, ufEstagX, 173); 
+        doc.text(ufEstagLabel, ufEstagX, 173);
 
         doc.setFont('arial', 'normal');
         const ufEstag = 'PA';
-        doc.text(ufEstag, ufEstagX, 177); 
+        doc.text(ufEstag, ufEstagX, 177);
 
         // Condições do Estágio
         doc.setFontSize(12);
         doc.setFont('arial', 'bold');
         const tituloCondicoes = 'CONDIÇÕES DO ESTÁGIO:';
-        doc.text(tituloCondicoes, cnpjX, 183); 
+        doc.text(tituloCondicoes, cnpjX, 183);
 
         doc.setFontSize(10);
 
         // Período
         doc.setFont('arial', 'bold');
         const periodoLabel = 'Período (dia/mês/ano):';
-        doc.text(periodoLabel, cnpjX, 187); 
+        doc.text(periodoLabel, cnpjX, 187);
 
         doc.setFont('arial', 'normal');
         const periodo = '01/09/2024 a 01/03/2025';
@@ -472,7 +472,7 @@ export default {
 
         doc.setFont('arial', 'normal');
         const horario = '08:00 a 12:00';
-        doc.text(horario, horarioX, 191); 
+        doc.text(horario, horarioX, 191);
 
         // Jornada semanal
         doc.setFont('arial', 'bold');
@@ -482,7 +482,7 @@ export default {
 
         doc.setFont('arial', 'normal');
         const jornada = '20 horas';
-        doc.text(jornada, jornadaX, 191); 
+        doc.text(jornada, jornadaX, 191);
 
         // Bolsa auxílio
         doc.setFont('arial', 'bold');
@@ -491,12 +491,12 @@ export default {
 
         doc.setFont('arial', 'normal');
         const bolsa = '800,00 (oitocentos reais)';
-        doc.text(bolsa, cnpjX, 199); 
+        doc.text(bolsa, cnpjX, 199);
 
         // Auxílio Transporte
         doc.setFont('arial', 'bold');
         const transporteLabel = 'Auxílio Transporte (R$):';
-        doc.text(transporteLabel, jornadaX, 195); 
+        doc.text(transporteLabel, jornadaX, 195);
 
         doc.setFont('arial', 'normal');
         const transporte = '200,00 (duzentos reais)';
@@ -505,38 +505,41 @@ export default {
         // Plano de Atividades de Estágio
         doc.setFont('arial', 'bold');
         const planoAtividadesLabel = 'Plano de Atividade de Estágio:';
-        doc.text(planoAtividadesLabel, cnpjX, 203); 
+        doc.text(planoAtividadesLabel, cnpjX, 203);
 
         doc.setFont('arial', 'normal');
         const atividades = [
-            '01. Desenvolver sistemas web utilizando JavaScript e frameworks modernos.',
-            '02. Auxiliar na manutenção de sistemas já existentes, corrigindo bugs e implementando novas funcionalidades.',
-            '03. Participar de reuniões de planejamento e discussão de projetos com a equipe.',
-            '04. Realizar testes de qualidade nos sistemas desenvolvidos.',
-            '05. Documentar o código e as soluções desenvolvidas para facilitar futuras manutenções.'
+          '01. Desenvolver sistemas web utilizando JavaScript e frameworks modernos.',
+          '02. Auxiliar na manutenção de sistemas já existentes, corrigindo bugs e implementando novas funcionalidades.',
+          '03. Participar de reuniões de planejamento e discussão de projetos com a equipe.',
+          '04. Realizar testes de qualidade nos sistemas desenvolvidos.',
+          '05. Documentar o código e as soluções desenvolvidas para facilitar futuras manutenções.',
         ];
 
         atividades.forEach((atividade, index) => {
-            doc.text(atividade, cnpjX, 207 + (index * 5));
+          doc.text(atividade, cnpjX, 207 + index * 5);
         });
 
         // Cláusulas
         doc.setFont('arial', 'bold');
-        const tituloClausulas = 'Celebram entre si este TERMO DE COMPROMISSO DE ESTÁGIO, convencionando as cláusulas seguintes:';
-        doc.text(tituloClausulas, cnpjX, 233); 
+        const tituloClausulas =
+          'Celebram entre si este TERMO DE COMPROMISSO DE ESTÁGIO, convencionando as cláusulas seguintes:';
+        doc.text(tituloClausulas, cnpjX, 233);
 
         doc.setFont('arial', 'bold');
         const clausula1Titulo = 'Cláusula 1ª –';
-        doc.text(clausula1Titulo, cnpjX, 237); 
+        doc.text(clausula1Titulo, cnpjX, 237);
         doc.setFont('arial', 'normal');
-        const clausula1Texto = 'Este instrumento tem por objetivo formalizar as condições para realização de ESTÁGIO DE ESTUDANTE e particularizar a relação jurídica especial existente entre o ESTAGIÁRIO, a CONCEDENTE e o IFPA caracterizando a não vinculação empregatícia, nos termos da legislação vigente, bem como, certificamos que as atividades a serem realizadas pelo aluno estão previstas na proposta pedagógica do Curso como forma de contextualização do currículo, em termos de educação para o trabalho e a cidadania.';
-        doc.text(doc.splitTextToSize(clausula1Texto, maxWidth), cnpjX, 241); 
+        const clausula1Texto =
+          'Este instrumento tem por objetivo formalizar as condições para realização de ESTÁGIO DE ESTUDANTE e particularizar a relação jurídica especial existente entre o ESTAGIÁRIO, a CONCEDENTE e o IFPA caracterizando a não vinculação empregatícia, nos termos da legislação vigente, bem como, certificamos que as atividades a serem realizadas pelo aluno estão previstas na proposta pedagógica do Curso como forma de contextualização do currículo, em termos de educação para o trabalho e a cidadania.';
+        doc.text(doc.splitTextToSize(clausula1Texto, maxWidth), cnpjX, 241);
 
         doc.setFont('arial', 'bold');
         const clausula2Titulo = 'Cláusula 2ª –';
-        doc.text(clausula2Titulo, cnpjX, 257); 
+        doc.text(clausula2Titulo, cnpjX, 257);
         doc.setFont('arial', 'normal');
-        const clausula2Texto = 'O ESTÁGIO DE ESTUDANTES, obrigatório ou não obrigatório, está em conformidade com o projeto pedagógico do curso, nos termos da Lei nº 11.788/08.';
+        const clausula2Texto =
+          'O ESTÁGIO DE ESTUDANTES, obrigatório ou não obrigatório, está em conformidade com o projeto pedagógico do curso, nos termos da Lei nº 11.788/08.';
         doc.text(doc.splitTextToSize(clausula2Texto, maxWidth), cnpjX, 261);
 
         doc.setFont('arial', 'bold');
@@ -545,16 +548,16 @@ export default {
 
         doc.setFont('arial', 'normal');
         const clausula3Texto = [
-            'a) Aprovar o Estágio de que trata o presente instrumento, considerando as condições de sua adequação à proposta pedagógica do curso, à etapa e modalidade de formação escolar do Estagiário e ao horário e calendário escolar;',
-            'b) Aprovar o plano de atividades do Estágio que consubstancie as condições/requisitos suficientes à exigência legal de adequação à etapa e modalidade de formação escolar do Estagiário;',
-            'c) Avaliar as instalações da Concedente através de instrumentos próprios;'
+          'a) Aprovar o Estágio de que trata o presente instrumento, considerando as condições de sua adequação à proposta pedagógica do curso, à etapa e modalidade de formação escolar do Estagiário e ao horário e calendário escolar;',
+          'b) Aprovar o plano de atividades do Estágio que consubstancie as condições/requisitos suficientes à exigência legal de adequação à etapa e modalidade de formação escolar do Estagiário;',
+          'c) Avaliar as instalações da Concedente através de instrumentos próprios;',
         ];
 
         clausula3Texto.forEach((item, index) => {
-            const lines = doc.splitTextToSize(item, maxWidth);
-            lines.forEach((line, lineIndex) => {
-                doc.text(line, cnpjX, 273 + (index * 8) + (lineIndex * 4)); 
-            });
+          const lines = doc.splitTextToSize(item, maxWidth);
+          lines.forEach((line, lineIndex) => {
+            doc.text(line, cnpjX, 273 + index * 8 + lineIndex * 4);
+          });
         });
 
         //Adicionar nova Página
@@ -577,11 +580,11 @@ export default {
           const paragraphSpacing = 1; // Espaçamento entre os parágrafos
 
           textoArray.forEach((item) => {
-              const lines = doc.splitTextToSize(item, maxWidth);
-              lines.forEach((line, lineIndex) => {
-                  doc.text(line, xPos, yPos + (lineIndex * lineSpacing));
-              });
-              yPos += lines.length * lineSpacing + paragraphSpacing; // Ajuste a posição vertical com base no número de linhas
+            const lines = doc.splitTextToSize(item, maxWidth);
+            lines.forEach((line, lineIndex) => {
+              doc.text(line, xPos, yPos + lineIndex * lineSpacing);
+            });
+            yPos += lines.length * lineSpacing + paragraphSpacing; // Ajuste a posição vertical com base no número de linhas
           });
 
           return yPos; // Retorna a posição vertical final para continuar com o próximo conteúdo
@@ -589,11 +592,18 @@ export default {
 
         doc.setFontSize(10);
         const clausula3TextoPag2 = [
-            'd) Indicar professor orientador, da área a ser desenvolvida no Estágio, como responsável pelo acompanhamento e avaliação do relatório das atividades do Estagiário.',
-            'e) Comunicar à parte concedente do Estágio, no início do período letivo, as datas de realização de avaliações escolares ou acadêmica.'
+          'd) Indicar professor orientador, da área a ser desenvolvida no Estágio, como responsável pelo acompanhamento e avaliação do relatório das atividades do Estagiário.',
+          'e) Comunicar à parte concedente do Estágio, no início do período letivo, as datas de realização de avaliações escolares ou acadêmica.',
         ];
         let currentY = 22; // Posição inicial na página
-        currentY = addClausula(doc, 'Cláusula 3ª – Cabe ao IFPA:', clausula3TextoPag2, cnpjX, currentY, maxWidth);
+        currentY = addClausula(
+          doc,
+          'Cláusula 3ª – Cabe ao IFPA:',
+          clausula3TextoPag2,
+          cnpjX,
+          currentY,
+          maxWidth,
+        );
 
         // Adiciona cláusula 4
         const clausula4Texto = [
@@ -609,9 +619,16 @@ export default {
           'j) Entregar, por ocasião de desligamento, termo de realização do estágio com indicação resumida das atividades desenvolvidas, dos períodos e da avaliação de desempenho;',
           'k) Manter em arquivo e à disposição da fiscalização os documentos firmados que comprovem a relação de estágio;',
           'l) Informar ao IFPA (DICAE/DEX) a rescisão antecipada deste instrumento, para as devidas providências administrativas que se fizerem necessárias;',
-          'm) Permitir o início das atividades de estágio apenas após o recebimento das 04 vias deste instrumento assinada pelas três partes signatárias.'
+          'm) Permitir o início das atividades de estágio apenas após o recebimento das 04 vias deste instrumento assinada pelas três partes signatárias.',
         ];
-        currentY = addClausula(doc, 'Cláusula 4ª – Cabe à concedente:', clausula4Texto, cnpjX, currentY + 1, maxWidth);
+        currentY = addClausula(
+          doc,
+          'Cláusula 4ª – Cabe à concedente:',
+          clausula4Texto,
+          cnpjX,
+          currentY + 1,
+          maxWidth,
+        );
 
         // Adiciona cláusula 5
         const clausula5Texto = [
@@ -622,29 +639,55 @@ export default {
           'e) Informar de imediato, qualquer alteração na sua situação escolar, tais como: trancamento de matrícula, abandono, conclusão de curso ou transferência de Instituição de Ensino;',
           'f) Entregar, obrigatoriamente, ao IFPA e à Concedente uma via do presente instrumento, devidamente assinada pelas partes;',
           'g) Informar previamente à Concedente os períodos de avaliação no IFPA, para fins de redução da jornada de estágio;',
-          'h) Preencher os relatórios de estágio a fim de subsidiar o IFPA com informações sobre seu estágio.'
+          'h) Preencher os relatórios de estágio a fim de subsidiar o IFPA com informações sobre seu estágio.',
         ];
-        currentY = addClausula(doc, 'Cláusula 5ª – Cabe ao Estagiário:', clausula5Texto, cnpjX, currentY + 1, maxWidth);
+        currentY = addClausula(
+          doc,
+          'Cláusula 5ª – Cabe ao Estagiário:',
+          clausula5Texto,
+          cnpjX,
+          currentY + 1,
+          maxWidth,
+        );
 
         // Adiciona cláusula 6
         const clausula6Texto = [
           'O presente instrumento e o Plano de Atividades de Estágio serão alterados ou prorrogados através de Termos Aditivos.',
           'Parágrafo Primeiro - O presente Termo de Compromisso de Estágio pode ser reincidido ou denunciado, a qualquer tempo, mediante comunicação escrita, pelo IFPA, pela Concedente ou pelo Estagiário, sendo a vontade deste último, a comunicação para rescisão deverá ocorrer pelos menos 15 (quinze) dias antes do desligamento efetivo.',
-          'Parágrafo Segundo - O Não cumprimento de quaisquer cláusulas do presente Termo de Compromisso de Estágio constitui motivo de imediata rescisão.'
+          'Parágrafo Segundo - O Não cumprimento de quaisquer cláusulas do presente Termo de Compromisso de Estágio constitui motivo de imediata rescisão.',
         ];
-        currentY = addClausula(doc, 'Cláusula 6ª – Alterações e Rescisão:', clausula6Texto, cnpjX, currentY + 1, maxWidth);
+        currentY = addClausula(
+          doc,
+          'Cláusula 6ª – Alterações e Rescisão:',
+          clausula6Texto,
+          cnpjX,
+          currentY + 1,
+          maxWidth,
+        );
 
         // Adiciona cláusula 7
         const clausula7Texto = [
-          'O Estagiário durante a vigência do presente Termo de Compromisso de Estágio estará segurado contra acidentes pessoais conforme apólice nº 666999, da seguradora Teste de Seguradora.'
+          'O Estagiário durante a vigência do presente Termo de Compromisso de Estágio estará segurado contra acidentes pessoais conforme apólice nº 666999, da seguradora Teste de Seguradora.',
         ];
-        currentY = addClausula(doc, 'Cláusula 7ª – Seguro:', clausula7Texto, cnpjX, currentY + 1, maxWidth);
+        currentY = addClausula(
+          doc,
+          'Cláusula 7ª – Seguro:',
+          clausula7Texto,
+          cnpjX,
+          currentY + 1,
+          maxWidth,
+        );
 
         // Texto final em negrito
         doc.setFontSize(11);
         doc.setFont('arial', 'bold');
-        const textoFinal = 'E, por estarem de inteiro e comum acordo com o Plano de Atividades de Estágio e com as demais condições estabelecidas neste Termo de Compromisso de Estágio, as partes assinam em 04 vias de igual teor.';
-        doc.text(doc.splitTextToSize(textoFinal, maxWidth), cnpjX, currentY + 2);
+        const textoFinal =
+          'E, por estarem de inteiro e comum acordo com o Plano de Atividades de Estágio e com as demais condições estabelecidas neste Termo de Compromisso de Estágio, as partes assinam em 04 vias de igual teor.';
+        doc.text(
+          doc.splitTextToSize(textoFinal, maxWidth),
+          cnpjX,
+          currentY + 2,
+        );
 
         // Configurações Assinatura
         const pageWidthAssinatura = doc.internal.pageSize.getWidth();
@@ -673,9 +716,21 @@ export default {
         doc.setFont('arial', 'normal');
         doc.setFontSize(8);
 
-        doc.text('ESTAGIÁRIO', firstLineX + lineLength / 2, yPosition + 5, { align: 'center' });
-        doc.text('SUPERVISOR (com CARIMBO)', secondLineX + lineLength / 2, yPosition + 5, { align: 'center' });
-        doc.text('IFPA – COORDENADOR DO CURSO', thirdLineX + lineLength / 2, yPosition + 5, { align: 'center' });
+        doc.text('ESTAGIÁRIO', firstLineX + lineLength / 2, yPosition + 5, {
+          align: 'center',
+        });
+        doc.text(
+          'SUPERVISOR (com CARIMBO)',
+          secondLineX + lineLength / 2,
+          yPosition + 5,
+          { align: 'center' },
+        );
+        doc.text(
+          'IFPA – COORDENADOR DO CURSO',
+          thirdLineX + lineLength / 2,
+          yPosition + 5,
+          { align: 'center' },
+        );
 
         const pdfBlob = doc.output('blob');
         const pdfUrl = URL.createObjectURL(pdfBlob);
@@ -690,6 +745,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style> -->

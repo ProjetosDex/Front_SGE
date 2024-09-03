@@ -1,35 +1,48 @@
-import axios from "axios";
+import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_ESTAGIO_LEGAL_API,
+  baseURL: import.meta.env.VITE_ESTAGIO_LEGAL_API,
 });
 
 axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      if (error.response && error.response.status === 401) {
-        try {
-          const response = await axiosInstance.post('auth/refresh/token', { refresh_token: localStorage.getItem('refresh_token') });
-  
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-          if (response.status === 200) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true; // Evitar loop infinito
 
-            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
-  
-            localStorage.setItem('access_token', response.data.access_token);
+      try {
+        const response = await axiosInstance.post('auth/refresh/token', {
+          refresh_token: localStorage.getItem('refresh_token'),
+        });
 
-            localStorage.setItem('refresh_token', response.data.refresh_token);
-  
-            //reenvia a requisição que falhou por expiração do token
-            return axiosInstance(error.config);
-          }
-        } catch (refreshError) {
-          console.error('Erro ao renovar token:', refreshError);
+        if (response.status === 200) {
+          const newAccessToken = response.data.access_token;
+          const newRefreshToken = response.data.refresh_token;
+
+          // Atualiza os tokens no localStorage
+          localStorage.setItem('access_token', newAccessToken);
+          localStorage.setItem('refresh_token', newRefreshToken);
+          console.log(newAccessToken);
+          // Aplica o novo token ao cabeçalho Authorization da requisição original
+          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+          // Reenvia a requisição original
+          return axiosInstance(originalRequest);
         }
+      } catch (refreshError) {
+        console.error('Erro ao renovar token:', refreshError);
+        // Opcional: Redirecionar para a página de login ou outra ação
       }
-  
-      return Promise.reject(error);
     }
-  );
-  
-  export default axiosInstance;
+
+    return Promise.reject(error);
+  },
+);
+
+export default axiosInstance;
