@@ -73,7 +73,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import type { InternshipProcess } from '@/api/internshipProcess.interface';
 import axiosInstance from '@/interceptors/axios-interceptor';
-import InputFile from '../../components/input-file/input-file.vue';
+import InputFile from '../../../components/input-file/input-file.vue';
 
 // Tipos para o conteúdo da etapa
 interface StepContent {

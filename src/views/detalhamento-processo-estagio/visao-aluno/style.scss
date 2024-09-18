@@ -138,16 +138,29 @@
 
 
 section .row {
-    margin-bottom: 10px;
-    background: #e1f8e3;
-    list-style: none;
-    padding: 10px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 500px;
-    
+  margin-bottom: 10px;
+  background: #e1f8e3;
+  list-style: none;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  section .row {
+      max-width: 90%; /* Em telas menores, limite a largura a 90% */
+  }
+}
+
+@media (max-width: 480px) {
+  section .row {
+      max-width: 100%; /* Em telas muito pequenas, ocupe 100% da largura */
+  }
 }
 
 section .row i {
@@ -193,3 +206,5 @@ section .row i {
 .download-icon:hover {
   color: #0d7904;
 }
+
+
