@@ -58,6 +58,8 @@
               </div>
             </li>
           </section>
+          <h3>Ação necessária:</h3>
+          <p>Se os arquivos estiverem corretos, faça o upload do documento necessário. Caso identifique inconsistências, descreva os motivos da recusa e prossiga com a rejeição.</p>
         </div>
 
         <!-- Componente de upload de arquivo, exibido no status EM ANALISE -->
@@ -65,10 +67,42 @@
           <input-file :uploadUrl="uploadUrlComputed" />
         </div>
 
-        <!-- Botão para recusar documentos -->
-        <div v-if="currentStepContent.status === 'EM ANALISE'" class="div-reject-button">
-          <button class="reject-button" @click="rejectDocuments">Recusar Documentos</button>
-        </div>
+          <!-- Botão de recusa de documentos -->
+          <div v-if="currentStepContent.status === 'EM ANALISE'" class="div-reject-button">
+            <v-form>
+              <v-container>
+                <v-text-field>
+                  <template v-slot:label>
+                    <span>
+                      Descreva o motivo da <strong>Recusa</strong> dos documentos <v-icon icon="mdi-close-circle"></v-icon>
+                    </span>
+                  </template>
+                </v-text-field>
+              </v-container>
+            </v-form>
+            <button class="reject-button" @click="dialog = true">Recusar Documentos</button>
+          </div>
+
+          <!-- Componente de diálogo do Vuetify -->
+          <v-dialog
+            v-model="dialog"
+            width="auto"
+          >
+            <v-card
+              max-width="400"
+              prepend-icon="mdi-update"
+              text="Os documentos foram recusados com sucesso e o aluno foi notificado."
+              title="Recusa de Documentos"
+            >
+              <template v-slot:actions>
+                <v-btn
+                  class="ms-auto"
+                  text="Ok"
+                  @click="dialog = false"
+                ></v-btn>
+              </template>
+            </v-card>
+          </v-dialog>
 
         <!-- Documentos do processo - exibido quando o status é CONCLUÍDO -->
         <div v-if="isCompleted && relatedDocuments.length" class="process-documents">
@@ -90,6 +124,7 @@
       </div>
     </v-container>
   </div>
+  
 </template>
 
 <script lang="ts" setup>
@@ -99,6 +134,7 @@ import type { InternshipProcess } from '@/api/internshipProcess.interface';
 import axiosInstance from '@/interceptors/axios-interceptor';
 import InputFile from '../../../components/input-file/input-file.vue';
 
+const dialog = ref(false);
 // Tipos para o conteúdo da etapa
 interface StepContent {
   title: string;
@@ -147,9 +183,6 @@ const uploadUrlComputed = computed(() => {
 });
 
 // Função para rejeitar documentos
-const rejectDocuments = () => {
-  console.log('Os documentos foram rejeitados. Por favor, revise as informações.');
-};
 
 // Documentos relacionados a cada etapa
 const documentMap: Record<string, { name: string; url: string }[]> = {
