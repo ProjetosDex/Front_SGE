@@ -1,7 +1,8 @@
 import { jsPDF } from 'jspdf';
 import backgroundImage from '@/assets/brasaooficial.png';
 import logo from '@/assets/logo_pdf_ifpa.png';
-export const generatePDF = (dadosTce: any) => {
+import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
+export const generatePDF = (dadosTce: CreatedTermCommitment) => {
   const doc = new jsPDF();
 
   // Função adicionar o logo/texto ao lado + background brasão
@@ -204,7 +205,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(razaoSocialCedenteTitle, 9.3, 94);
 
     doc.setFont('arial', 'normal');
-    const razaoSocialCedente = `${dadosTce.concedente.razaoSocial}`;
+    const razaoSocialCedente = `${dadosTce.razaoSocialConcedente}`;
     doc.text(razaoSocialCedente, 9.3, 98);
 
     // CNPJ
@@ -213,7 +214,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(cnpjCedenteLabel, cnpjX, 103);
 
     doc.setFont('arial', 'normal');
-    const cnpjCedente = `${dadosTce.concedente.cnpj}`;
+    const cnpjCedente = `${dadosTce.cnpjConcedente}`;
     doc.text(cnpjCedente, cnpjX, 107);
 
     // Cidade
@@ -222,7 +223,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(cidadeCedenteLabel, cidadeX, 103);
 
     doc.setFont('arial', 'normal');
-    const cidadeCedente = `${dadosTce.concedente.cidade}`;
+    const cidadeCedente = `${dadosTce.cidadeConcedente}`;
     doc.text(cidadeCedente, cidadeX, 107);
 
     // UF
@@ -231,7 +232,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(ufCedenteLabel, ufX, 103);
 
     doc.setFont('arial', 'normal');
-    const ufCedente = `${dadosTce.concedente.uf}`;
+    const ufCedente = `${dadosTce.ufConcedente}`;
     doc.text(ufCedente, ufX, 107);
 
     // Fone
@@ -249,16 +250,16 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(enderecoCedenteLabel, cnpjX, 111);
 
     doc.setFont('arial', 'normal');
-    const enderecoCedente = `${dadosTce.concedente.endereco}`;
+    const enderecoCedente = `${dadosTce.enderecoConcedente}`;
     doc.text(enderecoCedente, cnpjX, 115);
 
     // Bairro
     doc.setFont('arial', 'bold');
-    const bairroCedenteLabel = `${dadosTce.concedente.bairro}`;
+    const bairroCedenteLabel = `Bairro`;
     doc.text(bairroCedenteLabel, ufX, 111);
 
     doc.setFont('arial', 'normal');
-    const bairroCedente = `${dadosTce.concedente.bairro}`;
+    const bairroCedente = `${dadosTce.bairroConcedente}`;
     doc.text(bairroCedente, ufX, 115);
 
     // CEP
@@ -267,7 +268,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(cepCedenteLabel, foneX + 10, 111);
 
     doc.setFont('arial', 'normal');
-    const cepCedente = `${dadosTce.concedente.cep}`;
+    const cepCedente = `${dadosTce.cepConcedente}`;
     doc.text(cepCedente, foneX + 10, 115);
 
     // Representante legal
@@ -276,7 +277,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(representanteLegalCedenteLabel, cnpjX, 119);
 
     doc.setFont('arial', 'normal');
-    const representanteLegalCedente = `${dadosTce.concedente.representanteLegal}`;
+    const representanteLegalCedente = `${dadosTce.representanteLegalConcedente}`;
     doc.text(representanteLegalCedente, cnpjX, 123);
 
     // Cargo
@@ -285,7 +286,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(funcaoRepresentanteCedenteLabel, foneX + 10, 119);
 
     doc.setFont('arial', 'normal');
-    const funcaoRepresentanteCedente = `${dadosTce.concedente.funcao}`;
+    const funcaoRepresentanteCedente = `${dadosTce.funcaoRepresentanteLegalConcedente}`;
     doc.text(funcaoRepresentanteCedente, foneX + 10, 123);
 
     // Supervisor
@@ -294,7 +295,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(supervisorLabel, cnpjX, 127);
 
     doc.setFont('arial', 'normal');
-    const supervisor = `${dadosTce.concedente.supervisor}`;
+    const supervisor = `${dadosTce.supervisor}`;
     doc.text(supervisor, cnpjX, 131);
 
     // Cargo do Supervisor
@@ -303,7 +304,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(cargoSupervisorLabel, foneX + 10, 127);
 
     doc.setFont('arial', 'normal');
-    const cargoSupervisor = `${dadosTce.concedente.cargo}`;
+    const cargoSupervisor = `${dadosTce.cargoSupervisor}`;
     doc.text(cargoSupervisor, foneX + 10, 131);
 
     doc.setFontSize(12);
@@ -320,7 +321,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(nomeAlunoLabel, cnpjX, 141);
 
     doc.setFont('arial', 'normal');
-    const nomeAluno = `${dadosTce.aluno.nome}`;
+    const nomeAluno = `${dadosTce.user.name}`;
     doc.text(nomeAluno, cnpjX, 145);
 
     // Matrícula
@@ -329,7 +330,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(matriculaAlunoLabel, foneX + 10, 141);
 
     doc.setFont('arial', 'normal');
-    const matriculaAluno = `${dadosTce.aluno.matricula}`;
+    const matriculaAluno = `${dadosTce.user.registration}`;
     doc.text(matriculaAluno, foneX + 10, 145);
 
     // Curso
@@ -338,7 +339,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(cursoLabel, cnpjX, 149);
 
     doc.setFont('arial', 'normal');
-    const curso = `${dadosTce.aluno.curso}`;
+    const curso = `${dadosTce.user.courseStudy}`;
     doc.text(curso, cnpjX, 153);
 
     // Email
@@ -347,7 +348,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(emailLabel, foneX + 10, 149);
 
     doc.setFont('arial', 'normal');
-    const email = `${dadosTce.aluno.email}`;
+    const email = `${dadosTce.user.email}`;
     doc.text(email, foneX + 10, 153);
 
     // CPF
@@ -356,7 +357,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(cpfEstagiarioLabel, cnpjX, 157);
 
     doc.setFont('arial', 'normal');
-    const cpfEstagiario = `${dadosTce.aluno.cpf}`;
+    const cpfEstagiario = `${dadosTce.user.cpf}`;
     doc.text(cpfEstagiario, cnpjX, 161);
 
     // RG
@@ -448,7 +449,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(periodoLabel, cnpjX, 187);
 
     doc.setFont('arial', 'normal');
-    const periodo = `${dadosTce.condicoesEstagio.dataInicioEstagio} a ${dadosTce.condicoesEstagio.dataFimEstagio}`;
+    const periodo = `${dadosTce.dataInicioEstagio} a ${dadosTce.dataFimEstagio}`;
     doc.text(periodo, cnpjX, 191);
 
     // Horário
@@ -458,7 +459,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(horarioLabel, horarioX, 187);
 
     doc.setFont('arial', 'normal');
-    const horario = `${dadosTce.condicoesEstagio.horaInicioEstagio} a ${dadosTce.condicoesEstagio.horaFimEstagio}`;
+    const horario = `${dadosTce.horaInicioEstagio} a ${dadosTce.horaFimEstagio}`;
     doc.text(horario, horarioX, 191);
 
     // Jornada semanal
@@ -468,7 +469,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(jornadaLabel, jornadaX, 187);
 
     doc.setFont('arial', 'normal');
-    const jornada = `${dadosTce.condicoesEstagio.jornadaSemanal}`;
+    const jornada = `${dadosTce.jornadaSemanal}`;
     doc.text(jornada, jornadaX, 191);
 
     // Bolsa auxílio
@@ -477,7 +478,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(bolsaLabel, cnpjX, 195);
 
     doc.setFont('arial', 'normal');
-    const bolsa = `${dadosTce.condicoesEstagio.bolsaAuxilio}`;
+    const bolsa = `${dadosTce.bolsaAuxilio}`;
     doc.text(bolsa, cnpjX, 199);
 
     // Auxílio Transporte
@@ -486,7 +487,7 @@ export const generatePDF = (dadosTce: any) => {
     doc.text(transporteLabel, jornadaX, 195);
 
     doc.setFont('arial', 'normal');
-    const transporte = `${dadosTce.condicoesEstagio.auxilioTransporte}`;
+    const transporte = `${dadosTce.auxilioTransporte}`;
     doc.text(transporte, jornadaX, 199);
 
     // Plano de Atividades de Estágio
@@ -496,7 +497,7 @@ export const generatePDF = (dadosTce: any) => {
 
     doc.setFont('arial', 'normal');
     const atividades = [
-      `${dadosTce.condicoesEstagio.planoAtividadesEstagio}`,
+      // `${dadosTce.condicoesEstagio.planoAtividadesEstagio}`,
       '02. Auxiliar na manutenção de sistemas já existentes, corrigindo bugs e implementando novas funcionalidades.',
       '03. Participar de reuniões de planejamento e discussão de projetos com a equipe.',
       '04. Realizar testes de qualidade nos sistemas desenvolvidos.',

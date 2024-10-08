@@ -11,11 +11,7 @@
       <div class="text_overlay">
         <h1>SEJA BEM VINDO AO ESTÁGIO LEGAL</h1>
         <h2>
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-          commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
-          et magnis dis parturient montes, nascetur ridiculus mus. Donec quam
-          felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla
-          consequat massa quis enim.
+          Este sistema foi desenvolvido para simplificar e centralizar todas as etapas do seu estágio. Desde o início do processo, com a geração do Termo de Compromisso de Estágio (TCE), passando pelo acompanhamento de todas as atividades e documentações, até a conclusão final, tudo é gerido de forma integrada e acessível. Nosso objetivo é oferecer uma experiência mais eficiente e organizada, permitindo que você se concentre no que realmente importa: o seu desenvolvimento profissional. Explore as funcionalidades disponíveis e aproveite ao máximo as ferramentas que foram pensadas para facilitar sua jornada de estágio.
         </h2>
       </div>
       <v-carousel-item
@@ -31,44 +27,47 @@
 
   <div class="container">
     <v-card class="row">
-      <i class="mdi mdi-file"></i>
-      <h1>INICIO DE ESTÁGIO</h1>
+      <div class="title-container">
+        <i class="mdi mdi-file"></i>
+        <h1>INICIO DE ESTÁGIO</h1>
+      </div>
       <p>
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-        ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing
-        elit. Aenean commodo ligula eget dolor.
+        Para iniciar seu estágio, preencha e submeta toda a documentação necessária, incluindo o Termo de Compromisso. Esse processo garante que todas as partes estejam cientes das responsabilidades e expectativas. Clique em "Saiba mais" para acessar os formulários e instruções detalhadas.
       </p>
-      <a href="">saiba mais</a>
+      <a href="#">saiba mais</a>
     </v-card>
+
     <v-card class="row">
-      <i class="mdi mdi-calendar"></i>
-      <h1>FIM DE ESTÁGIO</h1>
+      <div class="title-container">
+        <i class="mdi mdi-calendar"></i>
+        <h1>FIM DE ESTÁGIO</h1>
+      </div>
       <p>
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-        ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing
-        elit. Aenean commodo ligula eget dolor.
+        Ao finalizar seu estágio, é essencial concluir todas as atividades e submeter o relatório final. Esse documento é necessário para validar as horas de estágio e avaliar seu desempenho. Para mais informações e acesso ao relatório, clique em "Saiba mais".
       </p>
-      <a href="">saiba mais</a>
+      <a href="#">saiba mais</a>
     </v-card>
+
     <v-card class="row">
-      <i class="mdi mdi-file-check-outline"></i>
-      <h1>CREDITAR ESTÁGIO</h1>
+      <div class="title-container">
+        <i class="mdi mdi-file-check-outline"></i>
+        <h1>CREDITAR ESTÁGIO</h1>
+      </div>
       <p>
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-        ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing
-        elit. Aenean commodo ligula eget dolor.
+        Após a conclusão do estágio, solicite o crédito das horas cumpridas em seu histórico escolar. É preciso submeter a documentação comprobatória e o relatório final. Acesse o passo a passo completo clicando em "Saiba mais".
       </p>
-      <a href="">saiba mais</a>
+      <a href="#">saiba mais</a>
     </v-card>
+
     <v-card class="row">
-      <i class="mdi mdi-update"></i>
-      <h1>ACOMPANHAR PROCESSOS</h1>
+      <div class="title-container">
+        <i class="mdi mdi-update"></i>
+        <h1>ACOMPANHAR PROCESSOS</h1>
+      </div>
       <p>
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-        ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing
-        elit. Aenean commodo ligula eget dolor.
+        Mantenha-se atualizado sobre o andamento dos seus processos de estágio. Acompanhe desde a aprovação da documentação até a finalização do estágio. Verifique o status de cada etapa clicando em "Saiba mais".
       </p>
-      <a href="">saiba mais</a>
+      <a href="#">saiba mais</a>
     </v-card>
     <testePdfVue />
   </div>
