@@ -20,4 +20,5 @@ export interface CreateTermCommitment {
   supervisor: string;
   cargoSupervisor: string;
   id_user: string;
+  planoAtividadesEstagio: string[];
 }

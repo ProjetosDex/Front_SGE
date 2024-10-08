@@ -4,7 +4,8 @@ import InicioEstagioPage from '../views/inicio-estagio/inicio-estagio.vue';
 import AcompanharProcessosDex from '../views/acompanhar-processos/visao-dex/acompanhar-processos.vue';
 import TermoDeCompromisso from '../views/Termo-de-Compromisso/Termo-de-Compromisso.vue';
 import FimEstagioPage from '../views/fim-estagio/fim-estagio.vue'
-import DetalhamentoProcessoEstagio from '../views/detalhamento-processo-estagio/detalhamento-processo-estagio.vue';
+import DetalhamentoProcessoEstagio from '../views/detalhamento-processo-estagio/visao-aluno/detalhamento-processo-estagio.vue';
+import DetalhamentoProcessoEstagioDEX from '../views/detalhamento-processo-estagio/visao-dex/detalhamento-processo-estagio_dex.vue';
 import FormTCE from '../views/FormTCE/form-tce.vue'
 
 
@@ -48,9 +49,14 @@ export const privateRoutes = [
           },
           {
             path:'/detalhamento/processo/:id',
-            name:'detalhamentoProcessoEstagio',
+            name:'detalhamentoProcessoEstagioDEX',
             component: DetalhamentoProcessoEstagio
           },
+          {
+            path:'/detalhamento/processo/dex/:id',
+            name:'detalhamentoProcessoEstagio',
+            component: DetalhamentoProcessoEstagioDEX
+          },          
           {
             path:'/formulario/tce',
             name:'formulariotce',

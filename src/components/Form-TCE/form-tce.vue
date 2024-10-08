@@ -357,20 +357,24 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="12">
-                <v-textarea
-                  :counter="10"
-                  label="Plano de Atividades de Estágio"
-                  v-model="
-                    infoTCE.condicoesEstagio.planoAtividadesEstagio.fieldValue
-                  "
-                  :error-messages="
-                    infoTCE.condicoesEstagio.planoAtividadesEstagio.fieldError
-                  "
-                  :rules="infoTCE.condicoesEstagio.planoAtividadesEstagio.rules"
-                  placeholder="1-&#10;2-&#10;3-&#10;4-&#10;5-"
-                  required
-                  hide-details="auto"
-                ></v-textarea>
+                <v-card-subtitle
+                  >Plano de Atividades do Estágio</v-card-subtitle
+                >
+
+                <template v-for="(atividade, index) in 5" :key="index">
+                  <v-text-field
+                    variant="underlined"
+                    type="text"
+                    :counter="100"
+                    :label="'Atividade ' + (index + 1)"
+                    v-model="
+                      infoTCE.condicoesEstagio.planoAtividadesEstagio
+                        .fieldValue[index]
+                    "
+                    required
+                    hide-details
+                  ></v-text-field>
+                </template>
               </v-col>
             </v-row>
           </v-container>
@@ -606,7 +610,7 @@ const infoTCE = ref({
       fieldError: '',
     },
     planoAtividadesEstagio: {
-      fieldValue: '',
+      fieldValue: [],
       rules: [(v) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
@@ -640,7 +644,11 @@ const cadastrarTCE = async () => {
     supervisor: dadosForm.concedente.supervisor.fieldValue,
     cargoSupervisor: dadosForm.concedente.cargo.fieldValue,
     id_user: userId.value,
+    planoAtividadesEstagio:
+      dadosForm.condicoesEstagio.planoAtividadesEstagio.fieldValue,
   };
+
+  console.log(reqBody);
 
   const response = await axiosInstance.post(`/termCommitment/create`, reqBody);
   if (response.status == 201) {

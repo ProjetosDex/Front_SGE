@@ -42,9 +42,67 @@
           <p>{{ currentStepContent.actionRequired }}</p>
         </div>
 
+        <!-- Documentos para download na etapa de Análise -->
+        <div v-if="currentStepContent.status === 'EM ANALISE' && relatedDocuments.length">
+          <h3>Documentos para Download:</h3>
+          <section class="uploaded-area">
+            <li class="row" v-for="(doc, index) in relatedDocuments" :key="index">
+              <div class="fileUpload">
+                <div class="content upload">
+                  <i class="mdi mdi-file-document"></i>
+                  <span class="name">{{ doc.name }}</span>
+                  <a :href="doc.url" download class="download-link">
+                    <v-icon small class="download-icon">mdi-download</v-icon>
+                  </a>
+                </div>
+              </div>
+            </li>
+          </section>
+          <h3>Ação necessária:</h3>
+          <p>Se os arquivos estiverem corretos, faça o upload do documento necessário. Caso identifique inconsistências, descreva os motivos da recusa e prossiga com a rejeição.</p>
+        </div>
+
+        <!-- Componente de upload de arquivo, exibido no status EM ANALISE -->
         <div v-if="currentStepContent.showUploadButton">
           <input-file :uploadUrl="uploadUrlComputed" />
         </div>
+
+          <!-- Botão de recusa de documentos -->
+          <div v-if="currentStepContent.status === 'EM ANALISE'" class="div-reject-button">
+            <v-form>
+              <v-container>
+                <v-text-field>
+                  <template v-slot:label>
+                    <span>
+                      Descreva o motivo da <strong>Recusa</strong> dos documentos <v-icon icon="mdi-close-circle"></v-icon>
+                    </span>
+                  </template>
+                </v-text-field>
+              </v-container>
+            </v-form>
+            <button class="reject-button" @click="dialog = true">Recusar Documentos</button>
+          </div>
+
+          <!-- Componente de diálogo do Vuetify -->
+          <v-dialog
+            v-model="dialog"
+            width="auto"
+          >
+            <v-card
+              max-width="400"
+              prepend-icon="mdi-update"
+              text="Os documentos foram recusados com sucesso e o aluno foi notificado."
+              title="Recusa de Documentos"
+            >
+              <template v-slot:actions>
+                <v-btn
+                  class="ms-auto"
+                  text="Ok"
+                  @click="dialog = false"
+                ></v-btn>
+              </template>
+            </v-card>
+          </v-dialog>
 
         <!-- Documentos do processo - exibido quando o status é CONCLUÍDO -->
         <div v-if="isCompleted && relatedDocuments.length" class="process-documents">
@@ -66,6 +124,7 @@
       </div>
     </v-container>
   </div>
+  
 </template>
 
 <script lang="ts" setup>
@@ -73,8 +132,9 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import type { InternshipProcess } from '@/api/internshipProcess.interface';
 import axiosInstance from '@/interceptors/axios-interceptor';
-import InputFile from '../../components/input-file/input-file.vue';
+import InputFile from '../../../components/input-file/input-file.vue';
 
+const dialog = ref(false);
 // Tipos para o conteúdo da etapa
 interface StepContent {
   title: string;
@@ -122,6 +182,8 @@ const uploadUrlComputed = computed(() => {
   }
 });
 
+// Função para rejeitar documentos
+
 // Documentos relacionados a cada etapa
 const documentMap: Record<string, { name: string; url: string }[]> = {
   'INÍCIO DE ESTÁGIO': [
@@ -144,7 +206,21 @@ const isCompleted = computed(() => currentStepContent.value?.status === 'CONCLU�
 
 // Propriedade computada para obter os documentos relacionados à etapa atual
 const relatedDocuments = computed(() => {
-  return isCompleted.value ? documentMap[currentStepContent.value?.title || ''] || [] : [];
+  const currentTitle = currentStepContent.value?.title || '';
+  const currentStatus = currentStepContent.value?.status || '';
+
+  if (currentTitle === 'FIM DE ESTÁGIO') {
+    if (currentStatus === 'CONCLUÍDO') {
+      // Exibe todos os documentos, incluindo o Atestado de Estágio
+      return documentMap['FIM DE ESTÁGIO'];
+    } else if (currentStatus === 'EM ANALISE') {
+      // Exibe apenas o Termo, Auto-Avaliação, Avaliação da Concedente e Avaliação do Orientador
+      return documentMap['FIM DE ESTÁGIO'].filter(doc => doc.name !== 'Atestado de Estágio');
+    }
+  }
+
+  // Para as outras etapas, retornar os documentos normais
+  return documentMap[currentTitle] || [];
 });
 
 // Função para mapear o conteúdo baseado na etapa
@@ -160,51 +236,26 @@ const getContentForStep = (label: string, status: string): StepContent => {
 
   switch (label) {
     case 'INÍCIO DE ESTÁGIO':
-      baseContent.description = 'Esta etapa é crucial para o início do seu estágio, no qual deverá ser realizado o preenchimento de todos os dados necessários para concluir o processo.';
-      if (status === 'EM ANDAMENTO') {
-        baseContent.actionRequired = 'Finalize o preenchimento do TCE com as assinaturas do Aluno e Concedente e realize o upload do documento preenchido.';
+      baseContent.description = 'Esta etapa é a qual o Aluno irá realizar o preenchimento de todos os dados necessários para o Termo de Compromisso de Estágio e o envio do mesmo.';
+      if (status === 'EM ANALISE') {
+        baseContent.additionalInfo = 'O Termo de Compromisso de Estágio foi submetido pelo aluno para análise. Realize a verificação das informações preenchidas e das assinaturas presentes no documento. Após a avaliação, favor proceder com a assinatura e devolução do mesmo.';
         baseContent.showUploadButton = true;
-      } else if (status === 'EM ANALISE') {
-        baseContent.additionalInfo = 'O documento está sendo analisado pelo departamento de estágio. Aguarde o retorno do Termo de Compromisso de Estágio assinado, caso tudo esteja em conformidade.';
-      } else if (status === 'RECUSADO') {
-        baseContent.additionalInfo = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
-        baseContent.actionRequired = 'Corrija as informações no TCE e realize o upload do documento corrigido.';
-        baseContent.showUploadButton = true;
-      } else if (status === 'CONCLUÍDO') {
-        baseContent.additionalInfo = 'Etapa concluída com sucesso! Seu estágio está ativo. Você pode avançar para a próxima etapa do processo, seja para renovação ou finalização do estágio, conforme necessário.';
       }
       break;
 
     case 'RENOVAÇÃO DE ESTÁGIO':
-      baseContent.description = 'Esta etapa é para a renovação do seu contrato de estágio.';
-      baseContent.additionalInfo = 'Reveja os termos, atualize sua documentação.';
-      if (status === 'EM ANDAMENTO') {
-        baseContent.actionRequired = 'Atualize a documentação do Termo de Compromisso de Estágio e realize o upload para análise.';
+      baseContent.description = 'Esta etapa é para a renovação do Termo de Compromisso de Estágio do aluno.';
+      if (status === 'EM ANALISE') {
+        baseContent.additionalInfo = 'O Termo de Compromisso de Estágio foi enviado para renovação. Por favor, revise o documento e, após a análise, realize o upload do termo assinado, caso todas as informações estejam corretas e completas.';
         baseContent.showUploadButton = true;
-      } else if (status === 'EM ANALISE') {
-        baseContent.additionalInfo = 'O documento está sendo analisado pelo departamento de estágio. Aguarde o retorno do documento de renovação assinado, caso tudo esteja em conformidade.';
-      } else if (status === 'RECUSADO') {
-        baseContent.additionalInfo = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
-        baseContent.actionRequired = 'Corrija os documentos e realize o upload novamente.';
-        baseContent.showUploadButton = true;
-      } else if (status === 'CONCLUÍDO') {
-        baseContent.additionalInfo = 'Etapa concluída com sucesso! Seu estágio foi renovado. Você pode avançar para a próxima etapa do processo, para finalização do estágio, conforme a data prevista no TCE.';
       }
       break;
 
     case 'FIM DE ESTÁGIO':
-      baseContent.description = 'Esta é a última etapa do processo para a conclusão do seu período de estágio.';
-      if (status === 'EM ANDAMENTO') {
-        baseContent.actionRequired = 'Submeta os relatórios finais e a documentação para conclusão.';
+      baseContent.description = 'Esta é a última etapa do processo para a conclusão do período de estágio.';
+      if (status === 'EM ANALISE') {
+        baseContent.additionalInfo = 'Revise os documentos finais do estágio, incluindo o Termo de Compromisso, a Auto-Avaliação, e as Avaliações do Concedente e Orientador. Caso todos os itens estejam corretos, finalize o processo enviando o Atestado de Estágio.';
         baseContent.showUploadButton = true;
-      } else if (status === 'EM ANALISE') {
-        baseContent.additionalInfo = 'O documento está em análise pelo departamento de estágio, aguarde a validação e o retorno do Atestado de Estágio. ';
-      } else if (status === 'RECUSADO') {
-        baseContent.additionalInfo = 'Os relatórios finais foram recusados por algumas inconsistências de informações.';
-        baseContent.actionRequired = 'Revise-os e realize o upload novamente.';
-        baseContent.showUploadButton = true;
-      } else if (status === 'CONCLUÍDO') {
-        baseContent.additionalInfo = 'Etapa concluída com sucesso! Todos os requisitos foram cumpridos e o seu estágio foi finalizado.';
       }
       break;
 
@@ -247,5 +298,4 @@ const findinternshipProcessById = async () => {
 onMounted(findinternshipProcessById);
 </script>
 
-<style src="./style.scss" lang="scss" scoped>
-</style>
+<style src="./style.scss" lang="scss" scoped></style>
