@@ -314,7 +314,7 @@
               </v-col>
               <v-col cols="12" md="2">
                 <v-text-field
-                  type="number"
+                  type="time"
                   :counter="10"
                   label="Jornada Semanal"
                   v-model="infoTCE.condicoesEstagio.jornadaSemanal.fieldValue"
@@ -394,12 +394,14 @@
   <!-- <PdfGenerator /> -->
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, computed, watch, type Ref } from 'vue';
+import { io } from 'socket.io-client';
+import { ref, onMounted, watch } from 'vue';
 import { generatePDF } from '@/components/pdf-models/term-commitment/generatePdf';
 import axiosInstance from '@/interceptors/axios-interceptor';
 import type { User } from '@/api/user.interface';
 import type { CreateTermCommitment } from '@/api/createTermCommitment.interface';
 import axios from 'axios';
+import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
 // import PdfGenerator from '@/views/inicio-estagio/teste-pdf.vue';
 
 const selectedValue = ref('');
@@ -519,12 +521,7 @@ const infoTCE = ref({
     },
     cidade: {
       fieldValue: '',
-      rules: [
-        (v) => !!v || 'Este campo é obrigatório',
-        (v) => {
-          if (v !== 'Ananindeua') return 'nao é ananindeuas';
-        },
-      ],
+      rules: [(v) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     uf: {
@@ -623,7 +620,12 @@ const cadastrarTCE = async () => {
     dataFimEstagio: dadosForm.condicoesEstagio.dataFimEstagio.fieldValue,
     horaInicioEstagio: dadosForm.condicoesEstagio.horaInicioEstagio.fieldValue,
     horaFimEstagio: dadosForm.condicoesEstagio.horaFimEstagio.fieldValue,
+    jornadaSemanal: dadosForm.condicoesEstagio.jornadaSemanal.fieldValue,
     isObrigatorio: dadosForm.condicoesEstagio.isObrigatorio,
+    bolsaAuxilio: Number(dadosForm.condicoesEstagio.bolsaAuxilio.fieldValue),
+    auxilioTransporte: Number(
+      dadosForm.condicoesEstagio.auxilioTransporte.fieldValue,
+    ),
     razaoSocialConcedente: dadosForm.concedente.razaoSocial.fieldValue,
     cnpjConcedente: dadosForm.concedente.cnpj.fieldValue,
     cepConcedente: dadosForm.concedente.cep.fieldValue,
@@ -639,9 +641,12 @@ const cadastrarTCE = async () => {
     cargoSupervisor: dadosForm.concedente.cargo.fieldValue,
     id_user: userId.value,
   };
+
   const response = await axiosInstance.post(`/termCommitment/create`, reqBody);
   if (response.status == 201) {
-    generatePDF(dadosForm);
+    const createdTerm: CreatedTermCommitment = response.data;
+    console.log(createdTerm);
+    generatePDF(createdTerm);
   }
   console.log(
     new Date(

@@ -1,4 +1,8 @@
-export interface CreateTermCommitment {
+export interface CreatedTermCommitment {
+  numApoliceSeguro: string;
+  nomeSeguradora: string;
+  profOrientador: string;
+  codSiape: string;
   dataInicioEstagio: string;
   dataFimEstagio: string;
   horaInicioEstagio: string;
@@ -19,5 +23,12 @@ export interface CreateTermCommitment {
   funcaoRepresentanteLegalConcedente: string;
   supervisor: string;
   cargoSupervisor: string;
-  id_user: string;
+  user: {
+    name: string;
+    cpf: string;
+    registration: string;
+    email: string;
+    telefone: string;
+    courseStudy: string;
+  };
 }
