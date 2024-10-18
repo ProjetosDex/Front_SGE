@@ -1,11 +1,14 @@
 // src/services/socketService.ts
 import { io, Socket } from 'socket.io-client';
 import { useUserAuthStore } from '@/stores/userAuth.store';
+import { useNotificationStore } from '@/stores/notification.store';
 
 class SocketService {
   private socket: Socket | null = null; // Define a propriedade socket como Socket ou null
 
   connect(url: string, userUuid: string): void {
+    const notificationStore = useNotificationStore();
+
     this.socket = io(url, {
       transports: ['websocket'],
       withCredentials: false, // Ajuste conforme necessário
@@ -20,7 +23,7 @@ class SocketService {
 
     this.socket.on('notification', (data: any) => {
       console.log('Notificação recebida:', data);
-      // Aqui você pode emitir um evento global ou armazenar a notificação
+      notificationStore.addNotification(data);
     });
 
     this.socket.on('disconnect', () => {
