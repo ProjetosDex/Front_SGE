@@ -1,6 +1,5 @@
 // src/services/socketService.ts
 import { io, Socket } from 'socket.io-client';
-import { useUserAuthStore } from '@/stores/userAuth.store';
 import { useNotificationStore } from '@/stores/notification.store';
 
 class SocketService {

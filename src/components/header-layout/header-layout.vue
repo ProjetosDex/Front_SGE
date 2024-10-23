@@ -21,17 +21,20 @@
             :key="notification"
           >
             <v-list-item>
-              <v-btn
-                flat
-                prepend-icon="mdi-bell-outline"
-                style="
-                  text-transform: capitalize;
-                  width: 100%;
-                  display: flex;
-                  justify-content: flex-start;
-                "
-                >teste</v-btn
-              >
+              <v-badge dot color="info" style="width: 100%">
+                <v-btn
+                  @click="viewNotification(notification)"
+                  flat
+                  prepend-icon="mdi-bell-outline"
+                  style="
+                    text-transform: capitalize;
+                    width: 100%;
+                    display: flex;
+                    justify-content: flex-start;
+                  "
+                  >teste</v-btn
+                >
+              </v-badge>
             </v-list-item>
           </v-list>
           <div style="padding: 15px">
@@ -105,6 +108,7 @@ const router = useRouter();
 import { useUserAuthStore } from '@/stores/userAuth.store';
 import { onMounted, onUpdated, ref, watch } from 'vue';
 import { useNotificationStore } from '@/stores/notification.store';
+import axiosInstance from '@/interceptors/axios-interceptor';
 const userAuthStore = useUserAuthStore();
 const notificationStore = useNotificationStore();
 const audio = new Audio('/WhatsApp Audio.mpeg');
@@ -121,7 +125,6 @@ async function playNotificationSound() {
   }
 }
 
-// Observador para monitorar mudanças no array de notificações
 watch(
   notifications,
   (newNotifications, oldNotifications) => {
@@ -135,6 +138,17 @@ onMounted(async () => {
   await notificationStore.getRecentNotifications(userUuid);
   notifications.value = notificationStore.notifications;
 });
+
+const viewNotification = async (notification: any) => {
+  if (!notification.read) {
+    try {
+      await axiosInstance.patch(`notification/set/read/${notification.id}`);
+      notification.read = true;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+};
 
 async function logout() {
   userAuthStore.clear();

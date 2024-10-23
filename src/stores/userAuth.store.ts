@@ -8,6 +8,7 @@ export const useUserAuthStore = defineStore('userAuth', () => {
   const user = ref({});
 
   const storedUuidUser = sessionStorage.getItem('uuid_user');
+  const storedUserRole = sessionStorage.getItem('user_role');
 
   const storedAccessToken = localStorage.getItem('access_token');
   const access_token = ref(storedAccessToken ? storedAccessToken : null);
@@ -25,8 +26,12 @@ export const useUserAuthStore = defineStore('userAuth', () => {
     return data;
   }
 
-  function setUuidUser(UuidUser: string) {
-    sessionStorage.setItem('uuid_user', UuidUser);
+  function setUuidUser(uuidUser: string) {
+    sessionStorage.setItem('uuid_user', uuidUser);
+  }
+
+  function setUserRole(userRole: string) {
+    sessionStorage.setItem('user_role', userRole);
   }
 
   function setUser(userValue: any) {
@@ -64,9 +69,11 @@ export const useUserAuthStore = defineStore('userAuth', () => {
     storedUuidUser,
     access_token,
     refresh_token,
+    storedUserRole,
     checkToken,
     setUser,
     setUuidUser,
+    setUserRole,
     setIsAuth,
     setAccessToken,
     setRefreshToken,
