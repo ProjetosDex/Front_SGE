@@ -49,12 +49,12 @@ export const privateRoutes = [
           },
           {
             path:'/detalhamento/processo/:id',
-            name:'detalhamentoProcessoEstagioDEX',
+            name:'detalhamentoProcessoEstagio',
             component: DetalhamentoProcessoEstagio
           },
           {
             path:'/detalhamento/processo/dex/:id',
-            name:'detalhamentoProcessoEstagio',
+            name:'detalhamentoProcessoEstagioDEX',
             component: DetalhamentoProcessoEstagioDEX
           },          
           {

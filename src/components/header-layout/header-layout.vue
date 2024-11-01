@@ -19,23 +19,20 @@
             nav
             v-for="notification in notifications"
             :key="notification"
+            :class="{'read-notification': notification.read }"
           >
-            <v-list-item>
-              <v-badge dot color="info" style="width: 100%">
-                <v-btn
+          <v-btn
                   @click="viewNotification(notification)"
+                  :class="{ 'read-notification': notification.read }"
                   flat
-                  prepend-icon="mdi-bell-outline"
-                  style="
-                    text-transform: capitalize;
-                    width: 100%;
-                    display: flex;
-                    justify-content: flex-start;
-                  "
-                  >teste</v-btn
-                >
-              </v-badge>
+                  :prepend-icon="notification.read ? 'mdi-bell-outline' : 'mdi-bell-ring-outline'"
+                  class="notification-btn"
+                  >
+          <v-list-item class="notification-item" >       
+                <span class="notification-text">{{ notification.message }}</span>
             </v-list-item>
+          </v-btn>
+          
           </v-list>
           <div style="padding: 15px">
             <v-btn
@@ -113,8 +110,16 @@ const userAuthStore = useUserAuthStore();
 const notificationStore = useNotificationStore();
 const audio = new Audio('/WhatsApp Audio.mpeg');
 
+
 const menu = ref(false);
-const notifications = ref([]);
+
+const notifications = ref<Notification[]>([]);
+
+interface Notification {
+  id: string;
+  message: string;
+  read: boolean;
+}
 
 // Função para tocar o áudio
 async function playNotificationSound() {

@@ -18,8 +18,11 @@
       <v-list density="compact" nav>
           
         <v-list-item prepend-icon="mdi-home" title="Home" value="home" to="/home"></v-list-item>
-        <v-list-item prepend-icon="mdi-file" title="Inicio de Estágio" value="inicioEstagio" to="/inicio/estagio"></v-list-item>
-        <v-list-item prepend-icon="mdi-calendar" title="Fim de Estágio" value="fimEstagio" to="/fim/estagio"></v-list-item>
+        
+          
+          <v-list-item prepend-icon="mdi-file" title="Inicio de Estágio" value="inicioEstagio" to="/inicio/estagio" v-if="userRole == `ALUNO`"></v-list-item>
+          <v-list-item prepend-icon="mdi-calendar" title="Fim de Estágio" value="fimEstagio" to="/fim/estagio" v-if="userRole == `ALUNO`"></v-list-item>
+        
           <v-list-item prepend-icon="mdi-update" title="Acompanhar Processos" value="acompanharProcessos" to="/acompanhar/processos"></v-list-item>
       </v-list>
         <template v-slot:append>
@@ -37,17 +40,18 @@
 
 <script lang="ts" setup>
     import { ref, watch } from 'vue';
+    import { useUserAuthStore } from '@/stores/userAuth.store';
+    const userAuthStore = useUserAuthStore();
+    const userRole = ref(userAuthStore.storedUserRole);
     const drawer = ref(true);
     const rail = ref(true);
     const setaMenu = ref('mdi-chevron-right');
 
-    watch(rail,()=>{
-      if(rail.value === false){
-        setaMenu.value = 'mdi-chevron-left';
-      }else{
-        setaMenu.value = 'mdi-chevron-right';
-      }
+    watch(rail, () => {
+      setaMenu.value = rail.value ? 'mdi-chevron-right' : 'mdi-chevron-left';
     });
+
+    
 </script>
 
 <style src="./style.scss" lang="scss" scoped>

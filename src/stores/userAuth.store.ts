@@ -8,7 +8,7 @@ export const useUserAuthStore = defineStore('userAuth', () => {
   const user = ref({});
 
   const storedUuidUser = sessionStorage.getItem('uuid_user');
-  const storedUserRole = sessionStorage.getItem('user_role');
+  const storedUserRole = ref(sessionStorage.getItem('user_role') || '');
 
   const storedAccessToken = localStorage.getItem('access_token');
   const access_token = ref(storedAccessToken ? storedAccessToken : null);
@@ -32,6 +32,7 @@ export const useUserAuthStore = defineStore('userAuth', () => {
 
   function setUserRole(userRole: string) {
     sessionStorage.setItem('user_role', userRole);
+    storedUserRole.value = userRole;
   }
 
   function setUser(userValue: any) {
@@ -55,12 +56,14 @@ export const useUserAuthStore = defineStore('userAuth', () => {
   function clear() {
     localStorage.removeItem('access_token');
     sessionStorage.removeItem('uuid_user');
+    sessionStorage.removeItem('user_role');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
     isAuth.value = false;
     access_token.value = '';
     refresh_token.value = '';
     user.value = '';
+    storedUserRole.value = '';
   }
 
   return {

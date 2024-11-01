@@ -19,7 +19,11 @@
                                 </v-chip>
                             </div>
                             <div v-else-if="key === register.id">
-                                <router-link :to="{name:'detalhamentoProcessoEstagio', params:{id: register.id}}">
+                                <router-link  v-if="userRole === 'ADMINISTRADOR'" :to="{name:'detalhamentoProcessoEstagioDEX', params:{id: register.id}}">
+                                    <v-icon icon="mdi-file" style="color: #078640;"></v-icon>
+                                </router-link>
+                                
+                                <router-link  v-if="userRole === 'ALUNO'" :to="{name:'detalhamentoProcessoEstagio', params:{id: register.id}}">
                                     <v-icon icon="mdi-file" style="color: #078640;"></v-icon>
                                 </router-link>
                             </div>
@@ -42,6 +46,10 @@ import dataTableMenu from '../data-table-menu/data-table-menu.vue';
 import { reactive, ref,watch} from 'vue';
 import {useDataTableStore} from '../../stores/processDataTable.store';
 import  {storeToRefs} from 'pinia';
+
+import { useUserAuthStore } from '@/stores/userAuth.store';
+const userAuthStore = useUserAuthStore();
+const userRole = ref(userAuthStore.storedUserRole);
 
 const store =  useDataTableStore();
 const {page,internshipProcessRegisters} = storeToRefs(store);
@@ -103,103 +111,6 @@ function formatarDataBrasileira(data: string | Date): string {
 
 </script>
 
-<style lang="scss" scoped>
-.data-table-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f2f2f2;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
+<style src="./style.scss" lang="scss" scoped>
 
-.header-table tr th:last-child{
-    position: sticky;
-    right: 0;
-    background-color: #e0e0e0;
-    z-index: 1; 
-}
-
-.data-table {
-    border-radius: 4px;
-    width: 100%;
-    min-height: 45vh;
-    max-height: 60vh;
-    overflow: auto;
-    position: relative;
-}
-
-.data-table::-webkit-scrollbar {
-    width: 4px; /* Largura da barra de rolagem */
-    height: 4px; /* Altura da barra de rolagem */
-}
-
-/* Personalizar o trilho da barra de rolagem */
-.data-table::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Cor de fundo do trilho */
-}
-
-/* Personalizar o indicador da barra de rolagem (a própria barra) */
-.data-table::-webkit-scrollbar-thumb {
-    background: #078640; /* Cor da barra de rolagem */
-    border-radius: 6px; /* Borda arredondada */
-}
-
-/* Personalizar o indicador da barra de rolagem quando o mouse está sobre ele */
-.data-table::-webkit-scrollbar-thumb:hover {
-    background: #078640; /* Cor da barra de rolagem em hover */
-}
-
-.table-container {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-th span{
-    display: flex;
-    align-items: flex-start;
-}
-
-.header-table {
-    position: sticky;
-    width: 100%;
-    top: 0;
-    z-index: 2;
-}
-
-tr:nth-child(odd) {
-    background-color: #e0e0e0;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-
-td {
-    padding: 10px;
-}
-
-
-
-
-@media screen and (max-width: 768px) {
-
-
-  table td:last-child{
-    position: sticky;
-    right: 0;
-    background-color: #f2f2f2;
-    z-index: 1;
-  }
-
-table tr:nth-child(even) td:last-child {
-    background-color: #f2f2f2;
-}
-
-
-table tr:nth-child(odd) td:last-child {
-    background-color: #e0e0e0;
-}
-
-}
 </style>
