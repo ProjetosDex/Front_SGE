@@ -37,6 +37,11 @@
           <p>{{ currentStepContent.additionalInfo }}</p>
         </div>
 
+        <div v-if="currentStepContent.rejectionReason">
+          <h3>Motivo da Recusa:</h3>
+          <p class="rejection-reason">{{ currentStepContent.rejectionReason }}</p>
+        </div>
+
         <div v-if="currentStepContent.actionRequired">
           <h3>Ação necessária:</h3>
           <p>{{ currentStepContent.actionRequired }}</p>
@@ -80,6 +85,7 @@ interface StepContent {
   title: string;
   description: string;
   additionalInfo?: string;
+  rejectionReason?: string; 
   actionRequired?: string;
   showUploadButton?: boolean;
   status: string;
@@ -104,7 +110,7 @@ const stepClasses: Record<string, string> = {
 };
 
 const connectorStyles = ref<{ width: string; animation: string; backgroundColor: string }[]>([]);
-const currentStepContent = ref<StepContent | null>(null);
+const currentStepContent = ref<StepContent|null>(null);
 
 // Propriedade computada para retornar a URL de upload correta
 const uploadUrlComputed = computed(() => {
@@ -144,7 +150,7 @@ const isCompleted = computed(() => currentStepContent.value?.status === 'CONCLU�
 
 // Propriedade computada para obter os documentos relacionados à etapa atual
 const relatedDocuments = computed(() => {
-  return isCompleted.value ? documentMap[currentStepContent.value?.title || ''] || [] : [];
+  return isCompleted.value ? documentMap[currentStepContent.value?.title||'']||[] : [];
 });
 
 // Função para mapear o conteúdo baseado na etapa
@@ -153,6 +159,7 @@ const getContentForStep = (label: string, status: string): StepContent => {
     title: label,
     description: '',
     additionalInfo: '',
+    rejectionReason: '', 
     actionRequired: '',
     showUploadButton: false,
     status,
@@ -168,6 +175,7 @@ const getContentForStep = (label: string, status: string): StepContent => {
         baseContent.additionalInfo = 'O documento está sendo analisado pelo departamento de estágio. Aguarde o retorno do Termo de Compromisso de Estágio assinado, caso tudo esteja em conformidade.';
       } else if (status === 'RECUSADO') {
         baseContent.additionalInfo = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
+        baseContent.rejectionReason = 'Motivo da recusa será exibido aqui.'; 
         baseContent.actionRequired = 'Corrija as informações no TCE e realize o upload do documento corrigido.';
         baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
@@ -185,6 +193,7 @@ const getContentForStep = (label: string, status: string): StepContent => {
         baseContent.additionalInfo = 'O documento está sendo analisado pelo departamento de estágio. Aguarde o retorno do documento de renovação assinado, caso tudo esteja em conformidade.';
       } else if (status === 'RECUSADO') {
         baseContent.additionalInfo = 'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
+        baseContent.rejectionReason = 'Motivo da recusa será exibido aqui.'; 
         baseContent.actionRequired = 'Corrija os documentos e realize o upload novamente.';
         baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
@@ -201,6 +210,7 @@ const getContentForStep = (label: string, status: string): StepContent => {
         baseContent.additionalInfo = 'O documento está em análise pelo departamento de estágio, aguarde a validação e o retorno do Atestado de Estágio. ';
       } else if (status === 'RECUSADO') {
         baseContent.additionalInfo = 'Os relatórios finais foram recusados por algumas inconsistências de informações.';
+        baseContent.rejectionReason = 'Motivo da recusa será exibido aqui.'; 
         baseContent.actionRequired = 'Revise-os e realize o upload novamente.';
         baseContent.showUploadButton = true;
       } else if (status === 'CONCLUÍDO') {
@@ -229,7 +239,7 @@ const findinternshipProcessById = async () => {
   const currentStepIndex = steps.value.findIndex(s => s.label === internshipProcess.value?.movement);
 
   steps.value.forEach((step, index) => {
-    step.status = index < currentStepIndex ? 'CONCLUÍDO' : step.status === 'NÃO INICIADO' && step.label === internshipProcess.value?.movement ? internshipProcess.value?.status || 'NÃO INICIADO' : step.status;
+    step.status = index < currentStepIndex ? 'CONCLUÍDO' : step.status === 'NÃO INICIADO' && step.label === internshipProcess.value?.movement ? internshipProcess.value?.status||'NÃO INICIADO' : step.status;
   });
 
   updateCurrentStepContent(currentStepIndex);
@@ -239,7 +249,7 @@ const findinternshipProcessById = async () => {
     return {
       width: '100%',
       animation: 'grow 2s ease-out forwards',
-      backgroundColor: nextStepStatus === 'CONCLUÍDO' ? 'green' : nextStepStatus === 'EM ANDAMENTO' || nextStepStatus === 'EM ANALISE' ? 'orange' : '#d3d3d3',
+      backgroundColor: nextStepStatus === 'CONCLUÍDO' ? 'green' : nextStepStatus === 'EM ANDAMENTO'||nextStepStatus === 'EM ANALISE' ? 'orange' : '#d3d3d3',
     };
   });
 };
@@ -248,4 +258,5 @@ onMounted(findinternshipProcessById);
 </script>
 
 <style src="./style.scss" lang="scss" scoped>
+
 </style>
