@@ -8,23 +8,18 @@
 </template>
 
 <script setup lang="ts">
-  import  DataTable  from '../../../components/data-table/data-table.vue'
+import DataTable from '@/components/data-table/data-table.vue';
 </script>
 
 <style lang="scss" scoped>
 .title1 {
-text-align: left;
-color: #858796;
-font-size: 1.5rem;
-margin-bottom: 1%;
+  text-align: left;
+  color: #858796;
+  font-size: 1.5rem;
+  margin-bottom: 1%;
 }
 
-.acompanhar-processos-container{
+.acompanhar-processos-container {
   margin: 2%;
 }
 </style>
-
-
-
-
-

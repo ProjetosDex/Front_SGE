@@ -314,7 +314,7 @@
               </v-col>
               <v-col cols="12" md="2">
                 <v-text-field
-                  type="time"
+                  type="number"
                   :counter="10"
                   label="Jornada Semanal"
                   v-model="infoTCE.condicoesEstagio.jornadaSemanal.fieldValue"
@@ -324,6 +324,8 @@
                   :rules="infoTCE.condicoesEstagio.jornadaSemanal.rules"
                   required
                   hide-details="auto"
+                  min="0"
+                  step="0.5"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="3">
@@ -398,7 +400,6 @@
   <!-- <PdfGenerator /> -->
 </template>
 <script lang="ts" setup>
-import { io } from 'socket.io-client';
 import { ref, onMounted, watch } from 'vue';
 import { generatePDF } from '@/components/pdf-models/term-commitment/generatePdf';
 import axiosInstance from '@/interceptors/axios-interceptor';
@@ -406,7 +407,9 @@ import type { User } from '@/api/user.interface';
 import type { CreateTermCommitment } from '@/api/createTermCommitment.interface';
 import axios from 'axios';
 import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
-// import PdfGenerator from '@/views/inicio-estagio/teste-pdf.vue';
+import { useUserAuthStore } from '@/stores/userAuth.store';
+const userAuthStore = useUserAuthStore();
+const userFromStore = ref(userAuthStore.user);
 
 const selectedValue = ref('');
 
@@ -415,7 +418,7 @@ watch(selectedValue, (newValue: string) => {
 });
 
 const formatCnpj = () => {
-  let cnpj = infoTCE.value.concedente.cnpj.fieldValue;
+  const cnpj = infoTCE.value.concedente.cnpj.fieldValue;
   infoTCE.value.concedente.cnpj.fieldValue = cnpj.replace(/[^\d]+/g, '');
 };
 
@@ -463,6 +466,8 @@ const validateCnpj = (cnpj: string) => {
 
   return 'cnpj inválido';
 };
+
+const getAccessToken = () => localStorage.getItem('access_token');
 
 const userId = ref('');
 const loading = ref(false);
@@ -624,7 +629,9 @@ const cadastrarTCE = async () => {
     dataFimEstagio: dadosForm.condicoesEstagio.dataFimEstagio.fieldValue,
     horaInicioEstagio: dadosForm.condicoesEstagio.horaInicioEstagio.fieldValue,
     horaFimEstagio: dadosForm.condicoesEstagio.horaFimEstagio.fieldValue,
-    jornadaSemanal: dadosForm.condicoesEstagio.jornadaSemanal.fieldValue,
+    jornadaSemanal: Number(
+      dadosForm.condicoesEstagio.jornadaSemanal.fieldValue,
+    ),
     isObrigatorio: dadosForm.condicoesEstagio.isObrigatorio,
     bolsaAuxilio: Number(dadosForm.condicoesEstagio.bolsaAuxilio.fieldValue),
     auxilioTransporte: Number(
@@ -664,11 +671,15 @@ const cadastrarTCE = async () => {
 };
 
 onMounted(async () => {
-  const response = await axiosInstance.get(
-    `/user/findByEmail?email=diego@gmail.com`,
-  );
+  const email = userFromStore.value.email;
+  const response = await axiosInstance.get(`/user/findByEmail`, {
+    params: { email },
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  });
 
-  let user: User = response.data;
+  const user: User = response.data;
 
   infoTCE.value.aluno.nome.fieldValue = user.name;
   infoTCE.value.aluno.cpf.fieldValue = user.cpf;

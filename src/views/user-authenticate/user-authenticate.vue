@@ -28,7 +28,10 @@
         </label>
       </div>
       <div v-if="opcaoAutenticacao === 'login'">
-        <form class="form_container">
+        <v-form
+          class="form_container"
+          @keydown="handleKeydownForm($event, login)"
+        >
           <div class="title_container">
             <p class="title">Faça login em sua conta !</p>
             <span class="subtitle">Faça o login para acessar o sistema</span>
@@ -63,10 +66,13 @@
           </v-btn>
           <p class="infoLogin">{{ formLogin.infoLogin }}</p>
           <p class="note">Terms of use &amp; Conditions</p>
-        </form>
+        </v-form>
       </div>
       <div v-else>
-        <form class="form_container">
+        <v-form
+          class="form_container"
+          @keydown="handleKeydownForm($event, register)"
+        >
           <div class="title_container">
             <p class="title">Cria sua conta !</p>
             <span class="subtitle"
@@ -149,7 +155,7 @@
             <span>Registrar</span>
           </v-btn>
           <p class="note">Terms of use &amp; Conditions</p>
-        </form>
+        </v-form>
       </div>
     </div>
   </div>
@@ -157,7 +163,6 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import jwtDecode from 'jwt-decode';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 import { useUserAuthStore } from '@/stores/userAuth.store';
@@ -174,9 +179,9 @@ const formLogin = reactive({
 });
 
 function parseJwt(token: string) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
     window
       .atob(base64)
       .split('')
@@ -212,6 +217,12 @@ async function login() {
     } else {
       console.log('Erro durante a requisição de login:');
     }
+  }
+}
+
+async function handleKeydownForm(event: any, executionFunction: any) {
+  if (event.key === 'Enter') {
+    await executionFunction();
   }
 }
 
