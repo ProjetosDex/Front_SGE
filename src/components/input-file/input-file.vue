@@ -58,11 +58,17 @@
     </section>
 
     <!-- Botão para enviar os arquivos -->
-    <div class="buttonSubmit">
-      <v-btn type="submit" class="buttonUpload" @click="submitFiles"
+    <div class="buttonSubmit" v-if="props.uploadOption === 'FIM_ESTAGIO'">
+      <v-btn type="submit" class="buttonUpload" @click="finalizarProcesso"
+        >Finalizar Processo</v-btn
+      >
+    </div>
+    <div class="buttonSubmit" v-else>
+      <v-btn type="submit" class="buttonUpload" @click="registerFiles"
         >Enviar Arquivos</v-btn
       >
     </div>
+    <div>{{ props.internshipProcessId }}</div>
   </div>
 </template>
 
@@ -79,7 +85,16 @@ interface UploadFile {
 }
 
 // Definindo a prop para receber a URL de upload dinamicamente
-const props = defineProps<{ uploadUrl: string }>();
+const props = defineProps<{
+  uploadUrl: string;
+  uploadOption: string;
+  multiple: boolean;
+  internshipProcessId?: string | undefined;
+}>();
+
+import { useUserAuthStore } from '@/stores/userAuth.store';
+import axiosInstance from '@/interceptors/axios-interceptor';
+const userAuthStore = useUserAuthStore();
 
 // Referências e estados necessários
 const files = ref<HTMLInputElement>();
@@ -152,31 +167,55 @@ const simulateUpload = async (formData: FormData, file: File) => {
     }
 
     try {
-      // Envia o arquivo usando Axios
-      const response = await axios.post(
-        'http://localhost:4001/file/upload/term',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-            if (progressEvent.total) {
-              // Calcula o progresso do upload
-              const percentCompleted = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total,
-              );
+      if (props.uploadOption === 'FIM_ESTAGIO') {
+        const response = await axios.post(
+          'http://localhost:4001/file/upload/internship/evaluation',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+              if (progressEvent.total) {
+                // Calcula o progresso do upload
+                const percentCompleted = Math.round(
+                  (progressEvent.loaded * 100) / progressEvent.total,
+                );
 
-              // Atualiza o progresso do arquivo
-              uploadedFile.loading = percentCompleted;
-              uploadedFile.progress = percentCompleted;
-            }
+                // Atualiza o progresso do arquivo
+                uploadedFile.loading = percentCompleted;
+                uploadedFile.progress = percentCompleted;
+              }
+            },
           },
-        },
-      );
-      uploadedFile.path = response.data;
+        );
+        uploadedFile.path = response.data;
+      } else if (props.uploadOption === 'INICIO_ESTAGIO') {
+        const response = await axios.post(
+          'http://localhost:4001/file/upload/term',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+              if (progressEvent.total) {
+                // Calcula o progresso do upload
+                const percentCompleted = Math.round(
+                  (progressEvent.loaded * 100) / progressEvent.total,
+                );
 
-      console.log('Upload bem-sucedido');
+                // Atualiza o progresso do arquivo
+                uploadedFile.loading = percentCompleted;
+                uploadedFile.progress = percentCompleted;
+              }
+            },
+          },
+        );
+        uploadedFile.path = response.data;
+
+        console.log('Upload bem-sucedido');
+      }
     } catch (error) {
       console.error('Erro no upload:', error);
       clearInterval(progressInterval); // Para o intervalo em caso de erro
@@ -230,34 +269,113 @@ const handleDragLeave = (event: DragEvent) => {
 // Função para remover arquivos da lista de upload
 const removeFile = async (index: number, file: UploadFile) => {
   try {
-    console.log(file);
-    axios.delete(`http://localhost:4001/file/delete/term/${file.path}`);
-    uploadFiles.value.splice(index, 1);
+    if (props.uploadOption === 'FIM_ESTAGIO') {
+      axios.delete(
+        `http://localhost:4001/file/delete/internship-evaluation/${file.path}`,
+      );
+      uploadFiles.value.splice(index, 1);
+    } else if (props.uploadOption === 'INICIO_ESTAGIO') {
+      axios.delete(`http://localhost:4001/file/delete/term/${file.path}`);
+      uploadFiles.value.splice(index, 1);
+    }
   } catch (error) {
     console.error('error');
   }
 };
 
+const finalizarProcesso = async () => {
+  if (!props.internshipProcessId) {
+    alertMessage.value =
+      'Selecione um processo para realizar o upload dos arquivos.';
+    showAlert.value = true;
+    return;
+  }
+  if (uploadFiles.value.length < 3) {
+    alertMessage.value =
+      'São Necessários os 3 arquivos para realizar a finalização do processo.';
+    showAlert.value = true;
+    return;
+  }
+
+  await axiosInstance.post('processo/estagio/register/assign-end-internship', {
+    internshipEvaluationFilesPaths: uploadFiles.value.map((uploadFile) => {
+      return uploadFile.path;
+    }),
+    internshipProcessId: props.internshipProcessId,
+  });
+  window.location.reload();
+};
+
 // Função para enviar os arquivos ao backend utilizando a URL definida na prop
-const submitFiles = async () => {
+const registerFiles = async () => {
   if (uploadFiles.value.length === 0) {
     alertMessage.value = 'Nenhum arquivo selecionado para upload.';
     showAlert.value = true;
     return;
   }
 
-  // Simula o envio dos arquivos ao backend
-  uploadFiles.value.forEach(async (file) => {
-    const formData = new FormData();
-    formData.append('file', file.name);
-    console.log('chegou aqui');
-    await axios.post(props.uploadUrl, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+  if (
+    props.uploadOption === 'FIM_ESTAGIO' &&
+    userAuthStore.storedUserRole === 'ALUNO'
+  ) {
+    await finalizarProcesso();
+  }
+
+  if (
+    props.uploadOption === 'INICIO_ESTAGIO' &&
+    userAuthStore.storedUserRole === 'ALUNO'
+  ) {
+    console.log(uploadFiles.value[0].path);
+    await axiosInstance.post('termCommitment/register/assign', {
+      termFilePath: uploadFiles.value[0].path,
+      internshipProcessId: props.internshipProcessId,
     });
-    // Falta implementar a lógica real de upload.
-  });
+    window.location.reload();
+  } else if (
+    props.uploadOption === 'INICIO_ESTAGIO' &&
+    (userAuthStore.storedUserRole === 'FUNCIONARIO' ||
+      userAuthStore.storedUserRole === 'ADMINISTRADOR')
+  ) {
+    console.log(props.internshipProcessId);
+    await axiosInstance.post('/termCommitment/validate/assign', {
+      validate: true,
+      termFilePath: uploadFiles.value[0].path,
+      internshipProcessId: props.internshipProcessId,
+    });
+    window.location.reload();
+  } else if (
+    props.uploadOption === 'FIM_ESTAGIO' &&
+    (userAuthStore.storedUserRole === 'FUNCIONARIO' ||
+      userAuthStore.storedUserRole === 'ADMINISTRADOR')
+  ) {
+    console.log(props.internshipProcessId);
+    await axiosInstance.post(
+      '/processo/estagio/validate/assign-end-internship',
+      {
+        validate: true,
+        termFilePath: uploadFiles.value.map((uploadFile) => {
+          return uploadFile.path;
+        }),
+        internshipProcessId: props.internshipProcessId,
+      },
+    );
+    window.location.reload();
+  }
+
+  //separa condicao se for termo assinado aluno ou funcionario/administrador
+
+  // Simula o envio dos arquivos ao backend
+  // uploadFiles.value.forEach(async (file) => {
+  //   const formData = new FormData();
+  //   formData.append('file', file.name);
+  //   console.log('chegou aqui');
+  //   await axios.post(props.uploadUrl, formData, {
+  //     headers: {
+  //       'Content-Type': 'multipart/form-data',
+  //     },
+  //   });
+  //   // Falta implementar a lógica real de upload.
+  // });
 
   // Mostra o pop-up de sucesso por 3 segundos
   showSuccessAlert.value = true;

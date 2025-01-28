@@ -1,13 +1,30 @@
 export interface TermCommitment {
-    id: string;
-    numApoliceSeguro: string;
-    nomeSeguradora: string;
-    profOrientador: string;
-    codSiape: string;
-    dataInicioEstagio: Date;
-    dataFimEstagio: Date;
-    horaInicioEstagio: Date;
-    horaFimEstagio: Date;
-    id_user: string;
-    id_internshipGrantor: string;
-  }
+  id: string;
+  numApoliceSeguro: string;
+  nomeSeguradora: string;
+  profOrientador: string;
+  codSiape: string;
+  dataInicioEstagio: string;
+  dataFimEstagio: string;
+  horaInicioEstagio: string;
+  horaFimEstagio: string;
+  jornadaSemanal: number;
+  isObrigatorio: boolean;
+  bolsaAuxilio: number;
+  auxilioTransporte: number;
+  planoAtividadesEstagio: string;
+  razaoSocialConcedente: string;
+  cnpjConcedente: string;
+  cepConcedente: string;
+  bairroConcedente: string;
+  cidadeConcedente: string;
+  ufConcedente: string;
+  enderecoConcedente: string;
+  emailConcedente: string;
+  representanteLegalConcedente: string;
+  funcaoRepresentanteLegalConcedente: string;
+  supervisor: string;
+  cargoSupervisor: string;
+  filePath: string;
+  id_user: string;
+}

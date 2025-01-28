@@ -381,11 +381,19 @@
             </v-row>
           </v-container>
         </div>
-        <div class="main-btn">
-          <v-btn class="buttonTCE" to="/inicio/estagio">Voltar</v-btn>
-          <v-btn type="submit" class="buttonTCE" @click.prevent="cadastrarTCE"
-            >Cadastrar</v-btn
-          >
+        <div>
+          <div v-if="props.internshipProcessId" class="main-btn">
+            <v-btn class="buttonTCE" to="/inicio/estagio">Voltar</v-btn>
+            <v-btn type="submit" class="buttonTCE" @click.prevent="atualizarTCE"
+              >Atualizar</v-btn
+            >
+          </div>
+          <div v-else class="main-btn">
+            <v-btn class="buttonTCE" to="/inicio/estagio">Voltar</v-btn>
+            <v-btn type="submit" class="buttonTCE" @click.prevent="cadastrarTCE"
+              >Cadastrar</v-btn
+            >
+          </div>
         </div>
         <v-overlay :model-value="loading" class="align-center justify-center">
           <v-progress-circular
@@ -395,7 +403,24 @@
           ></v-progress-circular>
         </v-overlay>
       </v-form>
+      <v-dialog v-model="dialog" persistent width="640">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">Guia Visual do Sistema</span>
+          </v-card-title>
+          <div class="carrosel">
+            <h1>oi</h1>
+          </div>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="#078640" variant="text" @click="dialog = false">
+              Voltar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
+    <v-btn class="buttonTCE" @click.prevent="dialog = true">teste</v-btn>
   </div>
   <!-- <PdfGenerator /> -->
 </template>
@@ -408,8 +433,14 @@ import type { CreateTermCommitment } from '@/api/createTermCommitment.interface'
 import axios from 'axios';
 import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
 import { useUserAuthStore } from '@/stores/userAuth.store';
+import type { InternshipProcess } from '@/api/internshipProcess.interface';
 const userAuthStore = useUserAuthStore();
 const userFromStore = ref(userAuthStore.user);
+const dialog = ref(false);
+const props = defineProps<{
+  internshipProcessId?: string;
+  termCommitmentId?: string;
+}>();
 
 const selectedValue = ref('');
 
@@ -622,6 +653,57 @@ const infoTCE = ref({
   },
 });
 
+const atualizarTCE = async () => {
+  const dadosForm = infoTCE.value;
+  const reqBody: any = {
+    dataInicioEstagio: dadosForm.condicoesEstagio.dataInicioEstagio.fieldValue,
+    dataFimEstagio: dadosForm.condicoesEstagio.dataFimEstagio.fieldValue,
+    horaInicioEstagio: dadosForm.condicoesEstagio.horaInicioEstagio.fieldValue,
+    horaFimEstagio: dadosForm.condicoesEstagio.horaFimEstagio.fieldValue,
+    jornadaSemanal: Number(
+      dadosForm.condicoesEstagio.jornadaSemanal.fieldValue,
+    ),
+    isObrigatorio: dadosForm.condicoesEstagio.isObrigatorio,
+    bolsaAuxilio: Number(dadosForm.condicoesEstagio.bolsaAuxilio.fieldValue),
+    auxilioTransporte: Number(
+      dadosForm.condicoesEstagio.auxilioTransporte.fieldValue,
+    ),
+    razaoSocialConcedente: dadosForm.concedente.razaoSocial.fieldValue,
+    cnpjConcedente: dadosForm.concedente.cnpj.fieldValue,
+    cepConcedente: dadosForm.concedente.cep.fieldValue,
+    bairroConcedente: dadosForm.concedente.bairro.fieldValue,
+    cidadeConcedente: dadosForm.concedente.cidade.fieldValue,
+    ufConcedente: dadosForm.concedente.uf.fieldValue,
+    enderecoConcedente: dadosForm.concedente.endereco.fieldValue,
+    emailConcedente: dadosForm.concedente.email.fieldValue,
+    representanteLegalConcedente:
+      dadosForm.concedente.representanteLegal.fieldValue,
+    funcaoRepresentanteLegalConcedente: dadosForm.concedente.funcao.fieldValue,
+    supervisor: dadosForm.concedente.supervisor.fieldValue,
+    cargoSupervisor: dadosForm.concedente.cargo.fieldValue,
+    planoAtividadesEstagio:
+      dadosForm.condicoesEstagio.planoAtividadesEstagio.fieldValue,
+    internshipProcessId: props.internshipProcessId,
+  };
+
+  const response = await axiosInstance.patch(
+    `/termCommitment/update/${props.termCommitmentId}`,
+    reqBody,
+  );
+  console.log(response.status);
+  if (response.status == 200) {
+    //ou a rota de update nao retorna void ou eu pego as infos do proprio form que nao é recomendado
+    const createdTerm: CreatedTermCommitment = response.data;
+    generatePDF(createdTerm);
+  }
+  console.log(
+    new Date(
+      `${dadosForm.condicoesEstagio.dataInicioEstagio} ${dadosForm.condicoesEstagio.horaInicioEstagio}:00`,
+    ),
+  );
+  window.location.reload();
+};
+
 const cadastrarTCE = async () => {
   const dadosForm = infoTCE.value;
   const reqBody: CreateTermCommitment = {
@@ -670,24 +752,133 @@ const cadastrarTCE = async () => {
   );
 };
 
+const formatActivityPlans = (activityPlansString: string) => {
+  return JSON.parse(activityPlansString);
+};
+
 onMounted(async () => {
-  const email = userFromStore.value.email;
-  const response = await axiosInstance.get(`/user/findByEmail`, {
-    params: { email },
-    headers: {
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-  });
+  if (props.internshipProcessId) {
+    const email = userFromStore.value.email;
+    const responseUser = await axiosInstance.get(`/user/findByEmail`, {
+      params: { email },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    });
 
-  const user: User = response.data;
+    const responseInternshipProcess = await axiosInstance.get(
+      `/processo/estagio/${props.internshipProcessId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+        },
+      },
+    );
 
-  infoTCE.value.aluno.nome.fieldValue = user.name;
-  infoTCE.value.aluno.cpf.fieldValue = user.cpf;
-  infoTCE.value.aluno.matricula.fieldValue = user.registration;
-  infoTCE.value.aluno.celular.fieldValue = user.telefone;
-  infoTCE.value.aluno.curso.fieldValue = user.courseStudy;
-  infoTCE.value.aluno.email.fieldValue = user.email;
-  userId.value = user.id;
+    const internshipProcess: InternshipProcess = responseInternshipProcess.data;
+    console.log(internshipProcess);
+    const user: User = responseUser.data;
+
+    infoTCE.value.aluno.nome.fieldValue = user.name;
+    infoTCE.value.aluno.cpf.fieldValue = user.cpf;
+    infoTCE.value.aluno.matricula.fieldValue = user.registration;
+    infoTCE.value.aluno.celular.fieldValue = user.telefone;
+    infoTCE.value.aluno.curso.fieldValue = user.courseStudy;
+    infoTCE.value.aluno.email.fieldValue = user.email;
+    //infos termo
+    console.log(internshipProcess.termCommitment.razaoSocialConcedente);
+    infoTCE.value.concedente.razaoSocial.fieldValue =
+      internshipProcess.termCommitment.razaoSocialConcedente;
+
+    infoTCE.value.concedente.cnpj.fieldValue =
+      internshipProcess.termCommitment.cnpjConcedente;
+
+    infoTCE.value.concedente.cep.fieldValue =
+      internshipProcess.termCommitment.cepConcedente;
+
+    infoTCE.value.concedente.bairro.fieldValue =
+      internshipProcess.termCommitment.bairroConcedente;
+
+    infoTCE.value.concedente.cidade.fieldValue =
+      internshipProcess.termCommitment.cidadeConcedente;
+
+    infoTCE.value.concedente.uf.fieldValue =
+      internshipProcess.termCommitment.ufConcedente;
+
+    infoTCE.value.concedente.endereco.fieldValue =
+      internshipProcess.termCommitment.enderecoConcedente;
+
+    infoTCE.value.concedente.email.fieldValue =
+      internshipProcess.termCommitment.emailConcedente;
+
+    infoTCE.value.concedente.representanteLegal.fieldValue =
+      internshipProcess.termCommitment.representanteLegalConcedente;
+
+    infoTCE.value.concedente.funcao.fieldValue =
+      internshipProcess.termCommitment.funcaoRepresentanteLegalConcedente;
+
+    infoTCE.value.concedente.supervisor.fieldValue =
+      internshipProcess.termCommitment.supervisor;
+
+    infoTCE.value.concedente.cargo.fieldValue =
+      internshipProcess.termCommitment.cargoSupervisor;
+
+    selectedValue.value =
+      internshipProcess.termCommitment.isObrigatorio === true ? '1' : '0';
+
+    infoTCE.value.condicoesEstagio.dataInicioEstagio.fieldValue =
+      internshipProcess.termCommitment.dataInicioEstagio.split('T')[0];
+
+    infoTCE.value.condicoesEstagio.dataFimEstagio.fieldValue =
+      internshipProcess.termCommitment.dataFimEstagio.split('T')[0];
+
+    infoTCE.value.condicoesEstagio.horaInicioEstagio.fieldValue =
+      internshipProcess.termCommitment.horaInicioEstagio
+        .split('T')[1]
+        .substring(0, 5);
+
+    infoTCE.value.condicoesEstagio.horaFimEstagio.fieldValue =
+      internshipProcess.termCommitment.horaFimEstagio
+        .split('T')[1]
+        .substring(0, 5);
+
+    infoTCE.value.condicoesEstagio.jornadaSemanal.fieldValue = String(
+      internshipProcess.termCommitment.jornadaSemanal,
+    );
+
+    infoTCE.value.condicoesEstagio.bolsaAuxilio.fieldValue = String(
+      internshipProcess.termCommitment.bolsaAuxilio,
+    );
+
+    infoTCE.value.condicoesEstagio.auxilioTransporte.fieldValue = String(
+      internshipProcess.termCommitment.auxilioTransporte,
+    );
+
+    infoTCE.value.condicoesEstagio.planoAtividadesEstagio.fieldValue =
+      formatActivityPlans(
+        internshipProcess.termCommitment.planoAtividadesEstagio,
+      );
+
+    userId.value = user.id;
+  } else {
+    const email = userFromStore.value.email;
+    const response = await axiosInstance.get(`/user/findByEmail`, {
+      params: { email },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    });
+
+    const user: User = response.data;
+
+    infoTCE.value.aluno.nome.fieldValue = user.name;
+    infoTCE.value.aluno.cpf.fieldValue = user.cpf;
+    infoTCE.value.aluno.matricula.fieldValue = user.registration;
+    infoTCE.value.aluno.celular.fieldValue = user.telefone;
+    infoTCE.value.aluno.curso.fieldValue = user.courseStudy;
+    infoTCE.value.aluno.email.fieldValue = user.email;
+    userId.value = user.id;
+  }
 });
 
 const consultEnderecoByCep = async () => {

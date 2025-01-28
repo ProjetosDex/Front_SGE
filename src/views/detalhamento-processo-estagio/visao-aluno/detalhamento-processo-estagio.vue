@@ -58,8 +58,50 @@
           <p>{{ currentStepContent.actionRequired }}</p>
         </div>
 
+        <div
+          v-if="
+            currentStepContent.rejectionReason &&
+            internshipProcess?.movement === 'INÍCIO DE ESTÁGIO'
+          "
+        >
+          <formTCE
+            :internshipProcessId="internshipProcess?.id"
+            :termCommitmentId="internshipProcess?.id_termCommitment"
+          />
+        </div>
+
         <div v-if="currentStepContent.showUploadButton">
-          <input-file :uploadUrl="uploadUrlComputed" />
+          <div v-if="internshipProcess?.movement === 'FIM DE ESTÁGIO'">
+            <div class="model-files">
+              <p>Modelo dos arquivos necessários:</p>
+              <div class="model-file-items">
+                <v-btn
+                  v-for="file in modelFiles"
+                  :key="file.name"
+                  :href="file.url"
+                  download
+                  class="buttonUpload"
+                >
+                  {{ file.name }}
+                </v-btn>
+              </div>
+            </div>
+          </div>
+          <!-- refatorar -->
+          <div v-if="internshipProcess?.movement === 'FIM DE ESTÁGIO'">
+            <input-file
+              :uploadUrl="uploadUrlComputed"
+              :uploadOption="'FIM_ESTAGIO'"
+              :internshipProcessId="internshipProcess?.id"
+            />
+          </div>
+          <div v-else>
+            <input-file
+              :uploadUrl="uploadUrlComputed"
+              :uploadOption="'INICIO_ESTAGIO'"
+              :internshipProcessId="internshipProcess?.id"
+            />
+          </div>
         </div>
 
         <!-- Documentos do processo - exibido quando o status é CONCLUÍDO -->
@@ -92,6 +134,7 @@
 </template>
 
 <script lang="ts" setup>
+import formTCE from '@/components/Form-TCE/form-tce.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import type { InternshipProcess } from '@/api/internshipProcess.interface';
@@ -126,6 +169,21 @@ const stepClasses: Record<string, string> = {
   RECUSADO: 'rejected-step',
   'NÃO INICIADO': 'pending-step',
 };
+
+const modelFiles = [
+  {
+    name: 'Auto Avaliação do Estagiário',
+    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097275&&key=bd64adf971f7a8d62aa58966f6f14f1d',
+  },
+  {
+    name: 'Avaliação do Estagiário - Concedente',
+    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097276&&key=ecead2273608bcb87a428cd6b737d1ef',
+  },
+  {
+    name: 'Avaliação do Estagiário - Professor Orientador',
+    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097278&&key=2f4cee6135e4b5e4f256fb861bc8751c',
+  },
+];
 
 const connectorStyles = ref<
   { width: string; animation: string; backgroundColor: string }[]
@@ -224,10 +282,10 @@ const getContentForStep = (label: string, status: string): StepContent => {
       } else if (status === 'RECUSADO') {
         baseContent.additionalInfo =
           'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
-        baseContent.rejectionReason = 'Motivo da recusa será exibido aqui.';
+        baseContent.rejectionReason = 'aoba';
         baseContent.actionRequired =
           'Corrija as informações no TCE e realize o upload do documento corrigido.';
-        baseContent.showUploadButton = true;
+        baseContent.showUploadButton = false;
       } else if (status === 'CONCLUÍDO') {
         baseContent.additionalInfo =
           'Etapa concluída com sucesso! Seu estágio está ativo. Você pode avançar para a próxima etapa do processo, seja para renovação ou finalização do estágio, conforme necessário.';
