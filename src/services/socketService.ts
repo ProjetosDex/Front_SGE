@@ -24,10 +24,6 @@ class SocketService {
       console.log('Notificação recebida:', data);
       notificationStore.addNotification(data);
     });
-
-    this.socket.on('disconnect', () => {
-      console.log('Desconectado do servidor WebSocket');
-    });
   }
 
   disconnect(): void {

@@ -1,4 +1,5 @@
 export interface CreatedTermCommitment {
+  id: string;
   numApoliceSeguro: string;
   nomeSeguradora: string;
   profOrientador: string;
@@ -23,6 +24,7 @@ export interface CreatedTermCommitment {
   funcaoRepresentanteLegalConcedente: string;
   supervisor: string;
   cargoSupervisor: string;
+  internshipProcessId: string;
   user: {
     name: string;
     cpf: string;

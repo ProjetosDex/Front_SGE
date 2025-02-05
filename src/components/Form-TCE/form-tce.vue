@@ -406,13 +406,31 @@
       <v-dialog v-model="dialog" persistent width="640">
         <v-card>
           <v-card-title>
-            <span class="text-h5">Guia Visual do Sistema</span>
+            <span class="text-h5">Novo Processo Gerado!</span>
           </v-card-title>
-          <div class="carrosel">
-            <h1>oi</h1>
-          </div>
+          <v-card-text>
+            Faça o download do termo de compromisso e faça upload do modelo
+            assinado pelas partes interessadas para dar prosseguimento no
+            processo de estágio.
+          </v-card-text>
+          <section class="uploaded-area">
+            <download-file-button
+              :fileId="myProcessId"
+              fileType="Termo_compromisso"
+            ></download-file-button>
+          </section>
           <v-card-actions>
             <v-spacer></v-spacer>
+            <v-btn
+              color="#078640"
+              variant="text"
+              :to="{
+                name: 'detalhamentoProcessoEstagio',
+                params: { id: registredInternshipProcessId },
+              }"
+            >
+              Acompanhar Processo
+            </v-btn>
             <v-btn color="#078640" variant="text" @click="dialog = false">
               Voltar
             </v-btn>
@@ -426,6 +444,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
+import downloadFileButton from '../download-file-button/download-file-button.vue';
 import { generatePDF } from '@/components/pdf-models/term-commitment/generatePdf';
 import axiosInstance from '@/interceptors/axios-interceptor';
 import type { User } from '@/api/user.interface';
@@ -434,6 +453,7 @@ import axios from 'axios';
 import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
 import { useUserAuthStore } from '@/stores/userAuth.store';
 import type { InternshipProcess } from '@/api/internshipProcess.interface';
+const myProcessId = ref('');
 const userAuthStore = useUserAuthStore();
 const userFromStore = ref(userAuthStore.user);
 const dialog = ref(false);
@@ -441,6 +461,8 @@ const props = defineProps<{
   internshipProcessId?: string;
   termCommitmentId?: string;
 }>();
+
+const registredInternshipProcessId = ref('');
 
 const selectedValue = ref('');
 
@@ -742,8 +764,21 @@ const cadastrarTCE = async () => {
   const response = await axiosInstance.post(`/termCommitment/create`, reqBody);
   if (response.status == 201) {
     const createdTerm: CreatedTermCommitment = response.data;
+    const internshipProcessId = createdTerm.internshipProcessId;
+    registredInternshipProcessId.value = internshipProcessId;
+    const termBlob = await generatePDF(createdTerm);
+    const formData = new FormData();
+    formData.append('file', termBlob, 'termo_compromisso.pdf');
+    const filePath = await uploadTermCommitment(formData);
+    myProcessId.value = filePath;
+    await registerFilePathInProcess(
+      internshipProcessId,
+      filePath,
+      'TERM_COMMITMENT',
+    );
+    //chamar a req de register para fazer o link do processo com file
     console.log(createdTerm);
-    generatePDF(createdTerm);
+    dialog.value = true;
   }
   console.log(
     new Date(
@@ -899,6 +934,40 @@ const consultEnderecoByCep = async () => {
     loading.value = false;
   }
 };
+
+async function uploadTermCommitment(formData: FormData): Promise<string> {
+  const response = await axios.post(
+    'http://localhost:4001/file/upload/term',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  );
+
+  const fileId = response.data;
+
+  return fileId;
+}
+
+async function registerFilePathInProcess(
+  internshipProcessId: string,
+  filePath: string,
+  fileType: string,
+): Promise<void> {
+  await axios.post('http://localhost:3001/internship-history/register', {
+    status: 'EM_ANALISE',
+    movement: 'INICIO_ESTAGIO',
+    idInternshipProcess: internshipProcessId,
+    files: [
+      {
+        fileId: filePath,
+        fileType,
+      },
+    ],
+  });
+}
 </script>
 
 <style src="./style.scss" lang="scss" scoped></style>

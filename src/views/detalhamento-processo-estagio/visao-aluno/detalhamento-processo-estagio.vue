@@ -59,6 +59,30 @@
         </div>
 
         <div
+          v-if="internshipProcess?.movement === 'INÍCIO DE ESTÁGIO'"
+          class="process-documents"
+        >
+          <h3>Documentos do processo:</h3>
+          <section class="uploaded-area">
+            <li
+              class="row"
+              v-for="(doc, index) in relatedDocuments"
+              :key="index"
+            >
+              <div class="fileUpload">
+                <div class="content upload">
+                  <i class="mdi mdi-file-document"></i>
+                  <span class="name">{{ doc.name }}</span>
+                  <a :href="doc.url" download class="download-link">
+                    <v-icon small class="download-icon">mdi-download</v-icon>
+                  </a>
+                </div>
+              </div>
+            </li>
+          </section>
+        </div>
+
+        <div
           v-if="
             currentStepContent.rejectionReason &&
             internshipProcess?.movement === 'INÍCIO DE ESTÁGIO'
@@ -170,6 +194,22 @@ const stepClasses: Record<string, string> = {
   'NÃO INICIADO': 'pending-step',
 };
 
+const getRecentDocumentoByHistory = () => {
+  console.log(internshipProcess.value);
+  const lastHistory = internshipProcess.value?.statusHistory.find((value) => {
+    if (
+      !value.endDate &&
+      value.movement === 'INÍCIO DE ESTÁGIO' &&
+      value.fileId
+    ) {
+      return value;
+    } else {
+      return '';
+    }
+  });
+  return lastHistory?.file?.filePath;
+};
+
 const modelFiles = [
   {
     name: 'Auto Avaliação do Estagiário',
@@ -211,7 +251,7 @@ const documentMap: Record<string, { name: string; url: string }[]> = {
   'INÍCIO DE ESTÁGIO': [
     {
       name: 'Termo de Compromisso de Estágio',
-      url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+      url: `http://localhost:4001/file/download/term?path=${getRecentDocumentoByHistory()}`,
     },
   ],
   'RENOVAÇÃO DE ESTÁGIO': [
@@ -251,7 +291,9 @@ const isCompleted = computed(
 
 // Propriedade computada para obter os documentos relacionados à etapa atual
 const relatedDocuments = computed(() => {
-  return isCompleted.value
+  //colocar condição para em andamento e inicio de estagio retornar o primeiro file com id de file vindo do processo
+  return isCompleted.value ||
+    internshipProcess.value?.movement === 'INÍCIO DE ESTÁGIO'
     ? documentMap[currentStepContent.value?.title || ''] || []
     : [];
 });
