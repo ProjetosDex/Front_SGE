@@ -104,7 +104,8 @@
         <div
           v-if="
             internshipProcess?.movement ===
-            InternshipProcessMovement.FIM_ESTAGIO
+              InternshipProcessMovement.FIM_ESTAGIO &&
+            internshipProcess?.status !== InternshipProcessStatus.CONCLUIDO
           "
         >
           <input-file

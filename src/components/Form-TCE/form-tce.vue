@@ -438,7 +438,6 @@
         </v-card>
       </v-dialog>
     </div>
-    <v-btn class="buttonTCE" @click.prevent="dialog = true">teste</v-btn>
   </div>
   <!-- <PdfGenerator /> -->
 </template>
@@ -930,13 +929,13 @@ const consultEnderecoByCep = async () => {
 
   try {
     const reponse = await axios.get(
-      `https://api.brasilaberto.com/v1/zipcode/${infoTCE.value.concedente.cep.fieldValue}`,
+      `https://viacep.com.br/ws/${infoTCE.value.concedente.cep.fieldValue}/json`,
     );
 
-    infoTCE.value.concedente.bairro.fieldValue = reponse.data.result.district;
-    infoTCE.value.concedente.endereco.fieldValue = `${reponse.data.result.complement} ${reponse.data.result.street}`;
-    infoTCE.value.concedente.uf.fieldValue = reponse.data.result.stateShortname;
-    infoTCE.value.concedente.cidade.fieldValue = reponse.data.result.city;
+    infoTCE.value.concedente.bairro.fieldValue = reponse.data.bairro;
+    infoTCE.value.concedente.endereco.fieldValue = `${reponse.data.complemento} ${reponse.data.logradouro}`;
+    infoTCE.value.concedente.uf.fieldValue = reponse.data.uf;
+    infoTCE.value.concedente.cidade.fieldValue = reponse.data.localidade;
   } catch (error) {
     console.error('Error ao consultar endereço pelo CEP:', error);
   } finally {
