@@ -16,7 +16,7 @@
         hidden
       />
       <div class="icon" @click="openFileInput">
-        <img src="../../assets/cloud-uploading.png" />
+        <img src="@/assets/cloud-uploading.png" />
       </div>
       <p>Faça o Upload dos Arquivos Necessários</p>
     </form>
@@ -58,7 +58,21 @@
     </section>
 
     <!-- Botão para enviar os arquivos -->
-    <div class="buttonSubmit" v-if="props.uploadOption === 'FIM_ESTAGIO'">
+    <div
+      class="buttonSubmit"
+      v-if="
+        props.uploadOption === InternshipProcessMovement.FIM_ESTAGIO &&
+        props.uploadStatus === InternshipProcessStatus.EM_ANALISE
+      "
+    >
+      <v-btn type="submit" class="buttonUpload" @click="aprovarFimEstagio"
+        >Aprovar fim de estagio</v-btn
+      >
+    </div>
+    <div
+      class="buttonSubmit"
+      v-else-if="props.uploadOption === InternshipProcessMovement.FIM_ESTAGIO"
+    >
       <v-btn type="submit" class="buttonUpload" @click="finalizarProcesso"
         >Finalizar Processo</v-btn
       >
@@ -74,6 +88,11 @@
 
 <script setup lang="ts">
 import axios, { type AxiosProgressEvent } from 'axios';
+import {
+  InternshipProcessMovement,
+  InternshipProcessStatus,
+  type InternshipProcess,
+} from '@/api/internshipProcess.interface';
 import { ref } from 'vue';
 
 // Interface para armazenar informações sobre os arquivos de upload
@@ -88,12 +107,15 @@ interface UploadFile {
 const props = defineProps<{
   uploadUrl: string;
   uploadOption: string;
+  uploadStatus: string;
   multiple: boolean;
   internshipProcessId?: string | undefined;
 }>();
 
 import { useUserAuthStore } from '@/stores/userAuth.store';
-import axiosInstance from '@/interceptors/axios-interceptor';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
+import axiosFileApiInstance from '@/interceptors/axios-files-interceptor';
+import { FileTypeBackend } from '@/api/fileType.enum';
 const userAuthStore = useUserAuthStore();
 
 // Referências e estados necessários
@@ -167,9 +189,13 @@ const simulateUpload = async (formData: FormData, file: File) => {
     }
 
     try {
-      if (props.uploadOption === 'FIM_ESTAGIO') {
-        const response = await axios.post(
-          'http://localhost:4001/file/upload/internship/evaluation',
+      if (
+        props.uploadOption === InternshipProcessMovement.FIM_ESTAGIO &&
+        props.uploadStatus === InternshipProcessStatus.EM_ANALISE
+      ) {
+        console.log('aqui é um arquivo que e a creditacao');
+        const response = await axiosFileApiInstance.post(
+          '/file/upload/internship-certificate',
           formData,
           {
             headers: {
@@ -190,9 +216,37 @@ const simulateUpload = async (formData: FormData, file: File) => {
           },
         );
         uploadedFile.path = response.data;
-      } else if (props.uploadOption === 'INICIO_ESTAGIO') {
-        const response = await axios.post(
-          'http://localhost:4001/file/upload/term',
+
+        console.log('Upload bem-sucedido');
+      } else if (props.uploadOption === InternshipProcessMovement.FIM_ESTAGIO) {
+        const response = await axiosFileApiInstance.post(
+          '/file/upload/internship/evaluation',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+              if (progressEvent.total) {
+                // Calcula o progresso do upload
+                const percentCompleted = Math.round(
+                  (progressEvent.loaded * 100) / progressEvent.total,
+                );
+
+                // Atualiza o progresso do arquivo
+                uploadedFile.loading = percentCompleted;
+                uploadedFile.progress = percentCompleted;
+              }
+            },
+          },
+        );
+        uploadedFile.path = response.data;
+      } else if (
+        props.uploadOption === InternshipProcessMovement.INICIO_ESTAGIO
+      ) {
+        console.log('aqui');
+        const response = await axiosFileApiInstance.post(
+          '/file/upload/term',
           formData,
           {
             headers: {
@@ -223,14 +277,12 @@ const simulateUpload = async (formData: FormData, file: File) => {
   }, 1000);
 };
 
-// Funções para o comportamento de arrastar e soltar
 const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   const targetElement = event.currentTarget as HTMLElement;
   const droppedFiles = event.dataTransfer?.files;
   if (!droppedFiles) return;
 
-  // Esconder a mensagem de erro assim que um arquivo for arrastado
   if (showAlert.value) {
     showAlert.value = false;
   }
@@ -266,16 +318,33 @@ const handleDragLeave = (event: DragEvent) => {
   }
 };
 
-// Função para remover arquivos da lista de upload
+const fileNameToTypeMap: Record<string, FileTypeBackend> = {
+  'Auto Avaliação do Estagiário.pdf': FileTypeBackend.STUDENT_SELF_EVALUATION,
+  'Avaliação do Estagiário - Concedente.pdf':
+    FileTypeBackend.INTERNSHIP_GRANTOR_EVALUATION,
+  'Avaliação do Estagiário - Professor Orientador.pdf':
+    FileTypeBackend.SUPERVISOR_EVALUATION,
+};
+
 const removeFile = async (index: number, file: UploadFile) => {
   try {
-    if (props.uploadOption === 'FIM_ESTAGIO') {
-      axios.delete(
-        `http://localhost:4001/file/delete/internship-evaluation/${file.path}`,
+    if (
+      props.uploadOption === InternshipProcessMovement.FIM_ESTAGIO &&
+      props.uploadStatus === InternshipProcessStatus.EM_ANALISE
+    ) {
+      axiosFileApiInstance.delete(
+        `/file/delete/internship-certificate/${file.path}`,
       );
       uploadFiles.value.splice(index, 1);
-    } else if (props.uploadOption === 'INICIO_ESTAGIO') {
-      axios.delete(`http://localhost:4001/file/delete/term/${file.path}`);
+    } else if (props.uploadOption === InternshipProcessMovement.FIM_ESTAGIO) {
+      axiosFileApiInstance.delete(
+        `/file/delete/internship-evaluation/${file.path}`,
+      );
+      uploadFiles.value.splice(index, 1);
+    } else if (
+      props.uploadOption === InternshipProcessMovement.INICIO_ESTAGIO
+    ) {
+      axiosFileApiInstance.delete(`/file/delete/term/${file.path}`);
       uploadFiles.value.splice(index, 1);
     }
   } catch (error) {
@@ -297,13 +366,82 @@ const finalizarProcesso = async () => {
     return;
   }
 
-  await axiosInstance.post('processo/estagio/register/assign-end-internship', {
-    internshipEvaluationFilesPaths: uploadFiles.value.map((uploadFile) => {
-      return uploadFile.path;
-    }),
-    internshipProcessId: props.internshipProcessId,
-  });
+  if (!validateEndInternshipNameFiles(uploadFiles.value)) {
+    alertMessage.value =
+      'os arquivos de finalização de estágio devem conter a mesma nomenclatura dos modelos no formato pdf';
+    showAlert.value = true;
+    return;
+  }
+
+  await axiosBackEndInstance.post(
+    'processo/estagio/register/assign-end-internship',
+    {
+      internshipEvaluationFilesPaths: uploadFiles.value.map((uploadFile) => {
+        return {
+          filePath: uploadFile.path,
+          fileType: fileNameToTypeMap[uploadFile.name],
+        };
+      }),
+      internshipProcessId: props.internshipProcessId,
+    },
+  );
   window.location.reload();
+};
+
+const aprovarFimEstagio = async () => {
+  if (uploadFiles.value.length < 1) {
+    alertMessage.value =
+      'É necessário fazer o upload do certificado de estágio para realizar a aprovação.';
+    showAlert.value = true;
+    return;
+  }
+  if (uploadFiles.value.length > 1) {
+    alertMessage.value =
+      'para realizar a aprovação é permitido apenas o envio de 1 certificado de estagio.';
+    showAlert.value = true;
+    return;
+  }
+
+  const internshipCertificateFilePath = uploadFiles.value.map((uploadFile) => {
+    return {
+      filePath: uploadFile.path,
+      fileType: fileNameToTypeMap[uploadFile.name],
+    };
+  })[0];
+
+  await axiosBackEndInstance.post(
+    'processo/estagio/validate/assign-end-internship',
+    {
+      internshipCertificateFilePath,
+      internshipProcessId: props.internshipProcessId,
+      validate: true,
+    },
+  );
+  window.location.reload();
+};
+
+interface FiletType {
+  name: string;
+  progress: number;
+  loading: number;
+  path?: string | undefined;
+}
+
+const validateEndInternshipNameFiles = (uploadFiles: FiletType[]): boolean => {
+  console.log(uploadFiles);
+  if (uploadFiles.length !== 3) {
+    return false;
+  }
+
+  const requiredFileNames = [
+    'Auto Avaliação do Estagiário.pdf',
+    'Avaliação do Estagiário - Concedente.pdf',
+    'Avaliação do Estagiário - Professor Orientador.pdf',
+  ];
+
+  return requiredFileNames.every((requiredName) =>
+    uploadFiles.some((file) => file.name === requiredName),
+  );
 };
 
 // Função para enviar os arquivos ao backend utilizando a URL definida na prop
@@ -322,22 +460,23 @@ const registerFiles = async () => {
   }
 
   if (
-    props.uploadOption === 'INICIO_ESTAGIO' &&
+    props.uploadOption === InternshipProcessMovement.INICIO_ESTAGIO &&
     userAuthStore.storedUserRole === 'ALUNO'
   ) {
+    console.log('funcionou');
     console.log(uploadFiles.value[0].path);
-    await axiosInstance.post('termCommitment/register/assign', {
+    await axiosBackEndInstance.post('termCommitment/register/assign', {
       termFilePath: uploadFiles.value[0].path,
       internshipProcessId: props.internshipProcessId,
     });
     window.location.reload();
   } else if (
-    props.uploadOption === 'INICIO_ESTAGIO' &&
+    props.uploadOption === InternshipProcessMovement.INICIO_ESTAGIO &&
     (userAuthStore.storedUserRole === 'FUNCIONARIO' ||
       userAuthStore.storedUserRole === 'ADMINISTRADOR')
   ) {
-    console.log(props.internshipProcessId);
-    await axiosInstance.post('/termCommitment/validate/assign', {
+    console.log('aqui ?');
+    await axiosBackEndInstance.post('/termCommitment/validate/assign', {
       validate: true,
       termFilePath: uploadFiles.value[0].path,
       internshipProcessId: props.internshipProcessId,
@@ -349,7 +488,7 @@ const registerFiles = async () => {
       userAuthStore.storedUserRole === 'ADMINISTRADOR')
   ) {
     console.log(props.internshipProcessId);
-    await axiosInstance.post(
+    await axiosBackEndInstance.post(
       '/processo/estagio/validate/assign-end-internship',
       {
         validate: true,

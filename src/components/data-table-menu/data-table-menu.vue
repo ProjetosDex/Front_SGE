@@ -169,7 +169,7 @@ const userAuthStore = useUserAuthStore();
 const userRole = ref(userAuthStore.storedUserRole);
 import { useDataTableStore } from '../../stores/processDataTable.store';
 import { storeToRefs } from 'pinia';
-import axiosInstance from '@/interceptors/axios-interceptor';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 
 const store = useDataTableStore();
 const { atualizarFiltros, atualizarInternshipProcessRegisters } = store;
@@ -207,7 +207,7 @@ async function findProcess() {
   dialog.value = false;
   let response;
   if (userRole.value === 'FUNCIONARIO' || userRole.value === 'ADMINISTRADOR') {
-    response = await axiosInstance.get('processo/estagio/filter', {
+    response = await axiosBackEndInstance.get('processo/estagio/filter', {
       params: {
         'user[name]': filtros.value.nameAluno,
         'user[registration]': filtros.value.matriculaAluno,
@@ -224,19 +224,22 @@ async function findProcess() {
     });
     atualizarInternshipProcessRegisters(response.data);
   } else if (userRole.value === 'ALUNO') {
-    response = await axiosInstance.get('processo/estagio/filter/my-process', {
-      params: {
-        startDateProcessRangeStart: filtros.value.dataInicioEstagioRangeStart,
-        startDateProcessRangeEnd: filtros.value.dataInicioEstagioRangeEnd,
-        endDateProcessRangeStart: filtros.value.dataFimestagioRangeStart,
-        endDateProcessRangeEnd: filtros.value.dataFimestagioRangeEnd,
-        page: page.value,
-        pageSize: showItems.value,
+    response = await axiosBackEndInstance.get(
+      'processo/estagio/filter/my-process',
+      {
+        params: {
+          startDateProcessRangeStart: filtros.value.dataInicioEstagioRangeStart,
+          startDateProcessRangeEnd: filtros.value.dataInicioEstagioRangeEnd,
+          endDateProcessRangeStart: filtros.value.dataFimestagioRangeStart,
+          endDateProcessRangeEnd: filtros.value.dataFimestagioRangeEnd,
+          page: page.value,
+          pageSize: showItems.value,
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+        },
       },
-      headers: {
-        Authorization: `Bearer ${getAccessToken()}`,
-      },
-    });
+    );
     atualizarInternshipProcessRegisters(response.data);
   }
 
@@ -259,7 +262,7 @@ function limparFiltros() {
 }
 
 async function findByQuery() {
-  const response = await axiosInstance.get('processo/estagio/findBy', {
+  const response = await axiosBackEndInstance.get('processo/estagio/findBy', {
     params: {
       query: inputSearch.value,
       page: page.value,

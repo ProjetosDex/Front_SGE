@@ -16,7 +16,9 @@
                 stepClasses[step.status as keyof typeof stepClasses],
               ]"
             >
-              <template v-if="step.status === 'CONCLUÍDO'">
+              <template
+                v-if="step.status === InternshipProcessStatus.CONCLUIDO"
+              >
                 <v-icon small color="white">mdi-check</v-icon>
               </template>
               <template v-else>
@@ -54,7 +56,7 @@
         <!-- Documentos para download na etapa de Análise -->
         <div
           v-if="
-            currentStepContent.status === 'EM ANALISE' &&
+            currentStepContent.status === InternshipProcessStatus.EM_ANALISE &&
             relatedDocuments.length
           "
         >
@@ -85,17 +87,40 @@
         </div>
 
         <!-- Componente de upload de arquivo, exibido no status EM ANALISE -->
-        <div v-if="currentStepContent.showUploadButton">
+        <div
+          v-if="
+            internshipProcess?.movement ===
+            InternshipProcessMovement.INICIO_ESTAGIO
+          "
+        >
           <input-file
             :uploadUrl="uploadUrlComputed"
-            :uploadOption="'INICIO_ESTAGIO'"
+            :uploadOption="InternshipProcessMovement.INICIO_ESTAGIO"
             :internshipProcessId="internshipProcess?.id"
+            :multiple="false"
+          />
+        </div>
+
+        <div
+          v-if="
+            internshipProcess?.movement ===
+            InternshipProcessMovement.FIM_ESTAGIO
+          "
+        >
+          <input-file
+            :uploadUrl="uploadUrlComputed"
+            :uploadOption="InternshipProcessMovement.FIM_ESTAGIO"
+            :uploadStatus="InternshipProcessStatus.EM_ANALISE"
+            :internshipProcessId="internshipProcess?.id"
+            :multiple="false"
           />
         </div>
 
         <!-- Botão de recusa de documentos -->
         <div
-          v-if="currentStepContent.status === 'EM ANALISE'"
+          v-if="
+            currentStepContent.status === InternshipProcessStatus.EM_ANALISE
+          "
           class="div-reject-button"
         >
           <v-form>
@@ -161,9 +186,14 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import type { InternshipProcess } from '@/api/internshipProcess.interface';
-import axiosInstance from '@/interceptors/axios-interceptor';
+import {
+  InternshipProcessMovement,
+  InternshipProcessStatus,
+  type InternshipProcess,
+} from '@/api/internshipProcess.interface';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 import InputFile from '../../../components/input-file/input-file.vue';
+import { FileTypeBackend } from '@/api/fileType.enum';
 
 const dialog = ref(false);
 // Tipos para o conteúdo da etapa
@@ -182,15 +212,15 @@ const internshipProcess = ref<InternshipProcess>();
 const remark = ref('');
 
 const steps = ref([
-  { label: 'INÍCIO DE ESTÁGIO', status: 'NÃO INICIADO' },
-  { label: 'RENOVAÇÃO DE ESTÁGIO', status: 'NÃO INICIADO' },
-  { label: 'FIM DE ESTÁGIO', status: 'NÃO INICIADO' },
+  { label: InternshipProcessMovement.INICIO_ESTAGIO, status: 'NÃO INICIADO' },
+  { label: InternshipProcessMovement.RENOVACAO, status: 'NÃO INICIADO' },
+  { label: InternshipProcessMovement.FIM_ESTAGIO, status: 'NÃO INICIADO' },
 ]);
 
 const stepClasses: Record<string, string> = {
-  CONCLUÍDO: 'completed-step',
-  'EM ANDAMENTO': 'in-progress-step',
-  'EM ANALISE': 'in-analysis-step',
+  CONCLUIDO: 'completed-step',
+  EM_ANDAMENTO: 'in-progress-step',
+  EM_ANALISE: 'in-analysis-step',
   RECUSADO: 'rejected-step',
   'NÃO INICIADO': 'pending-step',
 };
@@ -200,70 +230,110 @@ const connectorStyles = ref<
 >([]);
 const currentStepContent = ref<StepContent | null>(null);
 
+const getFilePathId = (fileType: string, movement: string) => {
+  let history = internshipProcess.value?.statusHistory;
+
+  // Se o histórico não estiver definido, retorne null
+  if (!history) return null;
+
+  // Ordenar o histórico do mais recente para o mais antigo
+  history = history.filter((history) => {
+    if (history.movement === movement) return history;
+  });
+
+  history = history.sort((a, b) => {
+    // Converte as strings de data ou usa um valor padrão (como 0) se for null
+    const startDateA = a.startDate ? new Date(a.startDate).getTime() : 0; // Retorna 0 se startDate for null
+    const startDateB = b.startDate ? new Date(b.startDate).getTime() : 0; // Retorna 0 se startDate for null
+    return startDateB - startDateA; // Ordena do mais recente para o mais antigo
+  });
+
+  console.log(history);
+
+  // Pegar o histórico mais recente
+  const mostRecentHistory = history[0]; // O primeiro após ordenar é o mais recente
+
+  // Se o histórico mais recente não tiver arquivos, retorne null
+  if (!mostRecentHistory || !mostRecentHistory.files) return null;
+
+  // Filtrar os arquivos do tipo desejado
+  const files = mostRecentHistory.files.filter(
+    (file) => file.fileType === fileType,
+  );
+
+  // Retornar apenas os caminhos dos arquivos encontrados (ou retornar null se nenhum arquivo for encontrado)
+  return files.length > 0 ? files.map((file) => file.filePath) : null;
+};
+
 // Propriedade computada para retornar a URL de upload correta
 const uploadUrlComputed = computed(() => {
   if (!currentStepContent.value) return '';
 
   switch (currentStepContent.value.title) {
-    case 'INÍCIO DE ESTÁGIO':
-      return 'https://minha-api.com/upload/inicio-estagio';
-    case 'RENOVAÇÃO DE ESTÁGIO':
+    case InternshipProcessMovement.INICIO_ESTAGIO:
+      return 'https://localhost:4001/file/upload/term';
+    case InternshipProcessMovement.RENOVACAO:
       return 'https://minha-api.com/upload/renovacao-estagio';
-    case 'FIM DE ESTÁGIO':
+    case InternshipProcessMovement.FIM_ESTAGIO:
       return 'https://minha-api.com/upload/fim-estagio';
     default:
       return '';
   }
 });
 
-//funcao para pegar o ultimo historico com doc termo de compromisso
-const getRecentDocumentoByHistory = () => {
-  const lastHistory = internshipProcess.value?.statusHistory.find((value) => {
-    if (
-      !value.endDate &&
-      value.movement === 'INÍCIO DE ESTÁGIO' &&
-      value.fileId
-    ) {
-      return value;
-    } else {
-      return '';
-    }
-  });
-  return lastHistory?.file?.filePath;
-};
-
 //refatorar tudo
 // Documentos relacionados a cada etapa
-const documentMap = () => {
+const documentMap = computed(() => {
+  const templateTermfileId = getFilePathId(
+    'TERM_COMMITMENT',
+    InternshipProcessMovement.INICIO_ESTAGIO,
+  );
+  const templateAutoAvaliacaoAlunoId = getFilePathId(
+    FileTypeBackend.STUDENT_SELF_EVALUATION,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
+  const templateAvaliacaoConcedenteId = getFilePathId(
+    FileTypeBackend.INTERNSHIP_GRANTOR_EVALUATION,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
+  const templateProfOrientadorId = getFilePathId(
+    FileTypeBackend.SUPERVISOR_EVALUATION,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
+  const url = templateTermfileId?.length ? templateTermfileId[0] : [''];
+  const urlAutoAvaliacaoAluno = templateAutoAvaliacaoAlunoId?.length
+    ? templateAutoAvaliacaoAlunoId[0]
+    : [''];
+
   return {
-    inicioEstagio: [
+    INICIO_DE_ESTAGIO: [
       {
         name: 'Termo de Compromisso de Estágio',
-        url: `http://localhost:4001/file/download/term?path=${getRecentDocumentoByHistory()}`,
+        url: `http://localhost:4001/file/download/term?path=${url}`,
       },
     ],
-    renovacaoEstagio: [
+    RENOVACAO: [
       {
         name: 'Termo de Compromisso de Estágio',
         url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
       },
     ],
-    fimEstagio: [
+    FIM_ESTAGIO: [
       {
         name: 'Termo de Compromisso de Estágio',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/term?path=${url}`,
       },
       {
         name: 'Auto-Avaliação do Aluno',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${urlAutoAvaliacaoAluno}`,
       },
       {
         name: 'Avaliação da Concedente',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${templateAvaliacaoConcedenteId}`,
       },
       {
         name: 'Avaliação do Orientador',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${templateProfOrientadorId}`,
       },
       {
         name: 'Atestado de Estágio',
@@ -271,7 +341,7 @@ const documentMap = () => {
       },
     ],
   };
-};
+});
 
 // Propriedade computada para verificar se a etapa atual está concluída
 const isCompleted = computed(
@@ -280,32 +350,33 @@ const isCompleted = computed(
 
 // Propriedade computada para obter os documentos relacionados à etapa atual
 const relatedDocuments = computed(() => {
-  const document = documentMap();
+  const document = documentMap.value;
+  console.log(document);
   let documentKey;
   const currentTitle = currentStepContent.value?.title || '';
   const currentStatus = currentStepContent.value?.status || '';
 
-  if (currentTitle === 'FIM DE ESTÁGIO') {
+  if (currentTitle === InternshipProcessMovement.FIM_ESTAGIO) {
     if (currentStatus === 'CONCLUÍDO') {
       // Exibe todos os documentos, incluindo o Atestado de Estágio
-      return document.fimEstagio;
-    } else if (currentStatus === 'EM ANALISE') {
+      return document.FIM_ESTAGIO;
+    } else if (currentStatus === InternshipProcessStatus.EM_ANALISE) {
       // Exibe apenas o Termo, Auto-Avaliação, Avaliação da Concedente e Avaliação do Orientador
-      return document.fimEstagio.filter(
+      return document.FIM_ESTAGIO.filter(
         (doc) => doc.name !== 'Atestado de Estágio',
       );
     }
   }
 
   switch (currentTitle) {
-    case 'INÍCIO DE ESTÁGIO':
-      documentKey = document.inicioEstagio;
+    case InternshipProcessMovement.INICIO_ESTAGIO:
+      documentKey = document.INICIO_DE_ESTAGIO;
       break;
-    case 'RENOVAÇÃO DE ESTÁGIO':
-      documentKey = document.renovacaoEstagio;
+    case InternshipProcessMovement.RENOVACAO:
+      documentKey = document.RENOVACAO;
       break;
-    case 'FIM DE ESTÁGIO':
-      documentKey = document.fimEstagio;
+    case InternshipProcessMovement.FIM_ESTAGIO:
+      documentKey = document.FIM_ESTAGIO;
       break;
   }
   // Para as outras etapas, retornar os documentos normais
@@ -324,30 +395,30 @@ const getContentForStep = (label: string, status: string): StepContent => {
   };
 
   switch (label) {
-    case 'INÍCIO DE ESTÁGIO':
+    case InternshipProcessMovement.INICIO_ESTAGIO:
       baseContent.description =
         'Esta etapa é a qual o Aluno irá realizar o preenchimento de todos os dados necessários para o Termo de Compromisso de Estágio e o envio do mesmo.';
-      if (status === 'EM ANALISE') {
+      if (status === InternshipProcessStatus.EM_ANALISE) {
         baseContent.additionalInfo =
           'O Termo de Compromisso de Estágio foi submetido pelo aluno para análise. Realize a verificação das informações preenchidas e das assinaturas presentes no documento. Após a avaliação, favor proceder com a assinatura e devolução do mesmo.';
         baseContent.showUploadButton = true;
       }
       break;
 
-    case 'RENOVAÇÃO DE ESTÁGIO':
+    case InternshipProcessMovement.RENOVACAO:
       baseContent.description =
         'Esta etapa é para a renovação do Termo de Compromisso de Estágio do aluno.';
-      if (status === 'EM ANALISE') {
+      if (status === InternshipProcessStatus.EM_ANALISE) {
         baseContent.additionalInfo =
           'O Termo de Compromisso de Estágio foi enviado para renovação. Por favor, revise o documento e, após a análise, realize o upload do termo assinado, caso todas as informações estejam corretas e completas.';
         baseContent.showUploadButton = true;
       }
       break;
 
-    case 'FIM DE ESTÁGIO':
+    case InternshipProcessMovement.FIM_ESTAGIO:
       baseContent.description =
         'Esta é a última etapa do processo para a conclusão do período de estágio.';
-      if (status === 'EM ANALISE') {
+      if (status === InternshipProcessStatus.EM_ANALISE) {
         baseContent.additionalInfo =
           'Revise os documentos finais do estágio, incluindo o Termo de Compromisso, a Auto-Avaliação, e as Avaliações do Concedente e Orientador. Caso todos os itens estejam corretos, finalize o processo enviando o Atestado de Estágio.';
         baseContent.showUploadButton = true;
@@ -362,8 +433,10 @@ const getContentForStep = (label: string, status: string): StepContent => {
 };
 
 const recusarDoc = async () => {
-  if (internshipProcess.value?.movement === 'FIM DE ESTÁGIO') {
-    await axiosInstance.post(
+  if (
+    internshipProcess.value?.movement === InternshipProcessMovement.FIM_ESTAGIO
+  ) {
+    await axiosBackEndInstance.post(
       '/processo/estagio/validate/assign-end-internship',
       {
         validate: false,
@@ -371,8 +444,11 @@ const recusarDoc = async () => {
         internshipProcessId: internshipProcessID,
       },
     );
-  } else if (internshipProcess.value?.movement === 'INÍCIO DE ESTÁGIO') {
-    await axiosInstance.post('/termCommitment/validate/assign', {
+  } else if (
+    internshipProcess.value?.movement ===
+    InternshipProcessMovement.INICIO_ESTAGIO
+  ) {
+    await axiosBackEndInstance.post('/termCommitment/validate/assign', {
       validate: false,
       remark: remark.value,
       internshipProcessId: internshipProcessID,
@@ -385,11 +461,12 @@ const recusarDoc = async () => {
 const updateCurrentStepContent = (stepIndex: number) => {
   const step = steps.value[stepIndex];
   currentStepContent.value = getContentForStep(step.label, step.status);
+  console.log(currentStepContent.value);
 };
 
 // Buscar informações do processo de estágio ao montar o componente
 const findinternshipProcessById = async () => {
-  const { data } = await axiosInstance.get(
+  const { data } = await axiosBackEndInstance.get(
     `processo/estagio/${internshipProcessID}`,
   );
   internshipProcess.value = data;
@@ -401,7 +478,7 @@ const findinternshipProcessById = async () => {
   steps.value.forEach((step, index) => {
     step.status =
       index < currentStepIndex
-        ? 'CONCLUÍDO'
+        ? InternshipProcessStatus.CONCLUIDO
         : step.status === 'NÃO INICIADO' &&
           step.label === internshipProcess.value?.movement
         ? internshipProcess.value?.status || 'NÃO INICIADO'
@@ -416,9 +493,10 @@ const findinternshipProcessById = async () => {
       width: '100%',
       animation: 'grow 2s ease-out forwards',
       backgroundColor:
-        nextStepStatus === 'CONCLUÍDO'
+        nextStepStatus === InternshipProcessStatus.CONCLUIDO
           ? 'green'
-          : nextStepStatus === 'EM ANDAMENTO' || nextStepStatus === 'EM ANALISE'
+          : nextStepStatus === InternshipProcessStatus.EM_ANDAMENTO ||
+            nextStepStatus === InternshipProcessStatus.EM_ANALISE
           ? 'orange'
           : '#d3d3d3',
     };

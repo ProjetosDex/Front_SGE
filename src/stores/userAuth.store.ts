@@ -1,4 +1,4 @@
-import axiosInstance from '@/interceptors/axios-interceptor';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -18,7 +18,7 @@ export const useUserAuthStore = defineStore('userAuth', () => {
 
   async function checkToken() {
     const tokenAuth = 'Bearer ' + access_token.value;
-    const { data } = await axiosInstance.get('user/me', {
+    const { data } = await axiosBackEndInstance.get('user/me', {
       headers: {
         Authorization: tokenAuth,
       },

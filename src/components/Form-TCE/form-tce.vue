@@ -446,13 +446,18 @@
 import { ref, onMounted, watch } from 'vue';
 import downloadFileButton from '../download-file-button/download-file-button.vue';
 import { generatePDF } from '@/components/pdf-models/term-commitment/generatePdf';
-import axiosInstance from '@/interceptors/axios-interceptor';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 import type { User } from '@/api/user.interface';
 import type { CreateTermCommitment } from '@/api/createTermCommitment.interface';
 import axios from 'axios';
 import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
 import { useUserAuthStore } from '@/stores/userAuth.store';
-import type { InternshipProcess } from '@/api/internshipProcess.interface';
+import {
+  InternshipProcessMovement,
+  InternshipProcessStatus,
+  type InternshipProcess,
+} from '@/api/internshipProcess.interface';
+import axiosFileApiInstance from '@/interceptors/axios-files-interceptor';
 const myProcessId = ref('');
 const userAuthStore = useUserAuthStore();
 const userFromStore = ref(userAuthStore.user);
@@ -528,95 +533,95 @@ const infoTCE = ref({
   aluno: {
     nome: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     matricula: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     cpf: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     curso: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     email: {
       fieldValue: '',
       rules: [
-        (v) => !!v || 'Este campo é obrigatório',
-        (v) => /.+@.+\..+/.test(v) || 'E-mail inválido',
+        (v: string) => !!v || 'Este campo é obrigatório',
+        (v: string) => /.+@.+\..+/.test(v) || 'E-mail inválido',
       ],
       fieldError: '',
     },
     celular: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
   },
   concedente: {
     razaoSocial: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     cnpj: {
       fieldValue: '',
-      rules: [(v) => validateCnpj(v)],
+      rules: [(v: string) => validateCnpj(v)],
       fieldError: '',
     },
     cep: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     bairro: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     cidade: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     uf: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     endereco: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     email: {
       fieldValue: '',
       rules: [
-        (v) => !!v || 'Este campo é obrigatório',
-        (v) => /.+@.+\..+/.test(v) || 'E-mail inválido',
+        (v: string) => !!v || 'Este campo é obrigatório',
+        (v: string) => /.+@.+\..+/.test(v) || 'E-mail inválido',
       ],
       fieldError: '',
     },
     representanteLegal: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     funcao: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     supervisor: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     cargo: {
@@ -628,48 +633,48 @@ const infoTCE = ref({
   condicoesEstagio: {
     tipoEstagio: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     isObrigatorio: false,
     dataInicioEstagio: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     dataFimEstagio: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     horaInicioEstagio: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     horaFimEstagio: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: string) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     jornadaSemanal: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: number) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     bolsaAuxilio: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: number) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     auxilioTransporte: {
       fieldValue: '',
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      rules: [(v: number) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
     planoAtividadesEstagio: {
-      fieldValue: [],
-      rules: [(v) => !!v || 'Este campo é obrigatório'],
+      fieldValue: [''],
+      rules: [(v: string[]) => !!v || 'Este campo é obrigatório'],
       fieldError: '',
     },
   },
@@ -677,7 +682,7 @@ const infoTCE = ref({
 
 const atualizarTCE = async () => {
   const dadosForm = infoTCE.value;
-  const reqBody: any = {
+  const reqBody = {
     dataInicioEstagio: dadosForm.condicoesEstagio.dataInicioEstagio.fieldValue,
     dataFimEstagio: dadosForm.condicoesEstagio.dataFimEstagio.fieldValue,
     horaInicioEstagio: dadosForm.condicoesEstagio.horaInicioEstagio.fieldValue,
@@ -708,7 +713,7 @@ const atualizarTCE = async () => {
     internshipProcessId: props.internshipProcessId,
   };
 
-  const response = await axiosInstance.patch(
+  const response = await axiosBackEndInstance.patch(
     `/termCommitment/update/${props.termCommitmentId}`,
     reqBody,
   );
@@ -761,7 +766,10 @@ const cadastrarTCE = async () => {
 
   console.log(reqBody);
 
-  const response = await axiosInstance.post(`/termCommitment/create`, reqBody);
+  const response = await axiosBackEndInstance.post(
+    `/termCommitment/create`,
+    reqBody,
+  );
   if (response.status == 201) {
     const createdTerm: CreatedTermCommitment = response.data;
     const internshipProcessId = createdTerm.internshipProcessId;
@@ -792,16 +800,17 @@ const formatActivityPlans = (activityPlansString: string) => {
 };
 
 onMounted(async () => {
+  window.addEventListener('keydown', handleKeyPress);
   if (props.internshipProcessId) {
     const email = userFromStore.value.email;
-    const responseUser = await axiosInstance.get(`/user/findByEmail`, {
+    const responseUser = await axiosBackEndInstance.get(`/user/findByEmail`, {
       params: { email },
       headers: {
         Authorization: `Bearer ${getAccessToken()}`,
       },
     });
 
-    const responseInternshipProcess = await axiosInstance.get(
+    const responseInternshipProcess = await axiosBackEndInstance.get(
       `/processo/estagio/${props.internshipProcessId}`,
       {
         headers: {
@@ -897,7 +906,7 @@ onMounted(async () => {
     userId.value = user.id;
   } else {
     const email = userFromStore.value.email;
-    const response = await axiosInstance.get(`/user/findByEmail`, {
+    const response = await axiosBackEndInstance.get(`/user/findByEmail`, {
       params: { email },
       headers: {
         Authorization: `Bearer ${getAccessToken()}`,
@@ -936,8 +945,8 @@ const consultEnderecoByCep = async () => {
 };
 
 async function uploadTermCommitment(formData: FormData): Promise<string> {
-  const response = await axios.post(
-    'http://localhost:4001/file/upload/term',
+  const response = await axiosFileApiInstance.post(
+    '/file/upload/term',
     formData,
     {
       headers: {
@@ -951,14 +960,55 @@ async function uploadTermCommitment(formData: FormData): Promise<string> {
   return fileId;
 }
 
+const fillForm = () => {
+  //concedente
+  infoTCE.value.concedente.razaoSocial.fieldValue = 'AGU';
+  infoTCE.value.concedente.cnpj.fieldValue = '49892589000179';
+  infoTCE.value.concedente.cep.fieldValue = '67145855';
+  infoTCE.value.concedente.bairro.fieldValue = 'Paar';
+  infoTCE.value.concedente.cidade.fieldValue = 'Ananindeua';
+  infoTCE.value.concedente.uf.fieldValue = 'PA';
+  infoTCE.value.concedente.endereco.fieldValue = 'tv.esquina';
+  infoTCE.value.concedente.email.fieldValue = 'rafa.teste@email.com';
+  infoTCE.value.concedente.representanteLegal.fieldValue = 'Afonso';
+  infoTCE.value.concedente.funcao.fieldValue = 'Product Owner';
+  infoTCE.value.concedente.supervisor.fieldValue = 'Afonso';
+  infoTCE.value.concedente.cargo.fieldValue = 'Product Owner';
+
+  //condicoes estagio
+  selectedValue.value = '1';
+  infoTCE.value.condicoesEstagio.dataInicioEstagio.fieldValue = '2025-04-18';
+  infoTCE.value.condicoesEstagio.dataFimEstagio.fieldValue = '2025-04-18';
+  infoTCE.value.condicoesEstagio.horaInicioEstagio.fieldValue = '08:00';
+  infoTCE.value.condicoesEstagio.horaFimEstagio.fieldValue = '12:00';
+  infoTCE.value.condicoesEstagio.jornadaSemanal.fieldValue = '20';
+  infoTCE.value.condicoesEstagio.bolsaAuxilio.fieldValue = '800';
+  infoTCE.value.condicoesEstagio.auxilioTransporte.fieldValue = '100';
+  infoTCE.value.condicoesEstagio.planoAtividadesEstagio.fieldValue = [
+    'atividade 1',
+    'atividade 2',
+    'atividade 3',
+    'atividade 4',
+    'atividade 5',
+  ];
+};
+
+const handleKeyPress = (event: any) => {
+  if (event.ctrlKey && event.key === 'm') {
+    // Altere 'm' para a tecla desejada
+    event.preventDefault(); // Evitar ações padrão se necessário
+    fillForm(); // Preencher o formulário com dados mockados ao pressionar Ctrl + M
+  }
+};
+
 async function registerFilePathInProcess(
   internshipProcessId: string,
   filePath: string,
   fileType: string,
 ): Promise<void> {
-  await axios.post('http://localhost:3001/internship-history/register', {
-    status: 'EM_ANALISE',
-    movement: 'INICIO_ESTAGIO',
+  await axiosBackEndInstance.post('/internship-history/register', {
+    status: InternshipProcessStatus.EM_ANDAMENTO,
+    movement: InternshipProcessMovement.INICIO_ESTAGIO,
     idInternshipProcess: internshipProcessId,
     files: [
       {

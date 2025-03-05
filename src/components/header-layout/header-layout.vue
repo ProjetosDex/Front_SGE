@@ -108,7 +108,7 @@ const router = useRouter();
 import { useUserAuthStore } from '@/stores/userAuth.store';
 import { onMounted, onUpdated, ref, watch } from 'vue';
 import { useNotificationStore } from '@/stores/notification.store';
-import axiosInstance from '@/interceptors/axios-interceptor';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 const userAuthStore = useUserAuthStore();
 const notificationStore = useNotificationStore();
 const audio = new Audio('/WhatsApp Audio.mpeg');
@@ -149,7 +149,9 @@ onMounted(async () => {
 const viewNotification = async (notification: any) => {
   if (!notification.read) {
     try {
-      await axiosInstance.patch(`notification/set/read/${notification.id}`);
+      await axiosBackEndInstance.patch(
+        `notification/set/read/${notification.id}`,
+      );
       notification.read = true;
     } catch (error) {
       console.error(error);

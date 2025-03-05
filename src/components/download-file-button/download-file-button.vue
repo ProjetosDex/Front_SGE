@@ -69,8 +69,8 @@ const handleDownload = (event: Event) => {
 .download-container {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Alinha os elementos nas extremidades */
-  background-color: rgb(162, 246, 169); /* Fundo verde */
+  justify-content: space-between;
+  background-color: rgb(162, 246, 169);
   padding: 12px 24px;
   border-radius: 4px;
 }

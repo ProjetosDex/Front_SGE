@@ -1,4 +1,4 @@
-import axiosInstance from '@/interceptors/axios-interceptor';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -13,11 +13,14 @@ export const useNotificationStore = defineStore('notification', () => {
     try {
       //investigar o armazenamento no session storage ou substituir apenas pelo token
       console.log(userUuid?.split('"')[1]);
-      const response = await axiosInstance.post('/notification/find/latest', {
-        id_user: userUuid?.split('"')[1],
-        page: 1,
-        pageSize: 5,
-      });
+      const response = await axiosBackEndInstance.post(
+        '/notification/find/latest',
+        {
+          id_user: userUuid?.split('"')[1],
+          page: 1,
+          pageSize: 5,
+        },
+      );
       notifications.value = response.data;
     } catch (error) {
       console.error('Error getting notifications:', error);

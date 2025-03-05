@@ -56,9 +56,9 @@
 </template>
 
 <script setup lang="ts">
-import axiosInstance from '@/interceptors/axios-interceptor';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 import inputFile from '../../components/input-file/input-file.vue';
-const uploadOption = 'FIM_ESTAGIO';
+const uploadOption = InternshipProcessMovement.FIM_ESTAGIO;
 // URL de upload
 const uploadUrl = 'upload/internship/evaluation';
 const getAccessToken = () => localStorage.getItem('access_token');
@@ -83,6 +83,7 @@ const modelFiles = [
 
 import { ref, onMounted } from 'vue';
 import { useUserAuthStore } from '@/stores/userAuth.store';
+import { InternshipProcessMovement } from '@/api/internshipProcess.interface';
 
 // Reactive state for selected items and dessert data
 const selected = ref([]);
@@ -102,7 +103,7 @@ const desserts = ref<any>([]);
 async function findElegibleForCompletationProcess() {
   let response;
   if (userRole.value === 'ALUNO') {
-    response = await axiosInstance.get(
+    response = await axiosBackEndInstance.get(
       'processo/estagio/elegible-for-completation',
       {
         params: {
@@ -114,6 +115,7 @@ async function findElegibleForCompletationProcess() {
         },
       },
     );
+    console.log(response.data);
     desserts.value = response.data;
   }
 }

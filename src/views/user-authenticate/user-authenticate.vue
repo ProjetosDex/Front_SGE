@@ -168,7 +168,7 @@ const router = useRouter();
 import { useUserAuthStore } from '@/stores/userAuth.store';
 const userAuthStore = useUserAuthStore();
 
-import axiosInstance from '@/interceptors/axios-interceptor';
+import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 import { socketService } from '@/services/socketService';
 const opcaoAutenticacao = ref('login');
 
@@ -196,7 +196,7 @@ function parseJwt(token: string) {
 
 async function login() {
   try {
-    const response = await axiosInstance.post('auth/login', formLogin);
+    const response = await axiosBackEndInstance.post('auth/login', formLogin);
     const tokens = response.data;
     if (tokens && tokens.access_token && tokens.refresh_token) {
       const decodedToken = parseJwt(tokens.access_token);
@@ -228,7 +228,10 @@ async function handleKeydownForm(event: any, executionFunction: any) {
 
 async function register() {
   try {
-    const response = await axiosInstance.post('user/createAluno', formLogin);
+    const response = await axiosBackEndInstance.post(
+      'user/createAluno',
+      formLogin,
+    );
     const tokens = response.data;
     if (tokens && tokens.access_token && tokens.refresh_token) {
       userAuthStore.setAccessToken(tokens.access_token);
