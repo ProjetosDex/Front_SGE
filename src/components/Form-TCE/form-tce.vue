@@ -403,7 +403,7 @@
           ></v-progress-circular>
         </v-overlay>
       </v-form>
-      <v-dialog v-model="dialog" persistent width="640">
+      <v-dialog v-model="sucessDialog" persistent width="640">
         <v-card>
           <v-card-title>
             <span class="text-h5">Novo Processo Gerado!</span>
@@ -431,8 +431,28 @@
             >
               Acompanhar Processo
             </v-btn>
-            <v-btn color="#078640" variant="text" @click="dialog = false">
+            <v-btn color="#078640" variant="text" @click="sucessDialog = false">
               Voltar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="intervalErrorDialog" persistent width="640">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5" style="color: red"
+              >Erro ao gerar processo!</span
+            >
+          </v-card-title>
+          <v-card-text> {{ messageError }} </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="intervalErrorDialog = false"
+            >
+              Ok
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -448,7 +468,7 @@ import { generatePDF } from '@/components/pdf-models/term-commitment/generatePdf
 import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 import type { User } from '@/api/user.interface';
 import type { CreateTermCommitment } from '@/api/createTermCommitment.interface';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
 import { useUserAuthStore } from '@/stores/userAuth.store';
 import {
@@ -460,7 +480,9 @@ import axiosFileApiInstance from '@/interceptors/axios-files-interceptor';
 const myProcessId = ref('');
 const userAuthStore = useUserAuthStore();
 const userFromStore = ref(userAuthStore.user);
-const dialog = ref(false);
+const sucessDialog = ref(false);
+const intervalErrorDialog = ref(false);
+const messageError = ref('');
 const props = defineProps<{
   internshipProcessId?: string;
   termCommitmentId?: string;
@@ -733,8 +755,12 @@ const atualizarTCE = async () => {
 const cadastrarTCE = async () => {
   const dadosForm = infoTCE.value;
   const reqBody: CreateTermCommitment = {
-    dataInicioEstagio: dadosForm.condicoesEstagio.dataInicioEstagio.fieldValue,
-    dataFimEstagio: dadosForm.condicoesEstagio.dataFimEstagio.fieldValue,
+    dataInicioEstagio: new Date(
+      dadosForm.condicoesEstagio.dataInicioEstagio.fieldValue,
+    ),
+    dataFimEstagio: new Date(
+      dadosForm.condicoesEstagio.dataFimEstagio.fieldValue,
+    ),
     horaInicioEstagio: dadosForm.condicoesEstagio.horaInicioEstagio.fieldValue,
     horaFimEstagio: dadosForm.condicoesEstagio.horaFimEstagio.fieldValue,
     jornadaSemanal: Number(
@@ -765,27 +791,34 @@ const cadastrarTCE = async () => {
 
   console.log(reqBody);
 
-  const response = await axiosBackEndInstance.post(
-    `/termCommitment/create`,
-    reqBody,
-  );
-  if (response.status == 201) {
-    const createdTerm: CreatedTermCommitment = response.data;
-    const internshipProcessId = createdTerm.internshipProcessId;
-    registredInternshipProcessId.value = internshipProcessId;
-    const termBlob = await generatePDF(createdTerm);
-    const formData = new FormData();
-    formData.append('file', termBlob, 'termo_compromisso.pdf');
-    const filePath = await uploadTermCommitment(formData);
-    myProcessId.value = filePath;
-    await registerFilePathInProcess(
-      internshipProcessId,
-      filePath,
-      'TERM_COMMITMENT',
+  try {
+    const response = await axiosBackEndInstance.post(
+      `/termCommitment/create`,
+      reqBody,
     );
-    //chamar a req de register para fazer o link do processo com file
-    console.log(createdTerm);
-    dialog.value = true;
+
+    if (response.status == 201) {
+      const createdTerm: CreatedTermCommitment = response.data;
+      console.log(createdTerm);
+      const internshipProcessId = createdTerm.internshipProcessId;
+      registredInternshipProcessId.value = internshipProcessId;
+      const termBlob = await generatePDF(createdTerm);
+      const formData = new FormData();
+      formData.append('file', termBlob, 'termo_compromisso.pdf');
+      const filePath = await uploadTermCommitment(formData);
+      myProcessId.value = filePath;
+      await registerFilePathInProcess(
+        internshipProcessId,
+        filePath,
+        'TERM_COMMITMENT',
+      );
+      //chamar a req de register para fazer o link do processo com file
+      console.log(createdTerm);
+      sucessDialog.value = true;
+    }
+  } catch (error: any) {
+    intervalErrorDialog.value = true;
+    messageError.value = error.response.data.message;
   }
   console.log(
     new Date(

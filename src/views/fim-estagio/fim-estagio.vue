@@ -31,6 +31,7 @@
         items-per-page="5"
         return-object
         show-select
+        no-data-text="não há processos aptos a serem finalizados."
       >
         <template v-slot:item.actions="{ item }">
           <router-link

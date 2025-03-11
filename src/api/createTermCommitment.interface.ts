@@ -1,6 +1,6 @@
 export interface CreateTermCommitment {
-  dataInicioEstagio: string;
-  dataFimEstagio: string;
+  dataInicioEstagio: Date;
+  dataFimEstagio: Date;
   horaInicioEstagio: string;
   horaFimEstagio: string;
   jornadaSemanal: number;

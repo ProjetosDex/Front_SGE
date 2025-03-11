@@ -451,7 +451,11 @@ export function generatePDF(dadosTce: CreatedTermCommitment): Promise<Blob> {
       doc.text(periodoLabel, cnpjX, 187);
 
       doc.setFont('arial', 'normal');
-      const periodo = `${dadosTce.dataInicioEstagio} a ${dadosTce.dataFimEstagio}`;
+      const periodo = `${new Date(
+        dadosTce.dataInicioEstagio,
+      ).toLocaleDateString('pt-BR')} a ${new Date(
+        dadosTce.dataFimEstagio,
+      ).toLocaleDateString('pt-BR')}`;
       doc.text(periodo, cnpjX, 191);
 
       // Horário
