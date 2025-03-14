@@ -60,13 +60,7 @@
           <p>{{ currentStepContent.actionRequired }}</p>
         </div>
 
-        <div
-          v-if="
-            internshipProcess?.movement ===
-            InternshipProcessMovement.INICIO_ESTAGIO
-          "
-          class="process-documents"
-        >
+        <div class="process-documents">
           <h3>Documentos do processo:</h3>
           <section class="uploaded-area">
             <li
@@ -185,6 +179,7 @@ import {
 } from '@/api/internshipProcess.interface';
 import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
 import InputFile from '../../../components/input-file/input-file.vue';
+import { FileTypeBackend } from '@/api/fileType.enum';
 
 // Tipos para o conteúdo da etapa
 interface StepContent {
@@ -255,9 +250,29 @@ const uploadUrlComputed = computed(() => {
 // Documentos relacionados a cada etapa
 const documentMap = computed(() => {
   const templateTermfileId = getFilePathId(
-    'TERM_COMMITMENT',
+    FileTypeBackend.TERM_COMMITMENT,
     InternshipProcessMovement.INICIO_ESTAGIO,
-  ); // Ajuste conforme necessário
+  );
+
+  const certificadoEstagioPath = getFilePathId(
+    FileTypeBackend.INTERNSHIP_CERTIFICATE,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
+
+  const autoAvaliacaoAlunoPath = getFilePathId(
+    FileTypeBackend.STUDENT_SELF_EVALUATION,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
+
+  const avaliacaoConcedentePath = getFilePathId(
+    FileTypeBackend.INTERNSHIP_GRANTOR_EVALUATION,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
+
+  const avaliacaoProfOrientadorPath = getFilePathId(
+    FileTypeBackend.SUPERVISOR_EVALUATION,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
 
   return {
     INICIO_DE_ESTAGIO: [
@@ -272,26 +287,26 @@ const documentMap = computed(() => {
         url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
       },
     ],
-    'FIM DE ESTÁGIO': [
+    FIM_DE_ESTAGIO: [
       {
         name: 'Termo de Compromisso de Estágio',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/term?path=${templateTermfileId}`,
       },
       {
         name: 'Auto-Avaliação do Aluno',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${autoAvaliacaoAlunoPath}`,
       },
       {
         name: 'Avaliação da Concedente',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${avaliacaoConcedentePath}`,
       },
       {
         name: 'Avaliação do Orientador',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${avaliacaoProfOrientadorPath}`,
       },
       {
         name: 'Atestado de Estágio',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/internship-certificate?path=${certificadoEstagioPath}`,
       },
     ],
   };
@@ -305,12 +320,37 @@ const isCompleted = computed(
 // Propriedade computada para obter os documentos relacionados à etapa atual
 const relatedDocuments = computed(() => {
   //colocar condição para em andamento e inicio de estagio retornar o primeiro file com id de file vindo do processo
-  return isCompleted.value ||
-    internshipProcess.value?.movement ===
-      InternshipProcessMovement.INICIO_ESTAGIO
-    ? documentMap.value[currentStepContent.value?.title || ''] || []
-    : [];
+  console.log(currentStepContent.value?.title);
+  return documentMap.value[currentStepContent.value?.title || ''];
 });
+
+const getMotivoRecusa = (movement: string): string => {
+  let history = internshipProcess.value?.statusHistory;
+
+  // Se o histórico não estiver definido, retorne null
+  if (!history) return '';
+
+  // Ordenar o histórico do mais recente para o mais antigo
+  history = history.filter((history) => {
+    if (
+      history.movement === movement &&
+      history.status === InternshipProcessStatus.RECUSADO
+    ) {
+      return history;
+    }
+  });
+
+  history = history.sort((a, b) => {
+    // Converte as strings de data ou usa um valor padrão (como 0) se for null
+    const startDateA = a.startDate ? new Date(a.startDate).getTime() : 0; // Retorna 0 se startDate for null
+    const startDateB = b.startDate ? new Date(b.startDate).getTime() : 0; // Retorna 0 se startDate for null
+    return startDateB - startDateA; // Ordena do mais recente para o mais antigo
+  });
+
+  const mostRecentHistory = history[0]; // O primeiro após ordenar é o mais recente
+
+  return mostRecentHistory.observacoes ?? '';
+};
 
 const getFilePathId = (fileType: string, movement: string) => {
   let history = internshipProcess.value?.statusHistory;
@@ -319,14 +359,28 @@ const getFilePathId = (fileType: string, movement: string) => {
   if (!history) return null;
 
   // Ordenar o histórico do mais recente para o mais antigo
-  history = history.filter((history) => {
-    if (
-      history.movement === movement &&
-      history.status !== InternshipProcessStatus.EM_ANALISE
-    ) {
-      return history;
-    }
-  });
+  if (
+    movement === InternshipProcessMovement.FIM_ESTAGIO &&
+    fileType !== FileTypeBackend.INTERNSHIP_CERTIFICATE
+  ) {
+    history = history.filter((history) => {
+      if (
+        history.movement === movement &&
+        history.status === InternshipProcessStatus.EM_ANALISE
+      ) {
+        return history;
+      }
+    });
+  } else {
+    history = history.filter((history) => {
+      if (
+        history.movement === movement &&
+        history.status !== InternshipProcessStatus.EM_ANALISE
+      ) {
+        return history;
+      }
+    });
+  }
 
   history = history.sort((a, b) => {
     // Converte as strings de data ou usa um valor padrão (como 0) se for null
@@ -375,7 +429,9 @@ const getContentForStep = (label: string, status: string): StepContent => {
       } else if (status === InternshipProcessStatus.RECUSADO) {
         baseContent.additionalInfo =
           'O documento enviado foi recusado. Por favor, revise as informações e realize o upload novamente.';
-        baseContent.rejectionReason = 'aoba';
+        baseContent.rejectionReason = getMotivoRecusa(
+          InternshipProcessMovement.INICIO_ESTAGIO,
+        );
         baseContent.actionRequired =
           'Corrija as informações no TCE e realize o upload do documento corrigido.';
         baseContent.showUploadButton = false;

@@ -405,7 +405,7 @@ const aprovarFimEstagio = async () => {
   const internshipCertificateFilePath = uploadFiles.value.map((uploadFile) => {
     return {
       filePath: uploadFile.path,
-      fileType: fileNameToTypeMap[uploadFile.name],
+      fileType: FileTypeBackend.INTERNSHIP_CERTIFICATE,
     };
   })[0];
 

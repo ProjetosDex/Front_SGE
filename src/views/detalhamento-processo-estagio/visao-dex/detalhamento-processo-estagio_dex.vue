@@ -90,7 +90,9 @@
         <div
           v-if="
             internshipProcess?.movement ===
-            InternshipProcessMovement.INICIO_ESTAGIO
+              InternshipProcessMovement.INICIO_ESTAGIO &&
+            internshipProcess?.status !== InternshipProcessStatus.RECUSADO &&
+            internshipProcess?.status !== InternshipProcessStatus.CONCLUIDO
           "
         >
           <input-file
@@ -180,6 +182,26 @@
           </section>
         </div>
       </div>
+      <v-dialog v-model="intervalErrorDialog" persistent width="640">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5" style="color: red"
+              >Erro ao Recusar Processo!</span
+            >
+          </v-card-title>
+          <v-card-text> {{ messageError }} </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="intervalErrorDialog = false"
+            >
+              Ok
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </div>
 </template>
@@ -197,6 +219,8 @@ import InputFile from '../../../components/input-file/input-file.vue';
 import { FileTypeBackend } from '@/api/fileType.enum';
 
 const dialog = ref(false);
+const intervalErrorDialog = ref(false);
+const messageError = ref('');
 // Tipos para o conteúdo da etapa
 interface StepContent {
   title: string;
@@ -404,6 +428,10 @@ const getContentForStep = (label: string, status: string): StepContent => {
           'O Termo de Compromisso de Estágio foi submetido pelo aluno para análise. Realize a verificação das informações preenchidas e das assinaturas presentes no documento. Após a avaliação, favor proceder com a assinatura e devolução do mesmo.';
         baseContent.showUploadButton = true;
       }
+      if (status === InternshipProcessStatus.RECUSADO) {
+        baseContent.additionalInfo =
+          'O Termo de Compromisso de Estágio foi devolvido ao aluno para as devidas correções.';
+      }
       break;
 
     case InternshipProcessMovement.RENOVACAO:
@@ -437,25 +465,44 @@ const recusarDoc = async () => {
   if (
     internshipProcess.value?.movement === InternshipProcessMovement.FIM_ESTAGIO
   ) {
-    await axiosBackEndInstance.post(
-      '/processo/estagio/validate/assign-end-internship',
-      {
-        validate: false,
-        remark: remark.value,
-        internshipProcessId: internshipProcessID,
-      },
-    );
+    try {
+      await axiosBackEndInstance.post(
+        '/processo/estagio/validate/assign-end-internship',
+        {
+          validate: false,
+          remark: remark.value,
+          internshipProcessId: internshipProcessID,
+        },
+      );
+      window.location.reload();
+    } catch (error: any) {
+      console.log(error.response.data.message);
+    }
   } else if (
     internshipProcess.value?.movement ===
     InternshipProcessMovement.INICIO_ESTAGIO
   ) {
-    await axiosBackEndInstance.post('/termCommitment/validate/assign', {
-      validate: false,
-      remark: remark.value,
-      internshipProcessId: internshipProcessID,
-    });
+    try {
+      await axiosBackEndInstance.post('/termCommitment/validate/assign', {
+        validate: false,
+        remark: remark.value,
+        internshipProcessId: internshipProcessID,
+      });
+      window.location.reload();
+    } catch (error: any) {
+      if (error.isAxiosError && error.response) {
+        const responseError = error.response.data.message;
+
+        if (responseError === 'remark is required') {
+          intervalErrorDialog.value = true;
+          messageError.value =
+            'é obrigatório o envio de uma observação para instruir a correção do aluno';
+        }
+      } else {
+        console.error('Erro desconhecido:', error);
+      }
+    }
   }
-  window.location.reload();
 };
 
 // Função para atualizar o conteúdo exibido com base na etapa selecionada

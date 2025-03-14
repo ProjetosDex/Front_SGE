@@ -184,7 +184,7 @@ enum TypeRequest {
 
 const inputSearch = ref('');
 const dialog = ref(false);
-const lasttypeRequest = ref<TypeRequest>(TypeRequest.FindByFilter);
+const lastTypeRequest = ref<TypeRequest>(TypeRequest.FindByFilter);
 const getAccessToken = () => localStorage.getItem('access_token');
 
 onMounted(async () => {
@@ -196,9 +196,9 @@ onUpdated(async () => {
 });
 
 watch(page, () => {
-  if (lasttypeRequest.value === TypeRequest.FindByFilter) {
+  if (lastTypeRequest.value === TypeRequest.FindByFilter) {
     findProcess();
-  } else if (lasttypeRequest.value === TypeRequest.FindByQuery) {
+  } else if (lastTypeRequest.value === TypeRequest.FindByQuery) {
     findByQuery();
   }
 });
@@ -222,6 +222,8 @@ async function findProcess() {
         Authorization: `Bearer ${getAccessToken()}`,
       },
     });
+
+    console.log(response.data);
     atualizarInternshipProcessRegisters(response.data);
   } else if (userRole.value === 'ALUNO') {
     response = await axiosBackEndInstance.get(
@@ -244,7 +246,7 @@ async function findProcess() {
   }
 
   inputSearch.value = '';
-  lasttypeRequest.value = TypeRequest.FindByFilter;
+  lastTypeRequest.value = TypeRequest.FindByFilter;
 }
 
 function limparFiltros() {
@@ -271,7 +273,7 @@ async function findByQuery() {
   });
 
   atualizarInternshipProcessRegisters(response.data);
-  lasttypeRequest.value = TypeRequest.FindByQuery;
+  lastTypeRequest.value = TypeRequest.FindByQuery;
 }
 
 const defineShowItems = (value: number) => {
