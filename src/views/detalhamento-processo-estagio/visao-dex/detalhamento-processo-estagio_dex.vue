@@ -54,12 +54,7 @@
         </div>
 
         <!-- Documentos para download na etapa de Análise -->
-        <div
-          v-if="
-            currentStepContent.status === InternshipProcessStatus.EM_ANALISE &&
-            relatedDocuments.length
-          "
-        >
+        <div>
           <h3>Documentos para Download:</h3>
           <section class="uploaded-area">
             <li
@@ -262,9 +257,25 @@ const getFilePathId = (fileType: string, movement: string) => {
   if (!history) return null;
 
   // Ordenar o histórico do mais recente para o mais antigo
-  history = history.filter((history) => {
-    if (history.movement === movement) return history;
-  });
+  if (
+    movement === InternshipProcessMovement.FIM_ESTAGIO &&
+    fileType !== FileTypeBackend.INTERNSHIP_CERTIFICATE
+  ) {
+    history = history.filter((history) => {
+      if (
+        history.movement === movement &&
+        history.status === InternshipProcessStatus.EM_ANALISE
+      ) {
+        return history;
+      }
+    });
+  } else {
+    history = history.filter((history) => {
+      if (history.movement === movement) {
+        return history;
+      }
+    });
+  }
 
   history = history.sort((a, b) => {
     // Converte as strings de data ou usa um valor padrão (como 0) se for null
@@ -272,9 +283,6 @@ const getFilePathId = (fileType: string, movement: string) => {
     const startDateB = b.startDate ? new Date(b.startDate).getTime() : 0; // Retorna 0 se startDate for null
     return startDateB - startDateA; // Ordena do mais recente para o mais antigo
   });
-
-  console.log(history);
-
   // Pegar o histórico mais recente
   const mostRecentHistory = history[0]; // O primeiro após ordenar é o mais recente
 
@@ -317,24 +325,32 @@ const documentMap = computed(() => {
     FileTypeBackend.STUDENT_SELF_EVALUATION,
     InternshipProcessMovement.FIM_ESTAGIO,
   );
-  const templateAvaliacaoConcedenteId = getFilePathId(
+  const certificadoEstagioPath = getFilePathId(
+    FileTypeBackend.INTERNSHIP_CERTIFICATE,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
+
+  const autoAvaliacaoAlunoPath = getFilePathId(
+    FileTypeBackend.STUDENT_SELF_EVALUATION,
+    InternshipProcessMovement.FIM_ESTAGIO,
+  );
+
+  const avaliacaoConcedentePath = getFilePathId(
     FileTypeBackend.INTERNSHIP_GRANTOR_EVALUATION,
     InternshipProcessMovement.FIM_ESTAGIO,
   );
-  const templateProfOrientadorId = getFilePathId(
+
+  const avaliacaoProfOrientadorPath = getFilePathId(
     FileTypeBackend.SUPERVISOR_EVALUATION,
     InternshipProcessMovement.FIM_ESTAGIO,
   );
   const url = templateTermfileId?.length ? templateTermfileId[0] : [''];
-  const urlAutoAvaliacaoAluno = templateAutoAvaliacaoAlunoId?.length
-    ? templateAutoAvaliacaoAlunoId[0]
-    : [''];
 
   return {
     INICIO_DE_ESTAGIO: [
       {
         name: 'Termo de Compromisso de Estágio',
-        url: `http://localhost:4001/file/download/term?path=${url}`,
+        url: `http://localhost:4001/file/download/term?path=${templateTermfileId}`,
       },
     ],
     RENOVACAO: [
@@ -346,23 +362,23 @@ const documentMap = computed(() => {
     FIM_ESTAGIO: [
       {
         name: 'Termo de Compromisso de Estágio',
-        url: `http://localhost:4001/file/download/term?path=${url}`,
+        url: `http://localhost:4001/file/download/term?path=${templateTermfileId}`,
       },
       {
         name: 'Auto-Avaliação do Aluno',
-        url: `http://localhost:4001/file/download/internship/evaluation?path=${urlAutoAvaliacaoAluno}`,
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${autoAvaliacaoAlunoPath}`,
       },
       {
         name: 'Avaliação da Concedente',
-        url: `http://localhost:4001/file/download/internship/evaluation?path=${templateAvaliacaoConcedenteId}`,
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${avaliacaoConcedentePath}`,
       },
       {
         name: 'Avaliação do Orientador',
-        url: `http://localhost:4001/file/download/internship/evaluation?path=${templateProfOrientadorId}`,
+        url: `http://localhost:4001/file/download/internship/evaluation?path=${avaliacaoProfOrientadorPath}`,
       },
       {
         name: 'Atestado de Estágio',
-        url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1045921&&key=36338608351fb343fa69a03f1ba0b512',
+        url: `http://localhost:4001/file/download/internship-certificate?path=${certificadoEstagioPath}`,
       },
     ],
   };

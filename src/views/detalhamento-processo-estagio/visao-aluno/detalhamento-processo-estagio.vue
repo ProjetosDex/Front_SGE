@@ -320,8 +320,19 @@ const isCompleted = computed(
 // Propriedade computada para obter os documentos relacionados à etapa atual
 const relatedDocuments = computed(() => {
   //colocar condição para em andamento e inicio de estagio retornar o primeiro file com id de file vindo do processo
-  console.log(currentStepContent.value?.title);
-  return documentMap.value[currentStepContent.value?.title || ''];
+  if (
+    internshipProcess.value?.status === InternshipProcessStatus.EM_ANALISE &&
+    internshipProcess.value?.movement === InternshipProcessMovement.FIM_ESTAGIO
+  ) {
+    const fimEstagioDocuments =
+      documentMap.value[currentStepContent.value?.title || ''];
+
+    fimEstagioDocuments.splice(fimEstagioDocuments.length - 1, 1);
+
+    return fimEstagioDocuments;
+  } else {
+    return documentMap.value[currentStepContent.value?.title || ''];
+  }
 });
 
 const getMotivoRecusa = (movement: string): string => {
