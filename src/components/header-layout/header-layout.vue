@@ -105,11 +105,11 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';
 const router = useRouter();
-import { useUserAuthStore } from '@/stores/userAuth.store';
+import { useAuthStore } from '@/stores/auth.store';
 import { onMounted, onUpdated, ref, watch } from 'vue';
 import { useNotificationStore } from '@/stores/notification.store';
 import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
-const userAuthStore = useUserAuthStore();
+const userAuthStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const audio = new Audio('/WhatsApp Audio.mpeg');
 

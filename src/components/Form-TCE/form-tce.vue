@@ -466,19 +466,19 @@ import { ref, onMounted, watch } from 'vue';
 import downloadFileButton from '../download-file-button/download-file-button.vue';
 import { generatePDF } from '@/components/pdf-models/term-commitment/generatePdf';
 import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
-import type { User } from '@/api/user.interface';
+import type { User } from '@/core/domain/entities/user.entity';
 import type { CreateTermCommitment } from '@/api/createTermCommitment.interface';
 import axios, { AxiosError } from 'axios';
 import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
-import { useUserAuthStore } from '@/stores/userAuth.store';
+import { useAuthStore } from '@/stores/auth.store';
 import {
   InternshipProcessMovement,
   InternshipProcessStatus,
   type InternshipProcess,
-} from '@/api/internshipProcess.interface';
+} from '@/core/domain/entities/internshipProcess.entity';
 import axiosFileApiInstance from '@/interceptors/axios-files-interceptor';
 const myProcessId = ref('');
-const userAuthStore = useUserAuthStore();
+const userAuthStore = useAuthStore();
 const userFromStore = ref(userAuthStore.user);
 const sucessDialog = ref(false);
 const intervalErrorDialog = ref(false);
@@ -858,7 +858,7 @@ onMounted(async () => {
     infoTCE.value.aluno.nome.fieldValue = user.name;
     infoTCE.value.aluno.cpf.fieldValue = user.cpf;
     infoTCE.value.aluno.matricula.fieldValue = user.registration;
-    infoTCE.value.aluno.celular.fieldValue = user.telefone;
+    infoTCE.value.aluno.celular.fieldValue = user.telephone;
     infoTCE.value.aluno.curso.fieldValue = user.courseStudy;
     infoTCE.value.aluno.email.fieldValue = user.email;
     //infos termo
@@ -950,7 +950,7 @@ onMounted(async () => {
     infoTCE.value.aluno.nome.fieldValue = user.name;
     infoTCE.value.aluno.cpf.fieldValue = user.cpf;
     infoTCE.value.aluno.matricula.fieldValue = user.registration;
-    infoTCE.value.aluno.celular.fieldValue = user.telefone;
+    infoTCE.value.aluno.celular.fieldValue = user.telephone;
     infoTCE.value.aluno.curso.fieldValue = user.courseStudy;
     infoTCE.value.aluno.email.fieldValue = user.email;
     userId.value = user.id;

@@ -4,7 +4,7 @@ import {
   VDataTable,
   VDataTableServer,
   VDataTableVirtual,
-} from "vuetify/labs/VDataTable";
+} from 'vuetify/labs/VDataTable';
 
 export default createVuetify({
   components: {
@@ -19,4 +19,4 @@ export default createVuetify({
       mdi,
     },
   },
-})
+});

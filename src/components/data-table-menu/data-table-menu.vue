@@ -164,8 +164,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUpdated } from 'vue';
-import { useUserAuthStore } from '@/stores/userAuth.store';
-const userAuthStore = useUserAuthStore();
+import { useAuthStore } from '@/stores/auth.store';
+const userAuthStore = useAuthStore();
 const userRole = ref(userAuthStore.storedUserRole);
 import { useDataTableStore } from '../../stores/processDataTable.store';
 import { storeToRefs } from 'pinia';

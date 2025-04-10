@@ -1,34 +1,22 @@
-import { useUserAuthStore } from '@/stores/userAuth.store';
+import { useAuthStore } from '@/stores/auth.store';
 import { createRouter, createWebHistory } from 'vue-router';
-import { privateRoutes } from './privateRoutes';
-import { publicRoutes } from './publicRoutes';
+import { privateRoutes } from './routes/privateRoutes';
+import { publicRoutes } from './routes/publicRoutes';
+import { authGuard } from './guards/authGuard';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    ...publicRoutes,
-    ...privateRoutes,
-  ]
-})
+  routes: [...publicRoutes, ...privateRoutes],
+});
 
-router.beforeEach( async (to,from,next) => {
-  const userAuthStore = useUserAuthStore();
-
-  const auth = to.matched.some(record => record.meta.auth);
-
-  if(auth && !userAuthStore.isAuth){
-    try {
-      const user = await userAuthStore.checkToken();
-      userAuthStore.setUser(user);
-      userAuthStore.setIsAuth(true);
-      next();
-    } catch (error) {
-      userAuthStore.clear();
-      next('authenticate');
-    }
-  }else{
-    next();
+declare module 'vue-router' {
+  interface RouteMeta {
+    auth?: boolean;
+    roles?: string[];
+    allowWhileRefreshing?: boolean;
   }
-})
+}
 
-export default router
+router.beforeEach(authGuard);
+
+export default router;

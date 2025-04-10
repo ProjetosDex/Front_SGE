@@ -1,0 +1,74 @@
+.infoLogin {
+  color: red;
+}
+.form-authenticate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+}
+
+.authenticate-container {
+  display: flex;
+  height: 100vh;
+}
+
+.system-title {
+  display: flex;
+  flex-direction: column;
+  padding-top: 10%;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #078640;
+  color: #fff;
+  width: 50%;
+}
+
+.system-title h1 {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.8rem;
+}
+
+.logo-ifpa {
+  width: 100px;
+}
+
+@media screen and (max-width: 860px) {
+  .authenticate-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .system-title {
+    display: flex;
+    flex-direction: row;
+    padding-top: 0;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #078640;
+    color: #fff;
+    width: 100%;
+  }
+
+  .system-title h1 {
+    font-size: 0.9rem;
+  }
+
+  .logo-ifpa {
+    width: 3rem;
+    height: 4.1rem;
+  }
+
+  .form-authenticate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+}

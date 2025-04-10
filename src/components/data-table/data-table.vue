@@ -64,9 +64,9 @@ import { reactive, ref, watch } from 'vue';
 import { useDataTableStore } from '../../stores/processDataTable.store';
 import { storeToRefs } from 'pinia';
 
-import { useUserAuthStore } from '@/stores/userAuth.store';
-import { InternshipProcessStatus } from '@/api/internshipProcess.interface';
-const userAuthStore = useUserAuthStore();
+import { useAuthStore } from '@/stores/auth.store';
+import { InternshipProcessStatus } from '@/core/domain/entities/internshipProcess.entity';
+const userAuthStore = useAuthStore();
 const userRole = ref(userAuthStore.storedUserRole);
 
 const store = useDataTableStore();
