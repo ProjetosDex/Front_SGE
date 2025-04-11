@@ -7,7 +7,7 @@
     @click="rail = false"
   >
     <div class="header-sidebar">
-      <img src="../../assets/Logo-IFPA.png" class="logo-ifpa" alt="" />
+      <img src="@/assets/images/Logo-IFPA.png" class="logo-ifpa" alt="" />
     </div>
 
     <v-divider></v-divider>

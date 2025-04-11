@@ -1,0 +1,10 @@
+.overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  text-align: center;
+}
