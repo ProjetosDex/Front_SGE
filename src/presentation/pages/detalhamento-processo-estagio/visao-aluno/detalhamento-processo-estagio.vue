@@ -177,7 +177,7 @@ import {
   InternshipProcessStatus,
   type InternshipProcess,
 } from '@/core/domain/entities/internshipProcess.entity';
-import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
+import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 import InputFile from '@/components/input-file/input-file.vue';
 import { FileType } from '@/core/domain/entities/file.entity';
 

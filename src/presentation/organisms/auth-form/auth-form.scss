@@ -20,6 +20,13 @@
   gap: 10px;
 }
 
+.form-login-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
 .titulo-sistema {
   display: flex;
   flex-direction: column;

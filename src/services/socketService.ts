@@ -1,27 +1,25 @@
-// src/services/socketService.ts
 import { io, Socket } from 'socket.io-client';
 import { useNotificationStore } from '@/stores/notification.store';
 
 class SocketService {
-  private socket: Socket | null = null; // Define a propriedade socket como Socket ou null
+  private socket: Socket | null = null;
 
   connect(url: string, userUuid: string): void {
     const notificationStore = useNotificationStore();
 
     this.socket = io(url, {
       transports: ['websocket'],
-      withCredentials: false, // Ajuste conforme necessário
+      withCredentials: false,
     });
 
     this.socket.on('connect', () => {
       console.log('Conectado ao servidor WebSocket');
-      console.log('ID da sessão do socket:', this.socket!.id); // Usando ! para indicar que socket não é null
+      console.log('ID da sessão do socket:', this.socket!.id);
     });
 
     this.socket!.emit('register', userUuid);
 
     this.socket.on('notification', (data: any) => {
-      console.log('Notificação recebida:', data);
       notificationStore.addNotification(data);
     });
   }

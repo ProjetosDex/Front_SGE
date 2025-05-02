@@ -1,5 +1,5 @@
 import axios from 'axios';
-import axiosBackEndInstance from './axios-backend-interceptor';
+import axiosBackEndInstance from './axios-backend-client';
 
 const axiosFileApiInstance = axios.create({
   baseURL: import.meta.env.VITE_FILE_API,

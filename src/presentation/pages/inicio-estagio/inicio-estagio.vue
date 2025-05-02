@@ -17,11 +17,7 @@
           multiple
           hidden
         />
-        <v-btn
-          type="submit"
-          class="buttonTCE"
-          to="/formulario/tce"
-          onclick="generatePDF"
+        <v-btn type="submit" class="buttonTCE" to="/formulario/tce"
           >Cadastrar Termo de Compromisso</v-btn
         >
       </section>
@@ -35,7 +31,7 @@
                 Inicio de Estágio: Guia Visual do Sistema
               </h1>
             </button>
-            <img src="../../assets/formTCE.png" alt="" />
+            <img src="@/assets/images/formTCE.png" alt="" />
           </div>
         </template>
         <v-card>
@@ -69,7 +65,7 @@
       </v-dialog>
 
       <div class="card card2">
-        <img src="../../assets/filesIcon.png" alt="" class="img-card2" />
+        <img src="@/assets/images/filesIcon.png" alt="" class="img-card2" />
         <h1 class="title-card2">Inicio de Estágio: Guia Detalhado</h1>
       </div>
     </div>

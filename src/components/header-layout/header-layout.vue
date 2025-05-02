@@ -18,7 +18,7 @@
             density="compact"
             nav
             v-for="notification in notifications"
-            :key="notification"
+            :key="notification.id"
             :class="{ 'read-notification': notification.read }"
           >
             <v-btn
@@ -108,7 +108,7 @@ const router = useRouter();
 import { useAuthStore } from '@/stores/auth.store';
 import { onMounted, onUpdated, ref, watch } from 'vue';
 import { useNotificationStore } from '@/stores/notification.store';
-import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
+import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 const userAuthStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const audio = new Audio('/WhatsApp Audio.mpeg');

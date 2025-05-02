@@ -8,10 +8,13 @@
       <p class="title">{{ title }}</p>
       <span class="subtitle">{{ subTitle }}</span>
     </div>
-
     <br />
 
-    <div :class="typeForm === 'Register' ? 'form-register-inputs' : ''">
+    <div
+      :class="
+        typeForm === 'Register' ? 'form-register-inputs' : 'form-login-inputs'
+      "
+    >
       <InputGroup
         v-for="field in filteredInputs"
         :key="field.id"

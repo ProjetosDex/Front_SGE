@@ -113,8 +113,8 @@ const props = defineProps<{
 }>();
 
 import { useAuthStore } from '@/stores/auth.store';
-import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
-import axiosFileApiInstance from '@/interceptors/axios-files-interceptor';
+import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
+import axiosFileApiInstance from '@/core/infrastructure/interceptors/axios-files-interceptor';
 import { FileType } from '@/core/domain/entities/file.entity';
 const userAuthStore = useAuthStore();
 

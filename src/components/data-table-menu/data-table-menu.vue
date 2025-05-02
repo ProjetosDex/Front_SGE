@@ -169,7 +169,7 @@ const userAuthStore = useAuthStore();
 const userRole = ref(userAuthStore.storedUserRole);
 import { useDataTableStore } from '../../stores/processDataTable.store';
 import { storeToRefs } from 'pinia';
-import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
+import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 
 const store = useDataTableStore();
 const { atualizarFiltros, atualizarInternshipProcessRegisters } = store;

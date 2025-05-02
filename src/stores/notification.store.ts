@@ -1,4 +1,4 @@
-import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
+import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 

@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
+import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 import inputFile from '@/components/input-file/input-file.vue';
 const uploadOption = InternshipProcessMovement.STAGE_END;
 // URL de upload

@@ -1,4 +1,3 @@
-import { useAuthStore } from '@/stores/auth.store';
 import { createRouter, createWebHistory } from 'vue-router';
 import { privateRoutes } from './routes/privateRoutes';
 import { publicRoutes } from './routes/publicRoutes';

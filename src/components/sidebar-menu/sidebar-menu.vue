@@ -58,8 +58,9 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
-const userAuthStore = useAuthStore();
-const userRole = ref(userAuthStore.storedUserRole);
+const authStore = useAuthStore();
+const userRole = ref(authStore.userRole);
+console.log(userRole.value);
 const drawer = ref(true);
 const rail = ref(true);
 const setaMenu = ref('mdi-chevron-right');

@@ -1,6 +1,6 @@
 // src/stores/auth.store.ts
 import type { User } from '@/core/domain/entities/user.entity';
-import axiosBackEndInstance from '@/interceptors/axios-backend-interceptor';
+import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
