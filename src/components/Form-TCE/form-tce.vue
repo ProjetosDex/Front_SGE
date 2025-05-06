@@ -102,49 +102,9 @@
 import { onMounted, ref } from 'vue';
 import downloadFileButton from '../download-file-button/download-file-button.vue';
 import FormSection from '@/presentation/molecules/form-section/form-section.vue';
-import { TermCommitmentFormRequestMapper } from '@/core/application/mappers/termCommitmentFormRequestMapper';
-import type {
-  FieldUpdateEvent,
-  FormSectionKey,
-} from '@/presentation/types/term-commitment-form-types';
-import { TermCommitmentBloc } from '@/presentation/blocs/termCommitment/termCommitment.bloc';
-import { FormTermCommitmentStore } from '@/stores/formTermCommitment/form-term-commitment-store';
-import { CreateTermCommitmentUseCase } from '@/core/application/usecases/create-term-commitment-usecase';
-import { TermCommitmentRepository } from '@/core/infrastructure/repositories/termCommtimentRepository';
-import { TermCommitmentApi } from '@/core/infrastructure/api/termCommitmentApi';
-import { FileApi } from '@/core/infrastructure/api/file-api';
-import { InternshipHistoryApi } from '@/core/infrastructure/api/internship-history-api';
-import { UploadTermCommitmentPdfUseCase } from '@/core/application/usecases/upload-term-commitment-pdf-usecase';
-import { RegisterTermCommitmentFileIdInProcessHistoryUseCase } from '@/core/application/usecases/register-term-commitment-file-id-in-process-history-usecase';
+import { createTermCommitmentBloc } from '@/presentation/blocs/termCommitment/create-term-commitment-bloc';
 
-const formTermCommitmentStore = new FormTermCommitmentStore();
-const termCommitmentApi = new TermCommitmentApi();
-const fileApi = new FileApi();
-const internshipHistoryApi = new InternshipHistoryApi();
-const termCommitmentRepository = new TermCommitmentRepository(
-  termCommitmentApi,
-  fileApi,
-  internshipHistoryApi,
-);
-const createTermCommitmentUseCase = new CreateTermCommitmentUseCase(
-  termCommitmentRepository,
-);
-
-const uploadTermCommitmentPdfUseCase = new UploadTermCommitmentPdfUseCase(
-  termCommitmentRepository,
-);
-
-const registerTermCommitmentFileIdInProcessHistoryUseCase =
-  new RegisterTermCommitmentFileIdInProcessHistoryUseCase(
-    termCommitmentRepository,
-  );
-
-const formTermCommitmentBloc = new TermCommitmentBloc(
-  formTermCommitmentStore,
-  createTermCommitmentUseCase,
-  uploadTermCommitmentPdfUseCase,
-  registerTermCommitmentFileIdInProcessHistoryUseCase,
-);
+const formTermCommitmentBloc = createTermCommitmentBloc();
 
 const formSectionsData = formTermCommitmentBloc.getAllSections();
 
@@ -167,8 +127,6 @@ const handleFieldUpdate = (fieldUpdateEvent: any, section: any) => {
     fieldIndex: fieldUpdateEvent.fieldIndex,
     sectionIndex: section,
   });
-
-  console.log(formTermCommitmentBloc.getState());
 };
 
 const updateTCE = async () => {
@@ -176,7 +134,6 @@ const updateTCE = async () => {
 };
 
 const registerTCE = async () => {
-  console.log('minha rola foi invocada');
   formTermCommitmentBloc.createTermCommitment();
 };
 
