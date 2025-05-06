@@ -1,3 +1,8 @@
+import type {
+  FieldValue,
+  FormTceData,
+} from '@/presentation/types/term-commitment-form-types';
+
 export const validateCnpj = (cnpj: string) => {
   if (!cnpj) {
     console.log('minha rola é obrigatória');
@@ -46,209 +51,199 @@ export const validateCnpj = (cnpj: string) => {
   return 'cnpj inválido';
 };
 
-export const formTermCommitmentInitialState = {
+export const formTermCommitmentInitialState: FormTceData = {
   aluno: {
     sectionTitle: 'Aluno',
-    sectionData: [
-      {
+    sectionData: {
+      name: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'nome',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
         readonly: true,
       },
-      {
+      registration: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'matricula',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
         readonly: true,
       },
-      {
+      cpf: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'cpf',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
         readonly: true,
       },
-      {
+      course: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'curso',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
         readonly: true,
       },
-      {
+      email: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'email',
         rules: [
-          (v: string) => !!v || 'Este campo é obrigatório',
-          (v: string) => /.+@.+\..+/.test(v) || 'E-mail inválido',
+          (v: FieldValue) => !!v || 'Este campo é obrigatório',
+          (v: FieldValue) => /.+@.+\..+/.test(v as string) || 'E-mail inválido',
         ],
         errorMessages: [],
         required: true,
         readonly: true,
       },
-      {
-        type: 'text',
-        counter: 255,
-        fieldValue: '',
-        label: 'email',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
-        errorMessages: [],
-        required: true,
-        readonly: true,
-      },
-      {
+      telephone: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'celular',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
         readonly: true,
       },
-    ],
+    },
   },
   concedente: {
     sectionTitle: 'Concedente',
-    sectionData: [
-      {
+    sectionData: {
+      grantingCompanyName: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Razão Social',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      grantingCompanyCNPJ: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'CNPJ',
-        rules: [(v: string) => validateCnpj(v)],
+        rules: [(v: FieldValue) => validateCnpj(v as string)],
         errorMessages: [],
         required: true,
       },
-      {
+      grantingCompanyPostalCode: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'CEP',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      grantingCompanyDistrict: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Bairro',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      grantingCompanyCity: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Cidade',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      grantingCompanyState: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'UF',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      grantingCompanyAddress: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Endereço',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      grantingCompanyEmail: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Email',
         rules: [
-          (v: string) => !!v || 'Este campo é obrigatório',
-          (v: string) => /.+@.+\..+/.test(v) || 'E-mail inválido',
+          (v: FieldValue) => !!v || 'Este campo é obrigatório',
+          (v: FieldValue) => /.+@.+\..+/.test(v as string) || 'E-mail inválido',
         ],
         errorMessages: [],
         required: true,
       },
-      {
+      grantingCompanyLegalRepresentative: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Representante Legal',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      legalRepresentativeRole: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Função',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      supervisor: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Supervisor',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      supervisorPosition: {
         type: 'text',
         counter: 255,
         fieldValue: '',
         label: 'Cargo',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-    ],
+    },
   },
   condicoesEstagio: {
     sectionTitle: 'Condições do Estágio',
-    sectionData: [
-      {
+    sectionData: {
+      isMandatory: {
         type: 'radio-group',
         fieldValue: '1',
         label: 'Tipo de Estágio',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
         options: [
@@ -256,71 +251,71 @@ export const formTermCommitmentInitialState = {
           { label: 'Não-Obrigatório', value: '2' },
         ],
       },
-      {
+      internshipStartDate: {
         type: 'date',
         fieldValue: '',
         label: 'Início de Estágio',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      internshipEndDate: {
         type: 'date',
         fieldValue: '',
         label: 'Término de Estágio',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      internshipStartTime: {
         type: 'time',
         fieldValue: '',
         label: 'Horario Inicial',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      internshipEndTime: {
         type: 'time',
         fieldValue: '',
         label: 'Horario Final',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      weeklyWorkload: {
         type: 'number',
         fieldValue: '',
         label: 'Jornada Semanal',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      internshipGrant: {
         type: 'number',
         fieldValue: '',
         label: 'Bolsa Auxílio (R$)',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      transportationAllowance: {
         type: 'number',
         fieldValue: '',
         label: 'Auxílio Transporte (R$)',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-      {
+      internshipActivityPlan: {
         type: 'multi-text-field',
         fieldValue: ['', '', '', '', ''],
         labelFields: 'Atividade',
         label: 'Plano de atividades de Estágio',
-        rules: [(v: string) => !!v || 'Este campo é obrigatório'],
+        rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
         errorMessages: [],
         required: true,
       },
-    ],
+    },
   },
 };

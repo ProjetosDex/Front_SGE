@@ -3,9 +3,9 @@ export interface CreateTermCommitmentDTO {
 
   internshipEndDate: Date;
 
-  internshipStartTime: Date;
+  internshipStartTime: string;
 
-  internshipEndTime: Date;
+  internshipEndTime: string;
 
   weeklyWorkload: number;
 

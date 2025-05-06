@@ -1,48 +1,8 @@
+import type { FormTceData } from '@/presentation/types/term-commitment-form-types';
 import type { CreateTermCommitmentDTO } from '../dtos/createTermCommitmentDto';
-
-type FieldValue = string | number | boolean | null | undefined | string[];
-
-type SectionData<T = string> = {
-  type: string;
-  counter?: number | boolean;
-  fieldValue: FieldValue;
-  labelFields?: string;
-  label: string;
-  rules: Array<(value: T) => string | boolean>;
-  errorMessages: string[];
-  required: boolean;
-  readonly?: boolean;
-  options?: Array<{ label: string; value: string }>;
-};
-
-type FormSectionData = {
-  sectionTitle: string;
-  sectionData: Array<SectionData>;
-};
-
-type FormTceData = {
-  aluno: FormSectionData;
-  concedente: FormSectionData;
-  condicoesEstagio: FormSectionData;
-};
 
 export class TermCommitmentFormRequestMapper {
   static toRequest(termFormData: FormTceData): CreateTermCommitmentDTO {
-    const getValue = (section: string, label: string): any => {
-      const sectionData =
-        termFormData[section as keyof FormTceData].sectionData;
-      const field = sectionData.find((item) => item.label === label);
-
-      if (!field) {
-        console.warn(
-          `Field with label "${label}" not found in section "${section}". Returning null.`,
-        );
-        return null;
-      }
-
-      return field.fieldValue;
-    };
-
     const parseDate = (dateString: string): Date => {
       return new Date(dateString);
     };
@@ -61,84 +21,79 @@ export class TermCommitmentFormRequestMapper {
       );
     };
 
-    const internshipStartDate = getValue(
-      'condicoesEstagio',
-      'Início de Estágio',
-    ) as string;
-    const internshipEndDate = getValue(
-      'condicoesEstagio',
-      'Término de Estágio',
-    ) as string;
-    const internshipStartTime = getValue(
-      'condicoesEstagio',
-      'Horario Inicial',
-    ) as string;
-    const internshipEndTime = getValue(
-      'condicoesEstagio',
-      'Horario Final',
-    ) as string;
-    const weeklyWorkload = getValue(
-      'condicoesEstagio',
-      'Jornada Semanal',
-    ) as number;
-    const isMandatoryValue = getValue(
-      'condicoesEstagio',
-      'Tipo de Estágio',
-    ) as string; // Use string, then convert to boolean
-    const internshipGrant = getValue(
-      'condicoesEstagio',
-      'Bolsa Auxílio (R$)',
-    ) as number;
-    const transportationAllowance = getValue(
-      'condicoesEstagio',
-      'Auxílio Transporte (R$)',
-    ) as number;
-    const internshipActivityPlan = getValue(
-      'condicoesEstagio',
-      'Plano de atividades de Estágio',
-    ) as string[];
+    const internshipStartDate =
+      termFormData.condicoesEstagio.sectionData['internshipStartDate']
+        .fieldValue;
+    const internshipEndDate =
+      termFormData.condicoesEstagio.sectionData['internshipEndDate'].fieldValue;
+    const internshipStartTime =
+      termFormData.condicoesEstagio.sectionData['internshipStartTime']
+        .fieldValue;
+    const internshipEndTime =
+      termFormData.condicoesEstagio.sectionData['internshipEndTime'].fieldValue;
+    const weeklyWorkload =
+      termFormData.condicoesEstagio.sectionData['weeklyWorkload'].fieldValue;
+    const isMandatoryValue =
+      termFormData.condicoesEstagio.sectionData['isMandatory'].fieldValue;
+    const internshipGrant =
+      termFormData.condicoesEstagio.sectionData['internshipGrant'].fieldValue;
+    const transportationAllowance =
+      termFormData.condicoesEstagio.sectionData['transportationAllowance']
+        .fieldValue;
+    const internshipActivityPlan =
+      termFormData.condicoesEstagio.sectionData['internshipActivityPlan']
+        .fieldValue;
 
-    const grantingCompanyName = getValue(
-      'concedente',
-      'Razão Social',
-    ) as string;
-    const grantingCompanyCNPJ = getValue('concedente', 'CNPJ') as string;
-    const grantingCompanyPostalCode = getValue('concedente', 'CEP') as string;
-    const grantingCompanyDistrict = getValue('concedente', 'Bairro') as string;
-    const grantingCompanyCity = getValue('concedente', 'Cidade') as string;
-    const grantingCompanyState = getValue('concedente', 'UF') as string;
-    const grantingCompanyAddress = getValue('concedente', 'Endereço') as string;
-    const grantingCompanyEmail = getValue('concedente', 'Email') as string;
-    const grantingCompanyLegalRepresentative = getValue(
-      'concedente',
-      'Representante Legal',
-    ) as string;
-    const legalRepresentativeRole = getValue('concedente', 'Função') as string;
-    const supervisor = getValue('concedente', 'Supervisor') as string;
-    const supervisorPosition = getValue('concedente', 'Cargo') as string;
+    const grantingCompanyName =
+      termFormData.concedente.sectionData['grantingCompanyName'].fieldValue;
+    const grantingCompanyCNPJ =
+      termFormData.concedente.sectionData['grantingCompanyCNPJ'].fieldValue;
+    const grantingCompanyPostalCode =
+      termFormData.concedente.sectionData['grantingCompanyPostalCode']
+        .fieldValue;
+    const grantingCompanyDistrict =
+      termFormData.concedente.sectionData['grantingCompanyDistrict'].fieldValue;
+    const grantingCompanyCity =
+      termFormData.concedente.sectionData['grantingCompanyCity'].fieldValue;
+    const grantingCompanyState =
+      termFormData.concedente.sectionData['grantingCompanyState'].fieldValue;
+    const grantingCompanyAddress =
+      termFormData.concedente.sectionData['grantingCompanyAddress'].fieldValue;
+    const grantingCompanyEmail =
+      termFormData.concedente.sectionData['grantingCompanyEmail'].fieldValue;
+    const grantingCompanyLegalRepresentative =
+      termFormData.concedente.sectionData['grantingCompanyLegalRepresentative']
+        .fieldValue;
+    const legalRepresentativeRole =
+      termFormData.concedente.sectionData['legalRepresentativeRole'].fieldValue;
+    const supervisor =
+      termFormData.concedente.sectionData['supervisor'].fieldValue;
+    const supervisorPosition =
+      termFormData.concedente.sectionData['supervisorPosition'].fieldValue;
 
     return {
-      internshipStartDate: parseDate(internshipStartDate),
-      internshipEndDate: parseDate(internshipEndDate),
-      internshipStartTime: parseTime(internshipStartTime),
-      internshipEndTime: parseTime(internshipEndTime),
-      weeklyWorkload: weeklyWorkload,
+      internshipStartDate: parseDate(internshipStartDate as string),
+      internshipEndDate: parseDate(internshipEndDate as string),
+      internshipStartTime: internshipStartTime as string,
+      internshipEndTime: internshipEndTime as string,
+      weeklyWorkload: Number(weeklyWorkload),
       isMandatory: isMandatoryValue === '1',
-      internshipGrant: internshipGrant,
-      transportationAllowance: transportationAllowance,
-      internshipActivityPlan: internshipActivityPlan,
-      grantingCompanyName: grantingCompanyName,
-      grantingCompanyCNPJ: grantingCompanyCNPJ,
-      grantingCompanyPostalCode: grantingCompanyPostalCode,
-      grantingCompanyDistrict: grantingCompanyDistrict,
-      grantingCompanyCity: grantingCompanyCity,
-      grantingCompanyState: grantingCompanyState,
-      grantingCompanyAddress: grantingCompanyAddress,
-      grantingCompanyEmail: grantingCompanyEmail,
-      grantingCompanyLegalRepresentative: grantingCompanyLegalRepresentative,
-      legalRepresentativeRole: legalRepresentativeRole,
-      supervisor: supervisor,
-      supervisorPosition: supervisorPosition,
+      internshipGrant: Number(internshipGrant),
+      transportationAllowance: Number(transportationAllowance),
+      internshipActivityPlan: internshipActivityPlan as string[],
+      grantingCompanyName: grantingCompanyName as string,
+      grantingCompanyCNPJ: grantingCompanyCNPJ as string,
+      grantingCompanyPostalCode: grantingCompanyPostalCode as string,
+      grantingCompanyDistrict: grantingCompanyDistrict as string,
+      grantingCompanyCity: grantingCompanyCity as string,
+      grantingCompanyState: grantingCompanyState as string,
+      grantingCompanyAddress: grantingCompanyAddress as string,
+      grantingCompanyEmail: grantingCompanyEmail as string,
+      grantingCompanyLegalRepresentative:
+        grantingCompanyLegalRepresentative as string,
+      legalRepresentativeRole: legalRepresentativeRole as string,
+      supervisor: supervisor as string,
+      supervisorPosition: supervisorPosition as string,
     };
   }
 }

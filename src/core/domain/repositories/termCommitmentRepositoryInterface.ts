@@ -1,6 +1,10 @@
 import type { CreateTermCommitmentDTO } from '@/core/application/dtos/createTermCommitmentDto';
-import type { TermCommitment } from '../entities/termCommitment.entity';
 
 export interface TermCommitmentRepositoryInterface {
   create(createTermCommitmentDTO: CreateTermCommitmentDTO): any;
+  uploadTermCommitmentPdf(pfFormData: FormData): Promise<string>;
+  registerFileIdTermCommitment(
+    internshipProcessId: string,
+    fileId: string,
+  ): Promise<void>;
 }

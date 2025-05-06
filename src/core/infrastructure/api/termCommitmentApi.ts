@@ -5,7 +5,7 @@ export class TermCommitmentApi {
   private controllerUrl = '/termCommitment';
 
   async createTermCommitment(createTermCommitmentDTO: CreateTermCommitmentDTO) {
-    axiosBackEndClient.post(
+    return axiosBackEndClient.post(
       `${this.controllerUrl}/create`,
       createTermCommitmentDTO,
     );

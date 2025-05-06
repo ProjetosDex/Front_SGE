@@ -6,34 +6,79 @@ export type FieldValue =
   | undefined
   | string[];
 
-export type SectionData<T = string> = {
+export type SectionData<V = FieldValue, R = (value: V) => string | boolean> = {
   type: string;
   counter?: number | boolean;
-  fieldValue: FieldValue;
+  fieldValue: V;
   labelFields?: string;
   label: string;
-  rules: Array<(value: T) => string | boolean>;
+  rules: Array<R>;
   errorMessages: string[];
   required: boolean;
   readonly?: boolean;
   options?: Array<{ label: string; value: string }>;
 };
 
-export type FormSectionData = {
-  sectionTitle: string;
-  sectionData: Array<SectionData>;
-};
+export type SectionDataMap<
+  V = FieldValue,
+  R = (value: V) => string | boolean,
+> = Record<string, SectionData<V, R>>;
 
-export type FormTceData = {
-  aluno: FormSectionData;
-  concedente: FormSectionData;
-  condicoesEstagio: FormSectionData;
+export type FormSectionData<V = Record<string, SectionData>> = {
+  sectionTitle: string;
+  sectionData: V;
 };
 
 export type FormSectionKey = keyof FormTceData;
 
 export type FieldUpdateEvent = {
-  index: number;
+  sectionIndex: FormSectionKey;
+  fieldIndex:
+    | keyof StudentSectionData
+    | keyof InternshipGrantorSectionData
+    | keyof InternshipConditionsSectionData;
   subInputIndex?: number;
   value: FieldValue;
+};
+
+export type FormTceData = {
+  aluno: FormSectionData<StudentSectionData>;
+  concedente: FormSectionData<InternshipGrantorSectionData>;
+  condicoesEstagio: FormSectionData<InternshipConditionsSectionData>;
+};
+
+export type StudentSectionData = {
+  name: SectionData;
+  registration: SectionData;
+  cpf: SectionData;
+  course: SectionData;
+  email: SectionData;
+  telephone: SectionData;
+};
+
+export type InternshipGrantorSectionData = {
+  grantingCompanyName: SectionData;
+  grantingCompanyCNPJ: SectionData;
+  grantingCompanyPostalCode: SectionData;
+  grantingCompanyDistrict: SectionData;
+  grantingCompanyCity: SectionData;
+  grantingCompanyState: SectionData;
+  grantingCompanyAddress: SectionData;
+  grantingCompanyEmail: SectionData;
+  grantingCompanyLegalRepresentative: SectionData;
+  legalRepresentativeRole: SectionData;
+  supervisor: SectionData;
+  supervisorPosition: SectionData;
+};
+
+export type InternshipConditionsSectionData = {
+  isMandatory: SectionData;
+  internshipStartDate: SectionData;
+  internshipEndDate: SectionData;
+  internshipStartTime: SectionData;
+  internshipEndTime: SectionData;
+  weeklyWorkload: SectionData;
+  internshipGrant: SectionData;
+  transportationAllowance: SectionData;
+  internshipActivityPlan: SectionData;
 };
