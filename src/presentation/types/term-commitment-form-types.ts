@@ -42,9 +42,17 @@ export type FieldUpdateEvent = {
 };
 
 export type FormTceData = {
-  aluno: FormSectionData<StudentSectionData>;
-  concedente: FormSectionData<InternshipGrantorSectionData>;
-  condicoesEstagio: FormSectionData<InternshipConditionsSectionData>;
+  sections: {
+    aluno: FormSectionData<StudentSectionData>;
+    concedente: FormSectionData<InternshipGrantorSectionData>;
+    condicoesEstagio: FormSectionData<InternshipConditionsSectionData>;
+  };
+  showSuccessModal: boolean;
+  showErrorModal: boolean;
+  messageError: string | null;
+  loading: boolean;
+  filePathId: string | null;
+  createdInternshipProcessId: string | null;
 };
 
 export type StudentSectionData = {

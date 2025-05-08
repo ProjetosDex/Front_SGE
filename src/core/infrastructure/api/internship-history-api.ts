@@ -1,3 +1,7 @@
+import {
+  InternshipProcessMovement,
+  InternshipProcessStatus,
+} from '@/core/domain/entities/internshipProcess.entity';
 import axiosBackEndClient from '../interceptors/axios-backend-client';
 
 export class InternshipHistoryApi {
@@ -8,9 +12,10 @@ export class InternshipHistoryApi {
     filePathId: string,
     fileType: string,
   ) {
+    console.log('recebi o id do processo ' + internshipProcessId);
     axiosBackEndClient.post(`${this.controllerUrl}/register`, {
-      status: '',
-      movement: '',
+      status: InternshipProcessStatus.IN_PROGRESS,
+      movement: InternshipProcessMovement.STAGE_START,
       idInternshipProcess: internshipProcessId,
       files: [
         {

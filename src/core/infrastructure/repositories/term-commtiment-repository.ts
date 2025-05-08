@@ -1,5 +1,5 @@
 import type { CreateTermCommitmentDTO } from '@/core/application/dtos/createTermCommitmentDto';
-import type { TermCommitmentRepositoryInterface } from '@/core/domain/repositories/termCommitmentRepositoryInterface';
+import type { TermCommitmentRepositoryInterface } from '@/core/domain/repositories/term-commitment-repository-interface';
 import type { FileApi } from '../api/file-api';
 import { TermCommitmentApi } from '../api/termCommitmentApi';
 import type { InternshipHistoryApi } from '../api/internship-history-api';
@@ -17,8 +17,11 @@ export class TermCommitmentRepository
   }
 
   async create(createTermCommitmentDTO: CreateTermCommitmentDTO) {
-    console.log(createTermCommitmentDTO);
-    return this.termCommitmentApi.createTermCommitment(createTermCommitmentDTO);
+    const response = await this.termCommitmentApi.createTermCommitment(
+      createTermCommitmentDTO,
+    );
+
+    return response.data;
   }
 
   async registerFileIdTermCommitment(

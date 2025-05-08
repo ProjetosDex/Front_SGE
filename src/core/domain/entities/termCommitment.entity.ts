@@ -6,10 +6,10 @@ export interface TermCommitment {
   insuranceCompanyName: string;
   advisorProfessor: string;
   siapeCode: string;
-  internshipStartDate: Date;
-  internshipEndDate: Date;
-  internshipStartTime: Date;
-  internshipEndTime: Date;
+  internshipStartDate: string;
+  internshipEndDate: string;
+  internshipStartTime: string;
+  internshipEndTime: string;
   weeklyWorkload: number;
   isMandatory: boolean;
   internshipGrant: number;

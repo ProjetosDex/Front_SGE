@@ -9,7 +9,7 @@
     <div class="form">
       <v-form>
         <FormSection
-          v-for="(section, sectionKey) in formSectionsData"
+          v-for="(section, sectionKey) in sections"
           :key="sectionKey"
           :section-data="section.sectionData"
           :section-title="section.sectionTitle"
@@ -37,7 +37,12 @@
           ></v-progress-circular>
         </v-overlay>
       </v-form>
-      <v-dialog v-model="successDialog" persistent width="640">
+      <v-dialog
+        v-if="showSuccessModal && filePathId && createdInternshipProcessId"
+        v-model="showSuccessModal"
+        persistent
+        width="640"
+      >
         <v-card>
           <v-card-title>
             <span class="text-h5">Novo Processo Gerado!</span>
@@ -49,7 +54,7 @@
           </v-card-text>
           <section class="uploaded-area">
             <download-file-button
-              :fileId="myProcessId"
+              :fileId="filePathId"
               fileType="Termo_compromisso"
             ></download-file-button>
           </section>
@@ -60,7 +65,7 @@
               variant="text"
               :to="{
                 name: 'detalhamentoProcessoEstagio',
-                params: { id: registeredInternshipProcessId },
+                params: { id: createdInternshipProcessId },
               }"
             >
               Acompanhar Processo
@@ -68,14 +73,19 @@
             <v-btn
               color="#078640"
               variant="text"
-              @click="successDialog = false"
+              @click="showSuccessModal = false"
             >
               Voltar
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="intervalErrorDialog" persistent width="640">
+      <v-dialog
+        v-if="messageError && showErrorModal"
+        v-model="showErrorModal"
+        persistent
+        width="640"
+      >
         <v-card>
           <v-card-title>
             <span class="text-h5" style="color: red"
@@ -88,7 +98,7 @@
             <v-btn
               color="#078640"
               variant="text"
-              @click="intervalErrorDialog = false"
+              @click="showErrorModal = false"
             >
               Ok
             </v-btn>
@@ -99,27 +109,27 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import downloadFileButton from '../download-file-button/download-file-button.vue';
 import FormSection from '@/presentation/molecules/form-section/form-section.vue';
 import { createTermCommitmentBloc } from '@/presentation/blocs/termCommitment/create-term-commitment-bloc';
 
 const formTermCommitmentBloc = createTermCommitmentBloc();
 
-const formSectionsData = formTermCommitmentBloc.getAllSections();
-
-const myProcessId = ref('');
-const successDialog = ref(false);
-const intervalErrorDialog = ref(false);
-const messageError = ref('');
 const props = defineProps<{
   internshipProcessId?: string;
   termCommitmentId?: string;
 }>();
 
-const registeredInternshipProcessId = ref('');
-
-const loading = ref(false);
+const {
+  sections,
+  filePathId,
+  showSuccessModal,
+  showErrorModal,
+  loading,
+  messageError,
+  createdInternshipProcessId,
+} = formTermCommitmentBloc.getState();
 
 const handleFieldUpdate = (fieldUpdateEvent: any, section: any) => {
   formTermCommitmentBloc.updateFormField({
@@ -130,162 +140,32 @@ const handleFieldUpdate = (fieldUpdateEvent: any, section: any) => {
 };
 
 const updateTCE = async () => {
-  console.log('implementing');
+  await formTermCommitmentBloc.updateTermCommitment();
 };
 
 const registerTCE = async () => {
-  formTermCommitmentBloc.createTermCommitment();
+  await formTermCommitmentBloc.createTermCommitment();
 };
 
 onMounted(async () => {
+  //apenas um mock para testar a criação do termo remover para produção
   window.addEventListener('keydown', (event: any) => {
     if (event.ctrlKey && event.key === 'm') {
       event.preventDefault();
       formTermCommitmentBloc.fillFormMock();
     }
   });
-  // if (props.internshipProcessId) {
-  //   const email = userFromStore.value.email;
-  //   const responseUser = await axiosBackEndInstance.get(`/user/findByEmail`, {
-  //     params: { email },
-  //     headers: {
-  //       Authorization: `Bearer ${getAccessToken()}`,
-  //     },
-  //   });
 
-  //   const responseInternshipProcess = await axiosBackEndInstance.get(
-  //     `/processo/estagio/${props.internshipProcessId}`,
-  //     {
-  //       headers: {
-  //         Authorization: `Bearer ${getAccessToken()}`,
-  //       },
-  //     },
-  //   );
-
-  //   const internshipProcess: InternshipProcess = responseInternshipProcess.data;
-  //   console.log(internshipProcess);
-  //   const user: User = responseUser.data;
-
-  //   formData.value.aluno.nome.fieldValue = user.name;
-  //   formData.value.aluno.cpf.fieldValue = user.cpf;
-  //   formData.value.aluno.matricula.fieldValue = user.registration;
-  //   formData.value.aluno.celular.fieldValue = user.telephone;
-  //   formData.value.aluno.curso.fieldValue = user.courseStudy;
-  //   formData.value.aluno.email.fieldValue = user.email;
-  //   //infos termo
-  //   console.log(internshipProcess.termCommitment.razaoSocialConcedente);
-  //   formData.value.concedente.razaoSocial.fieldValue =
-  //     internshipProcess.termCommitment.razaoSocialConcedente;
-
-  //   formData.value.concedente.cnpj.fieldValue =
-  //     internshipProcess.termCommitment.cnpjConcedente;
-
-  //   formData.value.concedente.cep.fieldValue =
-  //     internshipProcess.termCommitment.cepConcedente;
-
-  //   formData.value.concedente.bairro.fieldValue =
-  //     internshipProcess.termCommitment.bairroConcedente;
-
-  //   formData.value.concedente.cidade.fieldValue =
-  //     internshipProcess.termCommitment.cidadeConcedente;
-
-  //   formData.value.concedente.uf.fieldValue =
-  //     internshipProcess.termCommitment.ufConcedente;
-
-  //   formData.value.concedente.endereco.fieldValue =
-  //     internshipProcess.termCommitment.enderecoConcedente;
-
-  //   formData.value.concedente.email.fieldValue =
-  //     internshipProcess.termCommitment.emailConcedente;
-
-  //   formData.value.concedente.representanteLegal.fieldValue =
-  //     internshipProcess.termCommitment.representanteLegalConcedente;
-
-  //   formData.value.concedente.funcao.fieldValue =
-  //     internshipProcess.termCommitment.funcaoRepresentanteLegalConcedente;
-
-  //   formData.value.concedente.supervisor.fieldValue =
-  //     internshipProcess.termCommitment.supervisor;
-
-  //   formData.value.concedente.cargo.fieldValue =
-  //     internshipProcess.termCommitment.cargoSupervisor;
-
-  //   selectedValue.value =
-  //     internshipProcess.termCommitment.isObrigatorio === true ? '1' : '0';
-
-  //   formData.value.condicoesEstagio.dataInicioEstagio.fieldValue =
-  //     internshipProcess.termCommitment.dataInicioEstagio.split('T')[0];
-
-  //   formData.value.condicoesEstagio.dataFimEstagio.fieldValue =
-  //     internshipProcess.termCommitment.dataFimEstagio.split('T')[0];
-
-  //   formData.value.condicoesEstagio.horaInicioEstagio.fieldValue =
-  //     internshipProcess.termCommitment.horaInicioEstagio
-  //       .split('T')[1]
-  //       .substring(0, 5);
-
-  //   formData.value.condicoesEstagio.horaFimEstagio.fieldValue =
-  //     internshipProcess.termCommitment.horaFimEstagio
-  //       .split('T')[1]
-  //       .substring(0, 5);
-
-  //   formData.value.condicoesEstagio.jornadaSemanal.fieldValue = String(
-  //     internshipProcess.termCommitment.jornadaSemanal,
-  //   );
-
-  //   formData.value.condicoesEstagio.bolsaAuxilio.fieldValue = String(
-  //     internshipProcess.termCommitment.bolsaAuxilio,
-  //   );
-
-  //   formData.value.condicoesEstagio.auxilioTransporte.fieldValue = String(
-  //     internshipProcess.termCommitment.auxilioTransporte,
-  //   );
-
-  //   formData.value.condicoesEstagio.planoAtividadesEstagio.fieldValue =
-  //     formatActivityPlans(
-  //       internshipProcess.termCommitment.planoAtividadesEstagio,
-  //     );
-
-  //   userId.value = user.id;
-  // } else {
-  //   const email = userFromStore.value.email;
-  //   const response = await axiosBackEndInstance.get(`/user/findByEmail`, {
-  //     params: { email },
-  //     headers: {
-  //       Authorization: `Bearer ${getAccessToken()}`,
-  //     },
-  //   });
-
-  //   const user: User = response.data;
-
-  //   formData.value.aluno.nome.fieldValue = user.name;
-  //   formData.value.aluno.cpf.fieldValue = user.cpf;
-  //   formData.value.aluno.matricula.fieldValue = user.registration;
-  //   formData.value.aluno.celular.fieldValue = user.telephone;
-  //   formData.value.aluno.curso.fieldValue = user.courseStudy;
-  //   formData.value.aluno.email.fieldValue = user.email;
-  //   userId.value = user.id;
-  // }
+  if (!props.internshipProcessId) {
+    await formTermCommitmentBloc.loadUserData();
+  } else {
+    await formTermCommitmentBloc.fillDataUpdateForm(props.internshipProcessId);
+  }
 });
 
-// const consultEnderecoByCep = async () => {
-//   loading.value = true;
-
-//   try {
-//     const reponse = await axios.get(
-//       `https://viacep.com.br/ws/${formData.value.concedente.cep.fieldValue}/json`,
-//     );
-
-//     formData.value.concedente.bairro.fieldValue = reponse.data.bairro;
-//     formData.value.concedente.endereco.fieldValue = `${reponse.data.complemento} ${reponse.data.logradouro}`;
-//     formData.value.concedente.uf.fieldValue = reponse.data.uf;
-//     formData.value.concedente.cidade.fieldValue = reponse.data.localidade;
-//   } catch (error) {
-//     console.error('Error ao consultar endereço pelo CEP:', error);
-//   } finally {
-//     loading.value = false;
-//   }
-// };
+const consultEnderecoByCep = async () => {
+  formTermCommitmentBloc.fillFormAddressFieldsByCep();
+};
 </script>
 
 <style src="./style.scss" lang="scss" scoped></style>

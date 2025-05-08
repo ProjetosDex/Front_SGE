@@ -1,4 +1,4 @@
-import type { TermCommitmentRepositoryInterface } from '@/core/domain/repositories/termCommitmentRepositoryInterface';
+import type { TermCommitmentRepositoryInterface } from '@/core/domain/repositories/term-commitment-repository-interface';
 
 export class UploadTermCommitmentPdfUseCase {
   constructor(

@@ -1,9 +1,8 @@
 import { jsPDF } from 'jspdf';
-import backgroundImage from '@/assets/brasaooficial.png';
-import logo from '@/assets/logo_pdf_ifpa.png';
-import type { CreatedTermCommitment } from '@/api/createdTermCommitment.interface';
+import backgroundImage from '@/assets/images/brasaooficial.png';
+import logo from '@/assets/images/logo_pdf_ifpa.png';
 
-export function generatePDF(dadosTce: CreatedTermCommitment): Promise<Blob> {
+export function generatePDF(dadosTce: any): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const doc = new jsPDF();
 
