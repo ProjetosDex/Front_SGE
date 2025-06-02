@@ -25,19 +25,23 @@
         title="Inicio de Estágio"
         value="inicioEstagio"
         to="/inicio/estagio"
-        v-if="userRole == `ALUNO`"
+        v-if="userRole == UserRole.STUDENT"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-calendar"
         title="Fim de Estágio"
         value="fimEstagio"
         to="/fim/estagio"
-        v-if="userRole == `ALUNO`"
+        v-if="userRole == UserRole.STUDENT"
       ></v-list-item>
 
       <v-list-item
         prepend-icon="mdi-update"
-        title="Acompanhar Processos"
+        :title="
+          userRole === UserRole.STUDENT
+            ? 'Meus Processos'
+            : 'Acompanhar Processos'
+        "
         value="acompanharProcessos"
         to="/acompanhar/processos"
       ></v-list-item>
@@ -58,8 +62,10 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
+import { UserRole } from '@/core/domain/entities/user.entity';
 const authStore = useAuthStore();
 const userRole = ref(authStore.userRole);
+console.log('eu sou a role');
 console.log(userRole.value);
 const drawer = ref(true);
 const rail = ref(true);

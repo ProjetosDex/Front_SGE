@@ -116,6 +116,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 import axiosFileApiInstance from '@/core/infrastructure/interceptors/axios-files-interceptor';
 import { FileType } from '@/core/domain/entities/file.entity';
+import { UserRole } from '@/core/domain/entities/user.entity';
 const userAuthStore = useAuthStore();
 
 // Referências e estados necessários
@@ -450,14 +451,14 @@ const registerFiles = async () => {
 
   if (
     props.uploadOption === 'FIM_ESTAGIO' &&
-    userAuthStore.userRole === 'ALUNO'
+    userAuthStore.userRole === UserRole.STUDENT
   ) {
     await finalizarProcesso();
   }
 
   if (
     props.uploadOption === InternshipProcessMovement.STAGE_START &&
-    userAuthStore.userRole === 'ALUNO'
+    userAuthStore.userRole === UserRole.STUDENT
   ) {
     console.log('funcionou');
     console.log(uploadFiles.value[0].path);
@@ -468,8 +469,8 @@ const registerFiles = async () => {
     window.location.reload();
   } else if (
     props.uploadOption === InternshipProcessMovement.STAGE_START &&
-    (userAuthStore.userRole === 'FUNCIONARIO' ||
-      userAuthStore.userRole === 'ADMINISTRADOR')
+    (userAuthStore.userRole === UserRole.EMPLOYEE ||
+      userAuthStore.userRole === UserRole.ADMINISTRATOR)
   ) {
     console.log('aqui ?');
     await axiosBackEndInstance.post('/termCommitment/validate/assign', {
@@ -480,8 +481,8 @@ const registerFiles = async () => {
     window.location.reload();
   } else if (
     props.uploadOption === 'FIM_ESTAGIO' &&
-    (userAuthStore.userRole === 'FUNCIONARIO' ||
-      userAuthStore.userRole === 'ADMINISTRADOR')
+    (userAuthStore.userRole === UserRole.EMPLOYEE ||
+      userAuthStore.userRole === UserRole.ADMINISTRATOR)
   ) {
     console.log(props.internshipProcessId);
     await axiosBackEndInstance.post(

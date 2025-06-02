@@ -5,7 +5,10 @@ import type {
   FieldUpdateEvent,
   FormTceData,
 } from '../../types/term-commitment-form-types';
-import { formTermCommitmentInitialState } from './termCommitment.state';
+import {
+  formTermCommitmentInitialState,
+  getInitialState,
+} from './termCommitment.state';
 import type { UploadTermCommitmentPdfUseCase } from '@/core/application/usecases/upload-term-commitment-pdf-usecase';
 import type { RegisterTermCommitmentFileIdInProcessHistoryUseCase } from '@/core/application/usecases/register-term-commitment-file-id-in-process-history-usecase';
 import { TermCommitmentFormRequestMapper } from '@/core/application/mappers/termCommitmentFormRequestMapper';
@@ -26,10 +29,18 @@ export class TermCommitmentBloc {
     private readonly getUserUseCase: GetUserUseCase,
     private readonly findInternshipProcessByIdUseCase: FindInternshipProcessByIdUseCase,
     private readonly getAddressInformationByPostalCodeUseCase: GetAddressInformationByPostalCodeUseCase,
-  ) {}
+  ) {
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyPostalCode'
+    ].onBlur = this.fillFormAddressFieldsByCep.bind(this);
+  }
 
   getState() {
     return toRefs(this.state);
+  }
+
+  clearState() {
+    Object.assign(this.state, getInitialState());
   }
 
   async createTermCommitment() {
@@ -37,22 +48,37 @@ export class TermCommitmentBloc {
       this.state,
     );
 
-    const createdTerm = await this.createTermCommitmentUseCase.handle(
-      termCommitmentRequestBody,
-    );
+    try {
+      this.state.loading = true;
 
-    const internshipProcessId = createdTerm.internshipProcessId;
+      const createdTerm = await this.createTermCommitmentUseCase.handle(
+        termCommitmentRequestBody,
+      );
 
-    const termPdfFormData =
-      await this.generateTermCommitmentPdfUseCase.handle(createdTerm);
+      const internshipProcessId = createdTerm.internshipProcessId;
 
-    const filePathId =
-      await this.uploadTermCommitmentPdfUseCase.handle(termPdfFormData);
+      const termPdfFormData =
+        await this.generateTermCommitmentPdfUseCase.handle(createdTerm);
 
-    await this.registerTermCommitmentFileIdInProcessHistoryUseCase.handle(
-      internshipProcessId,
-      filePathId,
-    );
+      const filePathId =
+        await this.uploadTermCommitmentPdfUseCase.handle(termPdfFormData);
+
+      await this.registerTermCommitmentFileIdInProcessHistoryUseCase.handle(
+        internshipProcessId,
+        filePathId,
+      );
+
+      this.state.loading = false;
+      this.state.filePathId = filePathId;
+      this.state.createdInternshipProcessId = internshipProcessId;
+      console.log(this.state);
+      this.state.showSuccessModal = true;
+      this.clearState();
+    } catch (error: any) {
+      this.state.loading = false;
+      this.state.showErrorModal = true;
+      this.state.messageError = error.message;
+    }
   }
 
   async updateTermCommitment() {
@@ -103,75 +129,93 @@ export class TermCommitmentBloc {
     const internshipProcess =
       await this.findInternshipProcessByIdUseCase.handle(internshipProcessId);
 
-    this.state.concedente.sectionData['grantingCompanyName'].fieldValue =
-      internshipProcess.termCommitment.grantingCompanyName;
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyName'
+    ].fieldValue = internshipProcess.termCommitment.grantingCompanyName;
 
-    this.state.concedente.sectionData['grantingCompanyCNPJ'].fieldValue =
-      internshipProcess.termCommitment.grantingCompanyCNPJ;
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyCNPJ'
+    ].fieldValue = internshipProcess.termCommitment.grantingCompanyCNPJ;
 
-    this.state.concedente.sectionData['grantingCompanyPostalCode'].fieldValue =
-      internshipProcess.termCommitment.grantingCompanyPostalCode;
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyPostalCode'
+    ].fieldValue = internshipProcess.termCommitment.grantingCompanyPostalCode;
 
-    this.state.concedente.sectionData['grantingCompanyDistrict'].fieldValue =
-      internshipProcess.termCommitment.grantingCompanyDistrict;
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyDistrict'
+    ].fieldValue = internshipProcess.termCommitment.grantingCompanyDistrict;
 
-    this.state.concedente.sectionData['grantingCompanyCity'].fieldValue =
-      internshipProcess.termCommitment.grantingCompanyCity;
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyCity'
+    ].fieldValue = internshipProcess.termCommitment.grantingCompanyCity;
 
-    this.state.concedente.sectionData['grantingCompanyState'].fieldValue =
-      internshipProcess.termCommitment.grantingCompanyState;
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyState'
+    ].fieldValue = internshipProcess.termCommitment.grantingCompanyState;
 
-    this.state.concedente.sectionData['grantingCompanyAddress'].fieldValue =
-      internshipProcess.termCommitment.grantingCompanyAddress;
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyAddress'
+    ].fieldValue = internshipProcess.termCommitment.grantingCompanyAddress;
 
-    this.state.concedente.sectionData['grantingCompanyEmail'].fieldValue =
-      internshipProcess.termCommitment.grantingCompanyEmail;
+    this.state.sections.concedente.sectionData[
+      'grantingCompanyEmail'
+    ].fieldValue = internshipProcess.termCommitment.grantingCompanyEmail;
 
-    this.state.concedente.sectionData[
+    this.state.sections.concedente.sectionData[
       'grantingCompanyLegalRepresentative'
     ].fieldValue =
       internshipProcess.termCommitment.grantingCompanyLegalRepresentative;
 
-    this.state.concedente.sectionData['legalRepresentativeRole'].fieldValue =
-      internshipProcess.termCommitment.legalRepresentativeRole;
+    this.state.sections.concedente.sectionData[
+      'legalRepresentativeRole'
+    ].fieldValue = internshipProcess.termCommitment.legalRepresentativeRole;
 
-    this.state.concedente.sectionData['supervisor'].fieldValue =
+    this.state.sections.concedente.sectionData['supervisor'].fieldValue =
       internshipProcess.termCommitment.supervisor;
 
-    this.state.concedente.sectionData['supervisorPosition'].fieldValue =
-      internshipProcess.termCommitment.supervisorPosition;
+    this.state.sections.concedente.sectionData[
+      'supervisorPosition'
+    ].fieldValue = internshipProcess.termCommitment.supervisorPosition;
 
     //condicoes estagio
-    this.state.condicoesEstagio.sectionData['isMandatory'].fieldValue =
+    this.state.sections.condicoesEstagio.sectionData['isMandatory'].fieldValue =
       internshipProcess.termCommitment.isMandatory;
 
-    this.state.condicoesEstagio.sectionData['internshipStartDate'].fieldValue =
+    this.state.sections.condicoesEstagio.sectionData[
+      'internshipStartDate'
+    ].fieldValue =
       internshipProcess.termCommitment.internshipStartDate.split('T')[0];
 
-    this.state.condicoesEstagio.sectionData['internshipEndDate'].fieldValue =
+    this.state.sections.condicoesEstagio.sectionData[
+      'internshipEndDate'
+    ].fieldValue =
       internshipProcess.termCommitment.internshipEndDate.split('T')[0];
 
-    this.state.condicoesEstagio.sectionData['internshipStartTime'].fieldValue =
-      internshipProcess.termCommitment.internshipStartTime
-        .split('T')[1]
-        .substring(0, 5);
+    this.state.sections.condicoesEstagio.sectionData[
+      'internshipStartTime'
+    ].fieldValue = internshipProcess.termCommitment.internshipStartTime
+      .split('T')[1]
+      .substring(0, 5);
 
-    this.state.condicoesEstagio.sectionData['internshipEndTime'].fieldValue =
-      internshipProcess.termCommitment.internshipEndTime
-        .split('T')[1]
-        .substring(0, 5);
+    this.state.sections.condicoesEstagio.sectionData[
+      'internshipEndTime'
+    ].fieldValue = internshipProcess.termCommitment.internshipEndTime
+      .split('T')[1]
+      .substring(0, 5);
 
-    this.state.condicoesEstagio.sectionData['weeklyWorkload'].fieldValue =
-      internshipProcess.termCommitment.weeklyWorkload;
+    this.state.sections.condicoesEstagio.sectionData[
+      'weeklyWorkload'
+    ].fieldValue = internshipProcess.termCommitment.weeklyWorkload;
 
-    this.state.condicoesEstagio.sectionData['internshipGrant'].fieldValue =
-      internshipProcess.termCommitment.internshipGrant;
+    this.state.sections.condicoesEstagio.sectionData[
+      'internshipGrant'
+    ].fieldValue = internshipProcess.termCommitment.internshipGrant;
 
-    this.state.condicoesEstagio.sectionData[
+    this.state.sections.condicoesEstagio.sectionData[
       'transportationAllowance'
     ].fieldValue = internshipProcess.termCommitment.transportationAllowance;
 
-    this.state.condicoesEstagio.sectionData[
+    this.state.sections.condicoesEstagio.sectionData[
       'internshipActivityPlan'
     ].fieldValue = this.formatActivityPlans(
       internshipProcess.termCommitment.internshipActivityPlan,
@@ -188,29 +232,33 @@ export class TermCommitmentBloc {
         .fieldValue;
 
     if (cep) {
-      this.state.loading = true;
-      const addressData =
-        await this.getAddressInformationByPostalCodeUseCase.handle(
-          cep as string,
-        );
+      try {
+        this.state.loading = true;
+        const addressData =
+          await this.getAddressInformationByPostalCodeUseCase.handle(
+            cep as string,
+          );
 
-      this.state.sections.concedente.sectionData[
-        'grantingCompanyDistrict'
-      ].fieldValue = addressData.bairro;
+        this.state.sections.concedente.sectionData[
+          'grantingCompanyDistrict'
+        ].fieldValue = addressData.bairro;
 
-      this.state.sections.concedente.sectionData[
-        'grantingCompanyCity'
-      ].fieldValue = addressData.localidade;
+        this.state.sections.concedente.sectionData[
+          'grantingCompanyCity'
+        ].fieldValue = addressData.localidade;
 
-      this.state.sections.concedente.sectionData[
-        'grantingCompanyState'
-      ].fieldValue = addressData.uf;
+        this.state.sections.concedente.sectionData[
+          'grantingCompanyState'
+        ].fieldValue = addressData.uf;
 
-      this.state.sections.concedente.sectionData[
-        'grantingCompanyAddress'
-      ].fieldValue = `${addressData.complemento} ${addressData.logradouro}`;
+        this.state.sections.concedente.sectionData[
+          'grantingCompanyAddress'
+        ].fieldValue = `${addressData.complemento} ${addressData.logradouro}`;
 
-      this.state.loading = false;
+        this.state.loading = false;
+      } catch (error) {
+        this.state.loading = false;
+      }
     }
   }
 

@@ -112,7 +112,7 @@
 import { onMounted } from 'vue';
 import downloadFileButton from '../download-file-button/download-file-button.vue';
 import FormSection from '@/presentation/molecules/form-section/form-section.vue';
-import { createTermCommitmentBloc } from '@/presentation/blocs/termCommitment/create-term-commitment-bloc';
+import { createTermCommitmentBloc } from '@/presentation/blocs/termCommitment-form/create-term-commitment-bloc';
 
 const formTermCommitmentBloc = createTermCommitmentBloc();
 
@@ -162,10 +162,6 @@ onMounted(async () => {
     await formTermCommitmentBloc.fillDataUpdateForm(props.internshipProcessId);
   }
 });
-
-const consultEnderecoByCep = async () => {
-  formTermCommitmentBloc.fillFormAddressFieldsByCep();
-};
 </script>
 
 <style src="./style.scss" lang="scss" scoped></style>

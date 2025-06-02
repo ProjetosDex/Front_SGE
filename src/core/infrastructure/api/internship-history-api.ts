@@ -12,7 +12,6 @@ export class InternshipHistoryApi {
     filePathId: string,
     fileType: string,
   ) {
-    console.log('recebi o id do processo ' + internshipProcessId);
     axiosBackEndClient.post(`${this.controllerUrl}/register`, {
       status: InternshipProcessStatus.IN_PROGRESS,
       movement: InternshipProcessMovement.STAGE_START,

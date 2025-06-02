@@ -78,6 +78,7 @@
                 sectionData[key].fieldValue,
               )
             "
+            @blur="sectionData[key].onBlur ? sectionData[key].onBlur() : null"
             @update:modelValue="(value) => handleFieldUpdate(key, value)"
           ></v-text-field>
         </v-col>
@@ -106,6 +107,7 @@ export type SectionData<V = FieldValue, R = (value: V) => string | boolean> = {
   required: boolean;
   readonly?: boolean;
   options?: Array<{ label: string; value: string }>;
+  onBlur?: () => void;
 };
 
 export type SectionDataMap<

@@ -3,12 +3,12 @@
     <div class="title">
       <h1 class="title1">Grid de Processos</h1>
     </div>
-    <DataTable></DataTable>
+    <SearchDataTable />
   </div>
 </template>
 
 <script setup lang="ts">
-import DataTable from '@/components/data-table/data-table.vue';
+import SearchDataTable from '@/presentation/organisms/search-data-table/search-data-table.vue';
 </script>
 
 <style lang="scss" scoped>

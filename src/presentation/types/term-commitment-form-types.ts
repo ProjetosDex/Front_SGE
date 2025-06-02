@@ -17,6 +17,7 @@ export type SectionData<V = FieldValue, R = (value: V) => string | boolean> = {
   required: boolean;
   readonly?: boolean;
   options?: Array<{ label: string; value: string }>;
+  onBlur?: () => void;
 };
 
 export type SectionDataMap<

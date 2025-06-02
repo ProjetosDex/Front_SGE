@@ -1,4 +1,4 @@
-export interface AddressCepResponse {
+export interface AddressCepResponseDto {
   cep: string;
   logradouro: string;
   complemento: string;

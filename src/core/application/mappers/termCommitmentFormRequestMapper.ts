@@ -22,54 +22,71 @@ export class TermCommitmentFormRequestMapper {
     };
 
     const internshipStartDate =
-      termFormData.condicoesEstagio.sectionData['internshipStartDate']
+      termFormData.sections.condicoesEstagio.sectionData['internshipStartDate']
         .fieldValue;
     const internshipEndDate =
-      termFormData.condicoesEstagio.sectionData['internshipEndDate'].fieldValue;
+      termFormData.sections.condicoesEstagio.sectionData['internshipEndDate']
+        .fieldValue;
     const internshipStartTime =
-      termFormData.condicoesEstagio.sectionData['internshipStartTime']
+      termFormData.sections.condicoesEstagio.sectionData['internshipStartTime']
         .fieldValue;
     const internshipEndTime =
-      termFormData.condicoesEstagio.sectionData['internshipEndTime'].fieldValue;
+      termFormData.sections.condicoesEstagio.sectionData['internshipEndTime']
+        .fieldValue;
     const weeklyWorkload =
-      termFormData.condicoesEstagio.sectionData['weeklyWorkload'].fieldValue;
+      termFormData.sections.condicoesEstagio.sectionData['weeklyWorkload']
+        .fieldValue;
     const isMandatoryValue =
-      termFormData.condicoesEstagio.sectionData['isMandatory'].fieldValue;
+      termFormData.sections.condicoesEstagio.sectionData['isMandatory']
+        .fieldValue;
     const internshipGrant =
-      termFormData.condicoesEstagio.sectionData['internshipGrant'].fieldValue;
+      termFormData.sections.condicoesEstagio.sectionData['internshipGrant']
+        .fieldValue;
     const transportationAllowance =
-      termFormData.condicoesEstagio.sectionData['transportationAllowance']
-        .fieldValue;
+      termFormData.sections.condicoesEstagio.sectionData[
+        'transportationAllowance'
+      ].fieldValue;
     const internshipActivityPlan =
-      termFormData.condicoesEstagio.sectionData['internshipActivityPlan']
-        .fieldValue;
+      termFormData.sections.condicoesEstagio.sectionData[
+        'internshipActivityPlan'
+      ].fieldValue;
 
     const grantingCompanyName =
-      termFormData.concedente.sectionData['grantingCompanyName'].fieldValue;
+      termFormData.sections.concedente.sectionData['grantingCompanyName']
+        .fieldValue;
     const grantingCompanyCNPJ =
-      termFormData.concedente.sectionData['grantingCompanyCNPJ'].fieldValue;
+      termFormData.sections.concedente.sectionData['grantingCompanyCNPJ']
+        .fieldValue;
     const grantingCompanyPostalCode =
-      termFormData.concedente.sectionData['grantingCompanyPostalCode']
+      termFormData.sections.concedente.sectionData['grantingCompanyPostalCode']
         .fieldValue;
     const grantingCompanyDistrict =
-      termFormData.concedente.sectionData['grantingCompanyDistrict'].fieldValue;
-    const grantingCompanyCity =
-      termFormData.concedente.sectionData['grantingCompanyCity'].fieldValue;
-    const grantingCompanyState =
-      termFormData.concedente.sectionData['grantingCompanyState'].fieldValue;
-    const grantingCompanyAddress =
-      termFormData.concedente.sectionData['grantingCompanyAddress'].fieldValue;
-    const grantingCompanyEmail =
-      termFormData.concedente.sectionData['grantingCompanyEmail'].fieldValue;
-    const grantingCompanyLegalRepresentative =
-      termFormData.concedente.sectionData['grantingCompanyLegalRepresentative']
+      termFormData.sections.concedente.sectionData['grantingCompanyDistrict']
         .fieldValue;
+    const grantingCompanyCity =
+      termFormData.sections.concedente.sectionData['grantingCompanyCity']
+        .fieldValue;
+    const grantingCompanyState =
+      termFormData.sections.concedente.sectionData['grantingCompanyState']
+        .fieldValue;
+    const grantingCompanyAddress =
+      termFormData.sections.concedente.sectionData['grantingCompanyAddress']
+        .fieldValue;
+    const grantingCompanyEmail =
+      termFormData.sections.concedente.sectionData['grantingCompanyEmail']
+        .fieldValue;
+    const grantingCompanyLegalRepresentative =
+      termFormData.sections.concedente.sectionData[
+        'grantingCompanyLegalRepresentative'
+      ].fieldValue;
     const legalRepresentativeRole =
-      termFormData.concedente.sectionData['legalRepresentativeRole'].fieldValue;
+      termFormData.sections.concedente.sectionData['legalRepresentativeRole']
+        .fieldValue;
     const supervisor =
-      termFormData.concedente.sectionData['supervisor'].fieldValue;
+      termFormData.sections.concedente.sectionData['supervisor'].fieldValue;
     const supervisorPosition =
-      termFormData.concedente.sectionData['supervisorPosition'].fieldValue;
+      termFormData.sections.concedente.sectionData['supervisorPosition']
+        .fieldValue;
 
     return {
       internshipStartDate: parseDate(internshipStartDate as string),

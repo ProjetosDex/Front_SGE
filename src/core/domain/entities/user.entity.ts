@@ -1,3 +1,9 @@
+export enum UserRole {
+  STUDENT = 'STUDENT',
+  EMPLOYEE = 'EMPLOYEE',
+  ADMINISTRATOR = 'ADMINISTRATOR',
+}
+
 export interface User {
   id: string;
   name: string;

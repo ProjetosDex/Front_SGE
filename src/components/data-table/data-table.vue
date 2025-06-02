@@ -20,7 +20,7 @@
               </div>
               <div v-else-if="key === register.id">
                 <router-link
-                  v-if="userRole === 'ADMINISTRADOR'"
+                  v-if="userRole === UserRole.ADMINISTRATOR"
                   :to="{
                     name: 'detalhamentoProcessoEstagioDEX',
                     params: { id: register.id },
@@ -30,7 +30,7 @@
                 </router-link>
 
                 <router-link
-                  v-if="userRole === 'ALUNO'"
+                  v-if="userRole === UserRole.STUDENT"
                   :to="{
                     name: 'detalhamentoProcessoEstagio',
                     params: { id: register.id },
@@ -59,6 +59,7 @@
 </template>
 
 <script setup lang="ts">
+import { UserRole } from '@/core/domain/entities/user.entity';
 import dataTableMenu from '../data-table-menu/data-table-menu.vue';
 import { reactive, ref, watch } from 'vue';
 import { useDataTableStore } from '../../stores/processDataTable.store';
