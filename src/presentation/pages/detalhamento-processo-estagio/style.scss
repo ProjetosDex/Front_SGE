@@ -9,6 +9,10 @@
   margin: 2%;
 }
 
+.v-stepper .v-divider {
+  border-color: #333 !important; /* Cinza escuro */
+}
+
 .steps-container {
   display: flex;
   justify-content: space-between;

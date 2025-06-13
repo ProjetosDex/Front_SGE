@@ -20,6 +20,9 @@
         Explore as funcionalidades disponíveis e aproveite ao máximo as
         ferramentas que foram pensadas para facilitar sua jornada de estágio.
       </h2>
+      <br />
+      <v-btn color="#078640" @click="dialog = !dialog"> Guia do Sistema </v-btn>
+      <GuideModal v-model:dialog="dialog" />
     </div>
 
     <template v-for="(item, i) in items" :key="i">
@@ -30,7 +33,10 @@
 
 <script setup lang="ts">
 import CarouselItem from '@/presentation/molecules/carousel-item/carousel-item.vue';
+import GuideModal from '../guide-modal/guide-modal.vue';
+import { ref } from 'vue';
 
+const dialog = ref(false);
 const items = [
   {
     src: 'src/assets/images/ifpa-front.png',

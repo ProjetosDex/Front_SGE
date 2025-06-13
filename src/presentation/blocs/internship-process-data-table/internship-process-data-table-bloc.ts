@@ -1,3 +1,4 @@
+import { InternshipProcessDataTableMapper } from '@/core/application/mappers/internship-process-data-table-mapper';
 import type { GetPaginatedInternshipProcessUseCase } from '@/core/application/usecases/get-paginated-internship-process-usecase';
 import type { InternshipProcessDataTableState } from '@/presentation/types/internship-process-data-table-types';
 import type { Router } from 'vue-router';
@@ -15,7 +16,7 @@ export class InternshipProcessDataTableBloc {
 
   openInternshipProcessDetails(internshipProcessId: string) {
     this.router.push({
-      name: 'detalhamentoProcessoEstagioDEX',
+      name: 'detalhamentoProcessoEstagio',
       params: { id: internshipProcessId },
     });
   }
@@ -30,8 +31,10 @@ export class InternshipProcessDataTableBloc {
     const internshipProcess =
       await this.getPaginatedInternshipProcessUseCase.handle(filters);
 
-    console.log('eu sou o getPaginated');
-    console.log(internshipProcess);
+    const internshipProcessRegisters =
+      InternshipProcessDataTableMapper.toDataTable(internshipProcess);
+
+    this.internshipProcessDataTableState.setData(internshipProcessRegisters);
   }
 
   clearFilters() {

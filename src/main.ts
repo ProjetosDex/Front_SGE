@@ -11,9 +11,13 @@ import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VStepperVertical,
+  },
   directives,
 });
 

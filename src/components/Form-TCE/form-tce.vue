@@ -5,6 +5,7 @@
       <h1 class="title1">
         Formulário de Solicitação Do Termo de Compromisso de Estágio (TCE)
       </h1>
+      <v-btn density="compact" icon="mdi-help" color="#078640"></v-btn>
     </div>
     <div class="form">
       <v-form>

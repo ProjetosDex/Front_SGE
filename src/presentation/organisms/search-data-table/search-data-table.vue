@@ -9,8 +9,8 @@
     :headers="state.headers"
     :data="state.data"
     :search-value="state.searchValue"
-    :currentPage="state.currentPage"
-    :itemsPerPage="state.itemsPerPage"
+    :currentPage="state.filters.page"
+    :itemsPerPage="state.filters.perPage"
     @open-register-details="onOpenRegisterDetails"
   />
 </template>

@@ -2,41 +2,9 @@
   <div class="info-processo-container">
     <h1 class="title1">Processo De Estágio</h1>
     <v-container>
-      <div class="steps-container">
-        <div
-          v-for="(step, index) in steps"
-          :key="index"
-          class="step-item"
-          @click="updateCurrentStepContent(index)"
-        >
-          <div class="circle-container">
-            <div
-              :class="[
-                'circle',
-                stepClasses[step.status as keyof typeof stepClasses],
-              ]"
-            >
-              <template
-                v-if="step.status === InternshipProcessStatus.COMPLETED"
-              >
-                <v-icon small color="white">mdi-check</v-icon>
-              </template>
-              <template v-else>
-                {{ index + 1 }}
-              </template>
-            </div>
-            <div
-              v-if="index < steps.length - 1"
-              class="connector"
-              :style="connectorStyles[index]"
-            ></div>
-          </div>
-          <div class="step-text">
-            <div class="step-label">{{ step.label }}</div>
-            <div class="step-status">{{ step.status }}</div>
-          </div>
-        </div>
-      </div>
+      <StepProgressBar />
+
+      <br />
 
       <!-- Seção para exibir conteúdo com base na etapa atual -->
       <div class="step-content" v-if="currentStepContent">
@@ -180,6 +148,7 @@ import {
 import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 import InputFile from '@/components/input-file/input-file.vue';
 import { FileType } from '@/core/domain/entities/file.entity';
+import StepProgressBar from '@/presentation/organisms/step-progress-bar/step-progress-bar.vue';
 
 // Tipos para o conteúdo da etapa
 interface StepContent {

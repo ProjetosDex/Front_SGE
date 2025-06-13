@@ -16,9 +16,9 @@
         hidden
       />
       <div class="icon" @click="openFileInput">
-        <img src="@/assets/cloud-uploading.png" />
+        <img src="@/assets/images/cloud-uploading.png" />
       </div>
-      <p>Faça o Upload dos Arquivos Necessários</p>
+      <p style="text-align: center">Faça o Upload dos Arquivos Necessários</p>
     </form>
 
     <!-- Alerta de erro -->
@@ -82,7 +82,6 @@
         >Enviar Arquivos</v-btn
       >
     </div>
-    <div>{{ props.internshipProcessId }}</div>
   </div>
 </template>
 

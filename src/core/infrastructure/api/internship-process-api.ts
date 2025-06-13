@@ -15,6 +15,7 @@ export class InternshipProcessApi {
   async getPaginatedProcess(
     internshipProcessFilterDto: InternshipProcessFilterDto,
   ): Promise<InternshipProcess[]> {
+    console.log(JSON.stringify(internshipProcessFilterDto));
     const response = await axiosBackEndClient.post(
       `${this.controllerUrl}/filter`,
       internshipProcessFilterDto,

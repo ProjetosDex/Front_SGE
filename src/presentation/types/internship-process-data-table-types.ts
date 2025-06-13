@@ -23,11 +23,12 @@ export type InternshipProcessDataTable = {
   data: InternshipProcessRegisterData[];
   filters: InternshipProcessFilterDto;
   searchValue: string;
-  itemsPerPage: number;
-  currentPage: number;
 };
 
 export interface InternshipProcessDataTableState {
   state: InternshipProcessDataTable;
   clearFilters: () => void;
+  setData: (
+    internshipProcessRegisters: InternshipProcessRegisterData[],
+  ) => void;
 }

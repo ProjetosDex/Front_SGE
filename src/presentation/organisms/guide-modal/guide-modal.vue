@@ -1,6 +1,53 @@
-@import '@/assets/styles/scss/colors.scss';
-@import '@/assets/styles/scss/buttons.scss';
+<template>
+  <div class="container">
+    <v-dialog
+      class="guide-dialog"
+      v-model="localDialog"
+      persistent
+      width="1024"
+    >
+      <v-card class="guide-card">
+        <div>
+          <v-card-title>
+            <div class="title-card">
+              <span class="text-h5">Guia Visual do Sistema</span>
+              <v-btn
+                icon="$close"
+                size="small"
+                variant="text"
+                @click="closeDialog"
+              ></v-btn>
+            </div>
+          </v-card-title>
+          <StepGuide />
+        </div>
+      </v-card>
+    </v-dialog>
+  </div>
+</template>
 
+<script setup lang="ts">
+import StepGuide from '@/presentation/organisms/step-guide/step-guide.vue';
+import { defineProps, defineEmits, computed } from 'vue';
+
+const props = defineProps<{
+  dialog: boolean;
+}>();
+
+const emit = defineEmits(['update:dialog']);
+
+// Computed property to handle dialog state
+const localDialog = computed({
+  get: () => props.dialog,
+  set: (value) => emit('update:dialog', value),
+});
+
+function closeDialog() {
+  emit('update:dialog', false);
+}
+</script>
+
+<style scoped>
 * {
   margin: 50;
   padding: 0;
@@ -196,3 +243,4 @@
     height: 100%;
   }
 }
+</style>

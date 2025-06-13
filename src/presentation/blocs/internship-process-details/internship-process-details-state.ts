@@ -5,7 +5,7 @@ import type {
 import { defineStore } from 'pinia';
 import { reactive } from 'vue';
 
-export const useInternshipProcessDataTableState = defineStore(
+export const useInternshipProcessDetailsState = defineStore(
   'InternshipProcessDataTableStore',
   () => {
     const state: InternshipProcessDataTable = reactive({
@@ -68,7 +68,7 @@ export const useInternshipProcessDataTableState = defineStore(
       state.data = internshipProcessRegisters;
     };
 
-    const clearFilters = () => {
+    const clear = () => {
       (Object.keys(state.filters) as (keyof typeof state.filters)[]).forEach(
         (key) => {
           const subObject = state.filters[key];
@@ -86,7 +86,7 @@ export const useInternshipProcessDataTableState = defineStore(
     return {
       state,
       setData,
-      clearFilters,
+      clear,
     };
   },
 );
