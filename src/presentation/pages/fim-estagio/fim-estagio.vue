@@ -3,7 +3,13 @@
     <v-card class="table-container">
       <div class="title">
         <h1 class="title1">Solicitação de Fim de Estágio</h1>
-        <v-btn density="compact" icon="mdi-help" color="#078640"></v-btn>
+        <v-btn
+          density="compact"
+          icon="mdi-help"
+          color="#078640"
+          @click="dialog = !dialog"
+        ></v-btn>
+        <GuideModal v-model:dialog="dialog" :initial-step="'2'" />
       </div>
       <!-- <p>Faça Upload dos Arquivos Preenchidos para Solicitar o Atestado de Estágio</p> -->
 
@@ -63,12 +69,14 @@
 <script setup lang="ts">
 import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 import inputFile from '@/components/input-file/input-file.vue';
+import GuideModal from '@/presentation/organisms/guide-modal/guide-modal.vue';
 const uploadOption = InternshipProcessMovement.STAGE_END;
 // URL de upload
 const uploadUrl = 'upload/internship/evaluation';
 const getAccessToken = () => localStorage.getItem('access_token');
 const userAuthStore = useAuthStore();
 const userRole = ref(userAuthStore.userRole);
+const dialog = ref(false);
 
 // Arquivos modelo
 const modelFiles = [

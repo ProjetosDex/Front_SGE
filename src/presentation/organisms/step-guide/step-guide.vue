@@ -1,5 +1,5 @@
 <template>
-  <v-stepper class="stepper-full">
+  <v-stepper class="stepper-full" :model-value="initialStep">
     <template v-slot:default="{ prev, next }">
       <v-stepper-header class="step-header">
         <StepItem :title="'Início de estágio'" :value="'1'" />
@@ -297,6 +297,10 @@ const stepNavigationInternshipEndUploadFilesImages = computed(() =>
 const checkScreenSize = () => {
   isSmallScreen.value = window.innerWidth <= 768;
 };
+
+defineProps<{
+  initialStep?: string;
+}>();
 
 onMounted(() => {
   checkScreenSize();

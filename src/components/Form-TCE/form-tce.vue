@@ -5,7 +5,13 @@
       <h1 class="title1">
         Formulário de Solicitação Do Termo de Compromisso de Estágio (TCE)
       </h1>
-      <v-btn density="compact" icon="mdi-help" color="#078640"></v-btn>
+      <v-btn
+        density="compact"
+        icon="mdi-help"
+        color="#078640"
+        @click="dialog = !dialog"
+      ></v-btn>
+      <GuideModal v-model:dialog="dialog" />
     </div>
     <div class="form">
       <v-form>
@@ -110,10 +116,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import downloadFileButton from '../download-file-button/download-file-button.vue';
 import FormSection from '@/presentation/molecules/form-section/form-section.vue';
 import { createTermCommitmentBloc } from '@/presentation/blocs/termCommitment-form/create-term-commitment-bloc';
+import GuideModal from '@/presentation/organisms/guide-modal/guide-modal.vue';
 
 const formTermCommitmentBloc = createTermCommitmentBloc();
 
@@ -121,6 +128,8 @@ const props = defineProps<{
   internshipProcessId?: string;
   termCommitmentId?: string;
 }>();
+
+const dialog = ref(false);
 
 const {
   sections,

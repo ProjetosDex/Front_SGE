@@ -19,7 +19,7 @@
               ></v-btn>
             </div>
           </v-card-title>
-          <StepGuide />
+          <StepGuide :initial-step="initialStep" />
         </div>
       </v-card>
     </v-dialog>
@@ -32,6 +32,7 @@ import { defineProps, defineEmits, computed } from 'vue';
 
 const props = defineProps<{
   dialog: boolean;
+  initialStep?: string;
 }>();
 
 const emit = defineEmits(['update:dialog']);
