@@ -15,7 +15,11 @@ export const useInternshipProcessDataTableState = defineStore(
           align: 'center',
           key: 'student',
         },
-        { title: 'Matrícula', align: 'center', key: 'registration' },
+        {
+          title: 'Matrícula',
+          align: 'center',
+          key: 'academicRegistrationCode',
+        },
         { title: 'Concedente', align: 'center', key: 'internshipGrantor' },
         {
           title: 'Data Inicio',
@@ -39,7 +43,7 @@ export const useInternshipProcessDataTableState = defineStore(
         user: {
           name: null,
           cpf: null,
-          registration: null,
+          academicRegistrationCode: null,
           email: null,
           courseStudy: null,
           telephone: null,

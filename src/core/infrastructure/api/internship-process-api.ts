@@ -15,11 +15,24 @@ export class InternshipProcessApi {
   async getPaginatedProcess(
     internshipProcessFilterDto: InternshipProcessFilterDto,
   ): Promise<InternshipProcess[]> {
-    console.log(JSON.stringify(internshipProcessFilterDto));
     const response = await axiosBackEndClient.post(
       `${this.controllerUrl}/filter`,
       internshipProcessFilterDto,
     );
+    return response.data;
+  }
+
+  async getEligibleToEndInternshipProcess(): Promise<InternshipProcess[]> {
+    const response = await axiosBackEndClient.get(
+      'processo/estagio/elegible-for-completation',
+      {
+        params: {
+          page: 1,
+          pageSize: 10,
+        },
+      },
+    );
+
     return response.data;
   }
 }

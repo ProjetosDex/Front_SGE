@@ -1,67 +1,104 @@
 <template>
   <div class="download-container">
-    <!-- Ícone do arquivo e nome do arquivo (alinhados à esquerda) -->
     <div class="left-content">
       <v-icon class="file-icon">mdi-file</v-icon>
       <span class="file-name">{{ fileName }}</span>
     </div>
 
-    <a
-      :href="downloadLink"
-      :download="fileName"
-      class="download-link"
-      @click.prevent="handleDownload"
+    <v-btn
+      class="download-icon"
+      :loading="isDownloading"
+      :disabled="isDownloading"
+      @click="handleDownload"
     >
-      <v-btn class="download-icon">
-        <v-icon small>mdi-download</v-icon>
-      </v-btn>
-    </a>
+      <v-icon small>mdi-download</v-icon>
+    </v-btn>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { FileType } from '@/core/domain/entities/file.entity';
+import axiosBackEndClient from '@/core/infrastructure/interceptors/axios-backend-client';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
   fileId?: string;
   fileType?: string;
 }>();
 
-// Nome do arquivo (pode ser dinâmico)
+const isDownloading = ref(false);
+
 const fileName = computed(() => {
-  if (props.fileType === 'Termo_compromisso') {
-    return 'termo_compromisso.pdf';
-  } else if (props.fileType === 'Avaliacao') {
-    return 'avaliacao.pdf';
-  }
-  return 'arquivo.pdf'; // Nome padrão
+  const fileNames: Record<string, string> = {
+    [FileType.TERM_COMMITMENT]: 'termo_compromisso.pdf',
+    [FileType.SUPERVISOR_EVALUATION]: 'avaliacao.pdf',
+  };
+
+  return fileNames[props.fileType || ''] || 'arquivo.pdf';
 });
 
-// Link de download (dinâmico com base no fileType e fileId)
-const downloadLink = computed(() => {
-  if (props.fileType === 'Termo_compromisso') {
-    return `http://localhost:4001/file/download/term?path=${props.fileId}`;
-  } else if (props.fileType === 'Avaliacao') {
-    return `http://localhost:4001/file/download/internship/evaluation?path=${props.fileId}`;
-  }
-  return '#'; // Fallback caso o tipo não seja reconhecido
-});
+const downloadFile = (filename: string, blob?: Blob) => {
+  if (blob) {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-// Função para evitar o comportamento padrão do link e forçar o download
-const handleDownload = (event: Event) => {
-  if (downloadLink.value === '#') {
-    event.preventDefault(); // Evita o comportamento padrão se o link for inválido
-    console.error('Tipo de arquivo não reconhecido ou link inválido.');
+    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+  }
+};
+
+const fetchTermCommitmentFile = async () => {
+  try {
+    const response = await axiosBackEndClient.post(
+      '/file/download',
+      {
+        fileId: props.fileId,
+        fileType: props.fileType,
+      },
+      {
+        responseType: 'blob',
+      },
+    );
+
+    return new Blob([response.data], { type: 'application/pdf' });
+  } catch (error) {
+    isDownloading.value = false;
+  }
+};
+
+const handleDownload = async () => {
+  if (!props.fileId || !props.fileType) {
+    console.error('fileId e fileType são obrigatórios');
     return;
   }
 
-  // Cria um link temporário para forçar o download
-  const link = document.createElement('a');
-  link.href = downloadLink.value;
-  link.download = fileName.value;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  isDownloading.value = true;
+
+  try {
+    if (props.fileType === FileType.TERM_COMMITMENT) {
+      const blob = await fetchTermCommitmentFile();
+      downloadFile(fileName.value, blob);
+    }
+    switch (props.fileType) {
+      case FileType.TERM_COMMITMENT:
+        break;
+
+      case FileType.SUPERVISOR_EVALUATION:
+        // TODO: Implementar lógica específica para avaliação
+        throw new Error('Download de avaliação ainda não implementado');
+
+      default:
+        throw new Error(`Tipo de arquivo não suportado: ${props.fileType}`);
+    }
+  } catch (error) {
+    console.error('Erro ao fazer download do arquivo:', error);
+  } finally {
+    isDownloading.value = false;
+  }
 };
 </script>
 

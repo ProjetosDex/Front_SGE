@@ -76,11 +76,11 @@ const formInputs = reactive({
     placeholder: 'confirm password',
     value: '',
   },
-  registration: {
-    label: 'registration',
-    id: 'input-registration',
+  academicRegistrationCode: {
+    label: 'academicRegistrationCode',
+    id: 'input-academicRegistrationCode',
     type: 'number',
-    placeholder: 'your registration',
+    placeholder: 'your academic registration',
     value: '',
   },
   cpf: {

@@ -9,12 +9,28 @@ export enum InternshipProcessStatus {
   REJECTED = 'REJECTED',
 }
 
+export const InternshipProcessStatusTranslation: Record<
+  InternshipProcessStatus,
+  string
+> = {
+  [InternshipProcessStatus.COMPLETED]: 'Concluído',
+  [InternshipProcessStatus.UNDER_REVIEW]: 'Em análise',
+  [InternshipProcessStatus.IN_PROGRESS]: 'Em andamento',
+  [InternshipProcessStatus.REJECTED]: 'Rejeitado',
+};
+
 export enum InternshipProcessMovement {
   STAGE_START = 'INTERNSHIP_START',
-  RENEWAL = 'INTERNSHIP_RENEWAL',
   STAGE_END = 'INTERNSHIP_END',
-  CREDIT = 'CREDIT',
 }
+
+export const InternshipProcessMovementTranslation: Record<
+  InternshipProcessMovement,
+  string
+> = {
+  [InternshipProcessMovement.STAGE_START]: 'Início de estágio',
+  [InternshipProcessMovement.STAGE_END]: 'Fim de estágio',
+};
 
 export interface InternshipProcess {
   id: string;

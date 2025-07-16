@@ -218,3 +218,39 @@ section .row i {
   gap: 15px; /* Espaçamento entre os botões */
   margin-bottom: 20px; /* Espaçamento inferior entre os arquivos e o próximo conteúdo */
 }
+
+.div-reject-button {
+  text-align: center;
+}
+
+.reject-button {
+  display: inline-block;
+  padding: 12px 13px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  text-transform: none;
+  outline: none;
+  color: #fff;
+  background-color: #ce0707;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px #999;
+  margin-top: 1%;
+}
+
+.reject-button:hover {
+  background-color: #990808;
+}
+
+.reject-button:active {
+  background-color: #990808;
+  box-shadow: 0 5px #666;
+  transform: translateY(1px);
+}
+
+.reject-button {
+  text-align: center;
+  margin-bottom: 50px;
+}

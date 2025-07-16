@@ -9,6 +9,7 @@
     :subtitle="subtitle"
     :color="itemColor"
     class="step-item"
+    @group:selected="handleSelected"
   ></v-stepper-item>
 </template>
 
@@ -25,9 +26,18 @@ const props = defineProps<{
   subtitle?: string;
 }>();
 
+const emit = defineEmits(['step-selected']);
+
 const itemColor = computed(() => {
   return props.complete ? 'green' : '';
 });
+
+const handleSelected = () => {
+  emit('step-selected', {
+    value: props.value,
+    title: props.title,
+  });
+};
 </script>
 
 <style scoped>

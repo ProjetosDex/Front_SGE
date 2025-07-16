@@ -62,7 +62,7 @@
           <section class="uploaded-area">
             <download-file-button
               :fileId="filePathId"
-              fileType="Termo_compromisso"
+              :fileType="FileType.TERM_COMMITMENT"
             ></download-file-button>
           </section>
           <v-card-actions>
@@ -70,10 +70,7 @@
             <v-btn
               color="#078640"
               variant="text"
-              :to="{
-                name: 'detalhamentoProcessoEstagio',
-                params: { id: createdInternshipProcessId },
-              }"
+              @click="openInternshipProcessDetails"
             >
               Acompanhar Processo
             </v-btn>
@@ -121,6 +118,7 @@ import downloadFileButton from '../download-file-button/download-file-button.vue
 import FormSection from '@/presentation/molecules/form-section/form-section.vue';
 import { createTermCommitmentBloc } from '@/presentation/blocs/termCommitment-form/create-term-commitment-bloc';
 import GuideModal from '@/presentation/organisms/guide-modal/guide-modal.vue';
+import { FileType } from '@/core/domain/entities/file.entity';
 
 const formTermCommitmentBloc = createTermCommitmentBloc();
 
@@ -147,6 +145,12 @@ const handleFieldUpdate = (fieldUpdateEvent: any, section: any) => {
     fieldIndex: fieldUpdateEvent.fieldIndex,
     sectionIndex: section,
   });
+};
+
+const openInternshipProcessDetails = () => {
+  formTermCommitmentBloc.openInternshipProcessDetails(
+    createdInternshipProcessId.value as string,
+  );
 };
 
 const updateTCE = async () => {

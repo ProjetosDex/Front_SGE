@@ -2,7 +2,8 @@ import type { CreateTermCommitmentDTO } from '@/core/application/dtos/createTerm
 import type { TermCommitmentRepositoryInterface } from '@/core/domain/repositories/term-commitment-repository-interface';
 import type { FileApi } from '../api/file-api';
 import { TermCommitmentApi } from '../api/termCommitmentApi';
-import type { InternshipHistoryApi } from '../api/internship-history-api';
+import type { InternshipProcessHistoryApi } from '../api/internship-process-history-api';
+import type { AssignTermCommitmentDTO } from '@/core/application/dtos/assign-term-commitment-dto';
 
 export class TermCommitmentRepository
   implements TermCommitmentRepositoryInterface
@@ -10,7 +11,7 @@ export class TermCommitmentRepository
   constructor(
     private readonly termCommitmentApi: TermCommitmentApi,
     private readonly fileApi: FileApi,
-    private readonly internshipHistoryApi: InternshipHistoryApi,
+    private readonly internshipHistoryApi: InternshipProcessHistoryApi,
   ) {}
   async uploadTermCommitmentPdf(pfFormData: FormData) {
     return this.fileApi.uploadTermCommitmentPdf(pfFormData);
@@ -22,6 +23,10 @@ export class TermCommitmentRepository
     );
 
     return response.data;
+  }
+
+  async assignTermCommitment(assignTermCommitmentDTO: AssignTermCommitmentDTO) {
+    await this.termCommitmentApi.assignTermCommitment(assignTermCommitmentDTO);
   }
 
   async registerFileIdTermCommitment(

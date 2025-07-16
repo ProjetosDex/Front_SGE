@@ -331,7 +331,7 @@ export function generatePDF(dadosTce: any): Promise<Blob> {
       doc.text(matriculaAlunoLabel, foneX + 10, 141);
 
       doc.setFont('arial', 'normal');
-      const matriculaAluno = `${dadosTce.user.registration}`;
+      const matriculaAluno = `${dadosTce.user.academicRegistrationCode}`;
       doc.text(matriculaAluno, foneX + 10, 145);
 
       // Curso

@@ -3,7 +3,7 @@ import { GenerateTermCommitmentPdfUseCase } from '@/core/application/usecases/ge
 import { RegisterTermCommitmentFileIdInProcessHistoryUseCase } from '@/core/application/usecases/register-term-commitment-file-id-in-process-history-usecase';
 import { UploadTermCommitmentPdfUseCase } from '@/core/application/usecases/upload-term-commitment-pdf-usecase';
 import { FileApi } from '@/core/infrastructure/api/file-api';
-import { InternshipHistoryApi } from '@/core/infrastructure/api/internship-history-api';
+import { InternshipProcessHistoryApi } from '@/core/infrastructure/api/internship-process-history-api';
 import { TermCommitmentApi } from '@/core/infrastructure/api/termCommitmentApi';
 import { TermCommitmentRepository } from '@/core/infrastructure/repositories/term-commtiment-repository';
 import { FormTermCommitmentStore } from '@/stores/formTermCommitment/form-term-commitment-store';
@@ -17,20 +17,24 @@ import { InternshipProcessRepository } from '@/core/infrastructure/repositories/
 import { GetAddressInformationByPostalCodeUseCase } from '@/core/application/usecases/get-address-information-by-postal-code-usecase';
 import { AddressRepository } from '@/core/infrastructure/repositories/address-repository';
 import { AddressCepApi } from '@/core/infrastructure/api/address-cep-api';
+import { FormTermCommitmentState } from './state/term-commitment-form-state';
+import { useRouter } from 'vue-router';
 
 export function createTermCommitmentBloc() {
-  const formTermCommitmentStore = new FormTermCommitmentStore();
+  const formTermCommitmentState = new FormTermCommitmentState();
   const termCommitmentApi = new TermCommitmentApi();
   const userApi = new UserApi();
   const fileApi = new FileApi();
   const internshipProcessApi = new InternshipProcessApi();
-  const internshipHistoryApi = new InternshipHistoryApi();
+  const internshipHistoryApi = new InternshipProcessHistoryApi();
   const addressCepApi = new AddressCepApi();
   const termCommitmentRepository = new TermCommitmentRepository(
     termCommitmentApi,
     fileApi,
     internshipHistoryApi,
   );
+
+  const router = useRouter();
 
   const userRepository = new UserRepository(userApi);
 
@@ -44,18 +48,6 @@ export function createTermCommitmentBloc() {
     termCommitmentRepository,
   );
 
-  const uploadTermCommitmentPdfUseCase = new UploadTermCommitmentPdfUseCase(
-    termCommitmentRepository,
-  );
-
-  const registerTermCommitmentFileIdInProcessHistoryUseCase =
-    new RegisterTermCommitmentFileIdInProcessHistoryUseCase(
-      termCommitmentRepository,
-    );
-
-  const generateTermCommitmentPdfUseCase =
-    new GenerateTermCommitmentPdfUseCase();
-
   const getUserUseCase = new GetUserUseCase(userRepository);
 
   const findInternshipProcessByIdUseCase = new FindInternshipProcessByIdUseCase(
@@ -66,11 +58,9 @@ export function createTermCommitmentBloc() {
     new GetAddressInformationByPostalCodeUseCase(addressRepository);
 
   const formTermCommitmentBloc = new TermCommitmentBloc(
-    formTermCommitmentStore,
+    formTermCommitmentState,
+    router,
     createTermCommitmentUseCase,
-    generateTermCommitmentPdfUseCase,
-    uploadTermCommitmentPdfUseCase,
-    registerTermCommitmentFileIdInProcessHistoryUseCase,
     getUserUseCase,
     findInternshipProcessByIdUseCase,
     getAddressInformationByPostalCodeUseCase,

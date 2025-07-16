@@ -8,7 +8,8 @@ export interface User {
   id: string;
   name: string;
   cpf: string;
-  registration: string;
+  rg: string;
+  academicRegistrationCode: string;
   email: string;
   telephone: string;
   courseStudy: string;

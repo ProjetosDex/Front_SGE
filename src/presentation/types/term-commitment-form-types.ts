@@ -4,7 +4,8 @@ export type FieldValue =
   | boolean
   | null
   | undefined
-  | string[];
+  | string[]
+  | null[];
 
 export type SectionData<V = FieldValue, R = (value: V) => string | boolean> = {
   type: string;
@@ -58,8 +59,9 @@ export type FormTceData = {
 
 export type StudentSectionData = {
   name: SectionData;
-  registration: SectionData;
+  academicRegistrationCode: SectionData;
   cpf: SectionData;
+  rg: SectionData;
   course: SectionData;
   email: SectionData;
   telephone: SectionData;

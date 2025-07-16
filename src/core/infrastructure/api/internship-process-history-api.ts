@@ -3,8 +3,9 @@ import {
   InternshipProcessStatus,
 } from '@/core/domain/entities/internshipProcess.entity';
 import axiosBackEndClient from '../interceptors/axios-backend-client';
+import type { InternshipProcessHistory } from '@/core/domain/entities/internshipProcessHistory.entity';
 
-export class InternshipHistoryApi {
+export class InternshipProcessHistoryApi {
   private controllerUrl = '/internship-history';
 
   async registerFilePathIdInProcess(
@@ -23,5 +24,15 @@ export class InternshipHistoryApi {
         },
       ],
     });
+  }
+
+  async getInternshipHistoriesByInternshipProcessId(
+    internshipProcessId: string,
+  ): Promise<InternshipProcessHistory[]> {
+    const response = await axiosBackEndClient.get<InternshipProcessHistory[]>(
+      `${this.controllerUrl}/by-internship-process/${internshipProcessId}`,
+    );
+
+    return response.data;
   }
 }

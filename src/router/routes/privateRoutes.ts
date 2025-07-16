@@ -3,7 +3,7 @@ import HomePage from '@/presentation/pages/home-page/home-page.vue';
 import AcompanharProcessosDex from '@/presentation/pages/acompanhar-processos/visao-dex/acompanhar-processos.vue';
 import FimEstagioPage from '@/presentation/pages/fim-estagio/fim-estagio.vue';
 import DetalhamentoProcessoEstagio from '@/presentation/pages/detalhamento-processo-estagio/detalhamento-processo-estagio.vue';
-import FormTCE from '@/presentation/pages/FormTCE/form-tce.vue';
+import StartInternship from '@/presentation/pages/start-internship/start-internship.vue';
 
 export const privateRoutes = [
   {
@@ -22,7 +22,7 @@ export const privateRoutes = [
       {
         path: '/inicio/estagio',
         name: 'inicioEstagio',
-        component: FormTCE,
+        component: StartInternship,
         meta: {
           auth: true,
         },

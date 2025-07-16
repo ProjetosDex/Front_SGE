@@ -3,7 +3,7 @@ import type { InternshipProcessFilterDto } from '@/core/application/dtos/interns
 export type InternshipProcessRegisterData = {
   id: string;
   student: string;
-  registration: string;
+  academicRegistrationCode: string;
   internshipGrantor: string;
   internshipProcessStartDate: string;
   internshipProcessEndDate: string;

@@ -6,4 +6,5 @@ export interface InternshipProcessRepositoryInterface {
   getPaginatedProcess(
     internshipProcessFilterDto: InternshipProcessFilterDto,
   ): Promise<InternshipProcess[]>;
+  getEligibleToEndInternshipProcess(): Promise<InternshipProcess[]>;
 }

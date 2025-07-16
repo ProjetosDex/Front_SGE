@@ -1,15 +1,15 @@
 import type { InternshipProcess } from '@/core/domain/entities/internshipProcess.entity';
-import type { InternshipProcessRegisterData } from '@/presentation/types/internship-process-data-table-types';
 import {
   InternshipProcessMovementTranslations,
   InternshipProcessStatusTranslations,
 } from '../utils/translate-map-record-constant';
+import type { EndInternshipProcessDataTableDto } from '../dtos/end-internship-process-data-table-dto';
 
 //ajustar tipagens dps
-export class InternshipProcessDataTableMapper {
+export class EndInternshipProcessDataTableMapper {
   static toDataTable(
     internshipProcess: InternshipProcess[],
-  ): InternshipProcessRegisterData[] {
+  ): EndInternshipProcessDataTableDto[] {
     const formatDateToDDMMYYYY = (dateString: string) => {
       const date = new Date(dateString);
 
@@ -23,20 +23,16 @@ export class InternshipProcessDataTableMapper {
     return internshipProcess.map((internshipProcess) => {
       return {
         id: internshipProcess.id,
-        academicRegistrationCode:
-          internshipProcess.user.academicRegistrationCode,
-        student: internshipProcess.user.name,
-        internshipGrantor: internshipProcess.termCommitment.grantingCompanyName,
-        internshipProcessStartDate: formatDateToDDMMYYYY(
-          internshipProcess.termCommitment.internshipStartDate,
-        ),
-        internshipProcessEndDate: formatDateToDDMMYYYY(
-          internshipProcess.termCommitment.internshipEndDate,
-        ),
+        termCommitment: {
+          grantingCompanyName:
+            internshipProcess.termCommitment.grantingCompanyName,
+        },
         movement:
           InternshipProcessMovementTranslations[internshipProcess.movement],
+        startDateProcess: formatDateToDDMMYYYY(
+          internshipProcess.termCommitment.internshipStartDate,
+        ),
         status: InternshipProcessStatusTranslations[internshipProcess.status],
-        course: internshipProcess.user.courseStudy,
       };
     });
   }

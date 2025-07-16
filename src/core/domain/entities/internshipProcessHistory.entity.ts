@@ -2,8 +2,8 @@ import type { FileEntity } from './file.entity';
 
 export interface InternshipProcessHistory {
   id: string;
-  startDate: string | null;
-  endDate: string;
+  startDate: string;
+  endDate: string | null;
   status: string;
   movement: string;
   description: string;
