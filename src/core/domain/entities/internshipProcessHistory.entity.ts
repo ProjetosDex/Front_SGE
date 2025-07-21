@@ -11,4 +11,5 @@ export interface InternshipProcessHistory {
   fileId: string;
   files?: FileEntity[];
   idInternshipProcess: string;
+  createdAt: string;
 }

@@ -22,4 +22,16 @@ export class InternshipProcessRepository
   async getEligibleToEndInternshipProcess(): Promise<InternshipProcess[]> {
     return this.internshipProcessApi.getEligibleToEndInternshipProcess();
   }
+
+  async assignEndInternshipProcess(
+    internshipProcessId: string,
+    files: File[],
+    validate?: boolean,
+  ) {
+    return this.internshipProcessApi.assignEndInternshipProcess(
+      internshipProcessId,
+      files,
+      validate,
+    );
+  }
 }

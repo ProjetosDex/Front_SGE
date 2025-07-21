@@ -3,6 +3,7 @@ import { InternshipProcessRepository } from '@/core/infrastructure/repositories/
 import { EndInternshipProcessBloc } from './end-internship-process-bloc';
 import { GetEligibleInternshipFinalizationProcessesUseCase } from '@/core/application/usecases/get-eligible-internship-finalization-processes-usecase';
 import { useEndInternshipProcessState } from './state/end-internship-process-state';
+import { AssignEndInternshipProcessUseCase } from '@/core/application/usecases/assign-end-internship-process-usecase';
 
 export function createEndInternshipProcessBloc(): EndInternshipProcessBloc {
   const endInternshipProcessState = useEndInternshipProcessState();
@@ -14,9 +15,14 @@ export function createEndInternshipProcessBloc(): EndInternshipProcessBloc {
     new GetEligibleInternshipFinalizationProcessesUseCase(
       internshipProcessRepository,
     );
+
+  const assignEndInternshipProcessUseCase =
+    new AssignEndInternshipProcessUseCase(internshipProcessRepository);
+
   const endInternshipProcessBloc = new EndInternshipProcessBloc(
     endInternshipProcessState,
     getEligibleInternshipFinalizationProcessesUseCase,
+    assignEndInternshipProcessUseCase,
   );
 
   return endInternshipProcessBloc;

@@ -2,12 +2,13 @@ import { toRefs } from 'vue';
 import { type EndInternshipProcessStateInterface } from './state/end-internship-process-state-interface';
 import type { GetEligibleInternshipFinalizationProcessesUseCase } from '@/core/application/usecases/get-eligible-internship-finalization-processes-usecase';
 import type { EndInternshipProcessDataTableDto } from '@/core/application/dtos/end-internship-process-data-table-dto';
+import type { AssignEndInternshipProcessUseCase } from '@/core/application/usecases/assign-end-internship-process-usecase';
 
 export class EndInternshipProcessBloc {
   constructor(
     private readonly endInternshipProcessState: EndInternshipProcessStateInterface,
     private readonly getEligibleInternshipFinalizationProcessesUseCase: GetEligibleInternshipFinalizationProcessesUseCase,
-    private readonly assignEndInternshipProcessUseCase: any,
+    private readonly assignEndInternshipProcessUseCase: AssignEndInternshipProcessUseCase,
   ) {}
 
   getState() {

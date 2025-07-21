@@ -82,6 +82,22 @@
         </div>
 
         <div
+          v-if="
+            currentStep === Step.INTERNSHIP_END &&
+            (((userRole === 'ADMINISTRATOR' || userRole === 'EMPLOYEE') &&
+              internshipEndStepStatus ===
+                InternshipProcessStatus.UNDER_REVIEW) ||
+              (userRole === 'STUDENT' &&
+                internshipEndStepStatus === InternshipProcessStatus.REJECTED))
+          "
+        >
+          <input-file
+            :actionButtonLabel="'Enviar Certificado de Estágio'"
+            @uploadedFiles="registerAssignEndInternshipProcess"
+          />
+        </div>
+
+        <div
           class="div-reject-button"
           v-if="
             currentStep === Step.INTERNSHIP_START &&
@@ -126,21 +142,35 @@ const userRole = ref(authStore.userRole);
 const remark = ref('');
 
 const internshipStartStepStatus = computed(() => {
-  return steps.find((step) => step.index === Step.INTERNSHIP_START)?.status;
+  return steps.value.find((step) => step.index === Step.INTERNSHIP_START)
+    ?.status;
+});
+
+const internshipEndStepStatus = computed(() => {
+  return steps.value.find((step) => step.index === Step.INTERNSHIP_END)?.status;
 });
 
 const internshipProcessDetailsBloc = createInternshipProcessDetailsBloc();
 const { steps, selectedStep, currentStep } =
   internshipProcessDetailsBloc.getState();
 
-const selectedStepIndex = computed(() => selectedStep ?? currentStep);
+const selectedStepIndex = computed(
+  () => selectedStep.value ?? currentStep.value,
+);
 
 const selectedStepData = computed(() => {
-  return steps.find((step) => step.index === selectedStepIndex.value);
+  return steps.value.find((step) => step.index === selectedStepIndex.value);
 });
 
 const registerAssignTermCommitment = async (files: File[]) => {
   await internshipProcessDetailsBloc.registerAssignTermCommitment(
+    files,
+    userRole.value,
+  );
+};
+
+const registerAssignEndInternshipProcess = async (files: File[]) => {
+  await internshipProcessDetailsBloc.registerAssignEndInternshipProcess(
     files,
     userRole.value,
   );

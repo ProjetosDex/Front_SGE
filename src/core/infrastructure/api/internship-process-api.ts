@@ -24,7 +24,7 @@ export class InternshipProcessApi {
 
   async getEligibleToEndInternshipProcess(): Promise<InternshipProcess[]> {
     const response = await axiosBackEndClient.get(
-      'processo/estagio/elegible-for-completation',
+      `${this.controllerUrl}/elegible-for-completation`,
       {
         params: {
           page: 1,
@@ -34,5 +34,32 @@ export class InternshipProcessApi {
     );
 
     return response.data;
+  }
+
+  async assignEndInternshipProcess(
+    internshipProcessId: string,
+    files: File[],
+    validate?: boolean,
+  ) {
+    const formData = new FormData();
+    formData.append('internshipProcessId', internshipProcessId);
+
+    if (validate) {
+      formData.append('validate', 'true');
+    }
+
+    for (const file of files) {
+      formData.append('file', file);
+    }
+
+    await axiosBackEndClient.post(
+      `${this.controllerUrl}/assign-end-internship-process`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
   }
 }

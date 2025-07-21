@@ -9,6 +9,8 @@ import type { InternshipProcessHistory } from '@/core/domain/entities/internship
 import type { InternshipProcessMovement } from '@/core/domain/entities/internshipProcess.entity';
 import type { AssignTermCommitmentUseCase } from '@/core/application/usecases/assign-term-commitment-usecase';
 import { UserRole } from '@/core/domain/entities/user.entity';
+import { toRefs } from 'vue';
+import type { AssignEndInternshipProcessUseCase } from '@/core/application/usecases/assign-end-internship-process-usecase';
 
 export class InternshipProcessDetailsBloc {
   constructor(
@@ -18,6 +20,7 @@ export class InternshipProcessDetailsBloc {
     private readonly findInternshipProcessByIdUseCase: FindInternshipProcessByIdUseCase,
     private readonly getHistoriesByInternshipProcessIdUseCase: GetHistoriesByInternshipProcessIdUseCase,
     private readonly assignTermCommitmentUseCase: AssignTermCommitmentUseCase,
+    private readonly assignEndInternshipProcessUseCase: AssignEndInternshipProcessUseCase,
   ) {}
 
   async loadInternshipProcessDetails() {
@@ -33,7 +36,7 @@ export class InternshipProcessDetailsBloc {
   }
 
   getState() {
-    return this.internshipProcessDetailsState.state;
+    return toRefs(this.internshipProcessDetailsState.state);
   }
 
   getAuthState() {
@@ -81,6 +84,21 @@ export class InternshipProcessDetailsBloc {
     window.location.reload();
   }
 
+  async registerAssignEndInternshipProcess(
+    files: File[],
+    userRole?: string | null,
+  ) {
+    const validate =
+      userRole === UserRole.ADMINISTRATOR || userRole === UserRole.EMPLOYEE
+        ? true
+        : false;
+    await this.assignEndInternshipProcessUseCase.handle(
+      this.router.currentRoute.value.params.id as string,
+      files,
+      validate,
+    );
+  }
+
   getCurrentHistory(internshipProcessHistories: InternshipProcessHistory[]) {
     if (!internshipProcessHistories || internshipProcessHistories.length === 0)
       return null;
@@ -106,21 +124,13 @@ export class InternshipProcessDetailsBloc {
         (acc, history) => {
           const existing = acc[history.movement];
 
-          // Se não existe ainda, adiciona
           if (!existing) {
             acc[history.movement] = history;
             return acc;
           }
 
-          // Prioriza histórico sem endDate (em andamento)
-          if (!history.endDate && existing.endDate) {
-            acc[history.movement] = history;
-            return acc;
-          }
-
-          // Se ambos têm ou ambos não têm endDate, pega o mais recente
-          const historyDate = new Date(history.endDate || history.startDate);
-          const existingDate = new Date(existing.endDate || existing.startDate);
+          const historyDate = new Date(history.createdAt);
+          const existingDate = new Date(existing.createdAt);
 
           if (historyDate > existingDate) {
             acc[history.movement] = history;

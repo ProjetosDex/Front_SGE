@@ -13,6 +13,7 @@ import { AssignTermCommitmentUseCase } from '@/core/application/usecases/assign-
 import { TermCommitmentApi } from '@/core/infrastructure/api/termCommitmentApi';
 import { TermCommitmentRepository } from '@/core/infrastructure/repositories/term-commtiment-repository';
 import { FileApi } from '@/core/infrastructure/api/file-api';
+import { AssignEndInternshipProcessUseCase } from '@/core/application/usecases/assign-end-internship-process-usecase';
 
 export function createInternshipProcessDetailsBloc(): InternshipProcessDetailsBloc {
   const router = useRouter();
@@ -52,6 +53,9 @@ export function createInternshipProcessDetailsBloc(): InternshipProcessDetailsBl
     termCommitmentRepository,
   );
 
+  const assignEndInternshipProcessUseCase =
+    new AssignEndInternshipProcessUseCase(internshipProcessRepository);
+
   const internshipProcessDetailsBloc = new InternshipProcessDetailsBloc(
     router,
     internshipProcessDetailsState,
@@ -59,6 +63,7 @@ export function createInternshipProcessDetailsBloc(): InternshipProcessDetailsBl
     findInternshipProcessByIdUseCase,
     getHistoriesByInternshipProcessIdUseCase,
     assignTermCommitmentUseCase,
+    assignEndInternshipProcessUseCase,
   );
 
   return internshipProcessDetailsBloc;
