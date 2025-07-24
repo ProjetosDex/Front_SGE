@@ -63,7 +63,7 @@ export interface InternshipProcessDetailsStateInterface {
   getInternshipProcessId: () => void;
   setDocumentsInStep: (documents: FileEntity[], stepIndex: string) => void;
   setCurrentStep: (stepIndex: string) => void;
-  setSelectedStep: (stepIndex: string) => void;
+  setSelectedStep: (stepIndex: Step) => void;
   setStepData: (internshipProcessHistories: InternshipProcessHistory[]) => void;
   getDocumentsInStep: (stepIndex: string) => FileEntity[];
 }

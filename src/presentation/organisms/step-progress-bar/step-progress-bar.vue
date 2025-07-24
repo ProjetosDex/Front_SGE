@@ -3,6 +3,7 @@
     <v-stepper-header class="step-header">
       <template v-for="(step, index) in steps" :key="step.index">
         <StepItem
+          :index="index"
           :title="step.title"
           :subtitle="StatusTranslation[step.status as InternshipProcessStatus]"
           :value="step.index"
@@ -21,25 +22,24 @@
 import type { InternshipProcessStatus } from '@/core/domain/entities/internshipProcess.entity';
 import BaseDivider from '@/presentation/atoms/base-divider/base-divider.vue';
 import StepItem from '@/presentation/atoms/step-item/step-item.vue';
+import { Step } from '@/presentation/blocs/end-internship-process/state/end-internship-process-state-interface';
 import {
   StatusTranslation,
   type StepData,
 } from '@/presentation/blocs/internship-process-details/state/internship-process-details-state-interface';
 
-const props = defineProps<{
+defineProps<{
   steps: StepData[];
   currentStep: string;
 }>();
 
-const handleStepSelection = (stepData: { value: string; title: string }) => {
-  console.log('Step selecionado:', stepData);
+const emit = defineEmits<{
+  (event: 'updateSelectedStep', stepIndex: Step): void;
+}>();
 
-  switch (stepData.value) {
-    case '1':
-      break;
-    case '2':
-      break;
-  }
+const handleStepSelection = (stepData: { value: string; title: string }) => {
+  const stepIndex = stepData.value as Step;
+  emit('updateSelectedStep', stepIndex);
 };
 </script>
 

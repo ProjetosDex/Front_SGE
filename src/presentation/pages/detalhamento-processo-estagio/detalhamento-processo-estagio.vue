@@ -2,7 +2,11 @@
   <div class="info-processo-container">
     <h1 class="title1">Processo De Estágio</h1>
     <v-container>
-      <StepProgressBar :steps="steps" :currentStep="currentStep" />
+      <StepProgressBar
+        :steps="steps"
+        :currentStep="currentStep"
+        @updateSelectedStep="handleUpdateSelectedStep"
+      />
 
       <br />
 
@@ -69,8 +73,7 @@
               userRole === 'STUDENT') ||
               (internshipStartStepStatus !== InternshipProcessStatus.REJECTED &&
                 ((userRole === 'STUDENT' &&
-                  internshipStartStepStatus !==
-                    InternshipProcessStatus.UNDER_REVIEW) ||
+                  internshipStartStepStatus !== InternshipProcessStatus.UNDER_REVIEW) ||
                   userRole === 'ADMINISTRATOR' ||
                   userRole === 'EMPLOYEE')))
           "
@@ -85,8 +88,7 @@
           v-if="
             currentStep === Step.INTERNSHIP_END &&
             (((userRole === 'ADMINISTRATOR' || userRole === 'EMPLOYEE') &&
-              internshipEndStepStatus ===
-                InternshipProcessStatus.UNDER_REVIEW) ||
+              internshipEndStepStatus === InternshipProcessStatus.UNDER_REVIEW) ||
               (userRole === 'STUDENT' &&
                 internshipEndStepStatus === InternshipProcessStatus.REJECTED))
           "
@@ -128,22 +130,21 @@
 </template>
 
 <script lang="ts" setup>
-import StepProgressBar from '@/presentation/organisms/step-progress-bar/step-progress-bar.vue';
-import InputFile from '@/components/input-file/input-file.vue';
-import downloadFileButton from '@/components/download-file-button/download-file-button.vue';
-import { createInternshipProcessDetailsBloc } from '@/presentation/blocs/internship-process-details/create-internship-process-details-bloc';
-import { computed, onMounted, ref } from 'vue';
-import { Step } from '@/presentation/blocs/internship-process-details/state/internship-process-details-state-interface';
-import { useAuthStore } from '@/stores/auth.store';
-import { InternshipProcessStatus } from '@/core/domain/entities/internshipProcess.entity';
+import StepProgressBar from "@/presentation/organisms/step-progress-bar/step-progress-bar.vue";
+import InputFile from "@/components/input-file/input-file.vue";
+import downloadFileButton from "@/components/download-file-button/download-file-button.vue";
+import { createInternshipProcessDetailsBloc } from "@/presentation/blocs/internship-process-details/create-internship-process-details-bloc";
+import { computed, onMounted, ref } from "vue";
+import { Step } from "@/presentation/blocs/internship-process-details/state/internship-process-details-state-interface";
+import { useAuthStore } from "@/stores/auth.store";
+import { InternshipProcessStatus } from "@/core/domain/entities/internshipProcess.entity";
 
 const authStore = useAuthStore();
 const userRole = ref(authStore.userRole);
-const remark = ref('');
+const remark = ref("");
 
 const internshipStartStepStatus = computed(() => {
-  return steps.value.find((step) => step.index === Step.INTERNSHIP_START)
-    ?.status;
+  return steps.value.find((step) => step.index === Step.INTERNSHIP_START)?.status;
 });
 
 const internshipEndStepStatus = computed(() => {
@@ -151,38 +152,37 @@ const internshipEndStepStatus = computed(() => {
 });
 
 const internshipProcessDetailsBloc = createInternshipProcessDetailsBloc();
-const { steps, selectedStep, currentStep } =
-  internshipProcessDetailsBloc.getState();
+const { steps, selectedStep, currentStep } = internshipProcessDetailsBloc.getState();
 
-const selectedStepIndex = computed(
-  () => selectedStep.value ?? currentStep.value,
-);
+const selectedStepIndex = computed(() => selectedStep.value ?? currentStep.value);
 
 const selectedStepData = computed(() => {
   return steps.value.find((step) => step.index === selectedStepIndex.value);
 });
 
 const registerAssignTermCommitment = async (files: File[]) => {
-  await internshipProcessDetailsBloc.registerAssignTermCommitment(
-    files,
-    userRole.value,
-  );
+  await internshipProcessDetailsBloc.registerAssignTermCommitment(files, userRole.value);
 };
 
 const registerAssignEndInternshipProcess = async (files: File[]) => {
   await internshipProcessDetailsBloc.registerAssignEndInternshipProcess(
     files,
-    userRole.value,
+    userRole.value
   );
 };
 
+const handleUpdateSelectedStep = (stepIndex: Step) => {
+  console.log("Selected step index:", stepIndex);
+  internshipProcessDetailsBloc.updateSelectedStep(stepIndex);
+};
+
 const handleRejectTermCommitment = async () => {
-  if (remark.value.trim() === '') {
-    alert('Por favor, descreva o motivo da recusa.');
+  if (remark.value.trim() === "") {
+    alert("Por favor, descreva o motivo da recusa.");
     return;
   }
   await internshipProcessDetailsBloc.rejectTermCommitment(remark.value);
-  remark.value = '';
+  remark.value = "";
 };
 
 onMounted(async () => {

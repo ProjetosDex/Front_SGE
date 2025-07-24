@@ -9,12 +9,12 @@
     :subtitle="subtitle"
     :color="itemColor"
     class="step-item"
-    @group:selected="handleSelected"
+    @click="handleSelected"
   ></v-stepper-item>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = defineProps<{
   value: string;
@@ -26,14 +26,14 @@ const props = defineProps<{
   subtitle?: string;
 }>();
 
-const emit = defineEmits(['step-selected']);
+const emit = defineEmits(["step-selected"]);
 
 const itemColor = computed(() => {
-  return props.complete ? 'green' : '';
+  return props.complete ? "green" : "";
 });
 
 const handleSelected = () => {
-  emit('step-selected', {
+  emit("step-selected", {
     value: props.value,
     title: props.title,
   });

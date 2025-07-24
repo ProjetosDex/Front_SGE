@@ -36,10 +36,13 @@ export const useInternshipProcessDetailsState = defineStore(
       }
     };
 
-    const setSelectedStep = (stepIndex: string) => {
+    const setSelectedStep = (stepIndex: Step) => {
       const step = state.steps.find((step) => step.index === stepIndex);
       if (step) {
         state.selectedStep = step.index;
+        if (step.index === Step.INTERNSHIP_END) {
+          step.editable = true;
+        }
       }
     };
 
