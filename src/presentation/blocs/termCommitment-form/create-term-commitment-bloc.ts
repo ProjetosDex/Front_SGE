@@ -1,12 +1,8 @@
 import { CreateTermCommitmentUseCase } from '@/core/application/usecases/create-term-commitment-usecase';
-import { GenerateTermCommitmentPdfUseCase } from '@/core/application/usecases/generate-term-commitment-pdf-usecase';
-import { RegisterTermCommitmentFileIdInProcessHistoryUseCase } from '@/core/application/usecases/register-term-commitment-file-id-in-process-history-usecase';
-import { UploadTermCommitmentPdfUseCase } from '@/core/application/usecases/upload-term-commitment-pdf-usecase';
 import { FileApi } from '@/core/infrastructure/api/file-api';
 import { InternshipProcessHistoryApi } from '@/core/infrastructure/api/internship-process-history-api';
 import { TermCommitmentApi } from '@/core/infrastructure/api/termCommitmentApi';
 import { TermCommitmentRepository } from '@/core/infrastructure/repositories/term-commtiment-repository';
-import { FormTermCommitmentStore } from '@/stores/formTermCommitment/form-term-commitment-store';
 import { TermCommitmentBloc } from './termCommitment.bloc';
 import { GetUserUseCase } from '@/core/application/usecases/get-user-usecase';
 import { UserRepository } from '@/core/infrastructure/repositories/user-repository';
@@ -19,6 +15,7 @@ import { AddressRepository } from '@/core/infrastructure/repositories/address-re
 import { AddressCepApi } from '@/core/infrastructure/api/address-cep-api';
 import { FormTermCommitmentState } from './state/term-commitment-form-state';
 import { useRouter } from 'vue-router';
+import { UpdateTermCommitmentUseCase } from '@/core/application/usecases/update-term-commitment-usecase';
 
 export function createTermCommitmentBloc() {
   const formTermCommitmentState = new FormTermCommitmentState();
@@ -57,6 +54,10 @@ export function createTermCommitmentBloc() {
   const getAddressInformationByPostalCodeUseCase =
     new GetAddressInformationByPostalCodeUseCase(addressRepository);
 
+  const updateTermCommitmentUseCase = new UpdateTermCommitmentUseCase(
+    termCommitmentRepository,
+  );
+
   const formTermCommitmentBloc = new TermCommitmentBloc(
     formTermCommitmentState,
     router,
@@ -64,6 +65,7 @@ export function createTermCommitmentBloc() {
     getUserUseCase,
     findInternshipProcessByIdUseCase,
     getAddressInformationByPostalCodeUseCase,
+    updateTermCommitmentUseCase,
   );
 
   return formTermCommitmentBloc;

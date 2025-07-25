@@ -52,30 +52,28 @@
           </section>
         </div>
 
-        <!-- <div
+        <div
           v-if="
-            currentStepContent.rejectionReason &&
-            internshipProcess?.movement ===
-              InternshipProcessMovement.STAGE_START
+            currentStep === Step.INTERNSHIP_START &&
+            internshipStartStepStatus === InternshipProcessStatus.REJECTED &&
+            userRole === 'STUDENT'
           "
         >
-          <formTCE
-            :internshipProcessId="internshipProcess?.id"
-            :termCommitmentId="internshipProcess?.id_termCommitment"
-          />
-        </div> -->
+          <FormTce :internshipProcessId="internshipProcessId" />
+        </div>
 
         <div
           v-if="
             currentStep === Step.INTERNSHIP_START &&
             internshipStartStepStatus !== InternshipProcessStatus.COMPLETED &&
-            ((internshipStartStepStatus === InternshipProcessStatus.REJECTED &&
-              userRole === 'STUDENT') ||
-              (internshipStartStepStatus !== InternshipProcessStatus.REJECTED &&
-                ((userRole === 'STUDENT' &&
-                  internshipStartStepStatus !== InternshipProcessStatus.UNDER_REVIEW) ||
-                  userRole === 'ADMINISTRATOR' ||
-                  userRole === 'EMPLOYEE')))
+            internshipStartStepStatus !== InternshipProcessStatus.REJECTED &&
+            !(
+              userRole === 'STUDENT' &&
+              internshipStartStepStatus === InternshipProcessStatus.UNDER_REVIEW
+            ) &&
+            (userRole === 'STUDENT' ||
+              userRole === 'ADMINISTRATOR' ||
+              userRole === 'EMPLOYEE')
           "
         >
           <input-file
@@ -138,10 +136,14 @@ import { computed, onMounted, ref } from "vue";
 import { Step } from "@/presentation/blocs/internship-process-details/state/internship-process-details-state-interface";
 import { useAuthStore } from "@/stores/auth.store";
 import { InternshipProcessStatus } from "@/core/domain/entities/internshipProcess.entity";
+import FormTce from "@/components/Form-TCE/form-tce.vue";
 
+import { useRouter } from "vue-router";
+const router = useRouter();
 const authStore = useAuthStore();
 const userRole = ref(authStore.userRole);
 const remark = ref("");
+const internshipProcessId = router.currentRoute.value.params.id as string;
 
 const internshipStartStepStatus = computed(() => {
   return steps.value.find((step) => step.index === Step.INTERNSHIP_START)?.status;

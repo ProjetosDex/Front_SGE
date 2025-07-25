@@ -7,6 +7,7 @@ import type { FindInternshipProcessByIdUseCase } from '@/core/application/usecas
 import type { GetAddressInformationByPostalCodeUseCase } from '@/core/application/usecases/get-address-information-by-postal-code-usecase';
 import type { FormTermCommitmentStateInterface } from './state/term-commitment-state-interface';
 import type { Router } from 'vue-router';
+import type { UpdateTermCommitmentUseCase } from '@/core/application/usecases/update-term-commitment-usecase';
 
 export class TermCommitmentBloc {
   constructor(
@@ -16,6 +17,7 @@ export class TermCommitmentBloc {
     private readonly getUserUseCase: GetUserUseCase,
     private readonly findInternshipProcessByIdUseCase: FindInternshipProcessByIdUseCase,
     private readonly getAddressInformationByPostalCodeUseCase: GetAddressInformationByPostalCodeUseCase,
+    private readonly updateTermCommitmentUseCase: UpdateTermCommitmentUseCase,
   ) {
     this.formTermCommitmentState.setOnblurEventInPostalCodeField(
       this.fillFormAddressFieldsByCep.bind(this),
@@ -52,8 +54,25 @@ export class TermCommitmentBloc {
     }
   }
 
-  async updateTermCommitment() {
-    return;
+  async updateTermCommitment(internshipProcessId: string) {
+    const termCommitmentRequestBody = TermCommitmentFormRequestMapper.toRequest(
+      this.formTermCommitmentState.getState(),
+    );
+
+    try {
+      this.formTermCommitmentState.setLoading(true);
+      await this.updateTermCommitmentUseCase.handle(
+        internshipProcessId,
+        termCommitmentRequestBody,
+      );
+
+      this.formTermCommitmentState.setLoading(false);
+      window.location.reload();
+    } catch (error: any) {
+      this.formTermCommitmentState.setLoading(false);
+      this.formTermCommitmentState.setShowErrorModal(true);
+      this.formTermCommitmentState.setMessageError(error.response.data.message);
+    }
   }
 
   updateFormField(fieldEvent: FieldUpdateEvent) {

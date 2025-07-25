@@ -142,7 +142,7 @@ export const useTermCommitmentFormStore = defineStore(
       state.sections.concedente.sectionData['supervisorPosition'].fieldValue =
         internshipProcess.termCommitment.supervisorPosition;
       state.sections.condicoesEstagio.sectionData['isMandatory'].fieldValue =
-        internshipProcess.termCommitment.isMandatory;
+        internshipProcess.termCommitment.isMandatory ? '1' : '2';
       state.sections.condicoesEstagio.sectionData[
         'internshipStartDate'
       ].fieldValue =

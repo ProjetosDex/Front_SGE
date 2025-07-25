@@ -6,11 +6,12 @@
     :editable="editable"
     :edit-icon="editIcon"
     :rules="rules"
+    :color="statusColor"
     :subtitle="subtitle"
-    :color="itemColor"
     class="step-item"
     @click="handleSelected"
-  ></v-stepper-item>
+  >
+  </v-stepper-item>
 </template>
 
 <script setup lang="ts">
@@ -28,8 +29,12 @@ const props = defineProps<{
 
 const emit = defineEmits(["step-selected"]);
 
-const itemColor = computed(() => {
-  return props.complete ? "green" : "";
+const statusColor = computed(() => {
+  if (!props.subtitle) return "";
+  if (props.subtitle === "Concluído") return "#078640";
+  if (props.subtitle === "Em Análise") return "#ffff00";
+  if (props.subtitle === "Rejeitado") return "#ff1d06";
+  return "";
 });
 
 const handleSelected = () => {

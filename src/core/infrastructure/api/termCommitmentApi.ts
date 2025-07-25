@@ -1,6 +1,7 @@
 import type { CreateTermCommitmentDTO } from '@/core/application/dtos/createTermCommitmentDto';
 import axiosBackEndClient from '../interceptors/axios-backend-client';
 import type { AssignTermCommitmentDTO } from '@/core/application/dtos/assign-term-commitment-dto';
+import type { UpdateTermCommitmentDTO } from '@/core/application/dtos/updateTermCommitmentDto';
 
 export class TermCommitmentApi {
   private controllerUrl = '/termCommitment';
@@ -37,5 +38,15 @@ export class TermCommitmentApi {
         'Content-Type': 'multipart/form-data',
       },
     });
+  }
+
+  async updateTermCommitment(
+    internshipProcessId: string,
+    updateTermCommitmentDTO: UpdateTermCommitmentDTO,
+  ): Promise<void> {
+    await axiosBackEndClient.patch(
+      `${this.controllerUrl}/update/${internshipProcessId}`,
+      updateTermCommitmentDTO,
+    );
   }
 }
