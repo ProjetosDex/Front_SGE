@@ -30,7 +30,6 @@ axiosBackEndClient.interceptors.response.use(
       originalRequest._retryCount = (originalRequest._retryCount || 0) + 1;
 
       try {
-        console.log('tentei mas fui mlk');
         await authStore.refreshToken();
         return axiosBackEndClient(originalRequest);
       } catch (refreshError) {

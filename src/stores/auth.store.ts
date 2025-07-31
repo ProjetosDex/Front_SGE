@@ -43,7 +43,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       isRefreshing.value = true;
       const { data } = await axiosBackEndInstance.post(
-        '/auth/refresh',
+        '/auth/refresh-token',
         {},
         {
           withCredentials: true,

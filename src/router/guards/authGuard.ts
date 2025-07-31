@@ -17,10 +17,13 @@ export async function authGuard(
   }
 
   try {
-    const isAuthenticated = await authStore.checkAuth(true);
-
+    let isAuthenticated = await authStore.checkAuth(true);
     if (!isAuthenticated) {
-      throw new Error('Usuário não autenticado');
+      await authStore.refreshToken();
+      isAuthenticated = await authStore.checkAuth(true);
+      if (!isAuthenticated) {
+        throw new Error('Usuário não autenticado');
+      }
     }
 
     if (to.meta.roles?.length && !authStore.hasAnyRole(to.meta.roles)) {
