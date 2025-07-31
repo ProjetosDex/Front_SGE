@@ -5,11 +5,17 @@ export class AssignEndInternshipProcessUseCase {
     private readonly internshipProcessRepository: InternshipProcessRepositoryInterface,
   ) {}
 
-  async handle(internshipProcessId: string, files: File[], validate?: boolean) {
+  async handle(
+    internshipProcessId: string,
+    files?: File[],
+    validate?: boolean,
+    remark?: string,
+  ) {
     await this.internshipProcessRepository.assignEndInternshipProcess(
       internshipProcessId,
       files,
       validate,
+      remark,
     );
   }
 }

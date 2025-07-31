@@ -25,13 +25,15 @@ export class InternshipProcessRepository
 
   async assignEndInternshipProcess(
     internshipProcessId: string,
-    files: File[],
+    files?: File[],
     validate?: boolean,
+    remark?: string,
   ) {
     return this.internshipProcessApi.assignEndInternshipProcess(
       internshipProcessId,
       files,
       validate,
+      remark,
     );
   }
 }

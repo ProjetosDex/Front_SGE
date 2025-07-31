@@ -32,7 +32,10 @@
           <p>{{ selectedStepData.actionRequired }}</p>
         </div>
 
-        <div class="process-documents">
+        <div
+          class="process-documents"
+          v-if="selectedStepData.documents.some((doc) => !doc.isRejected)"
+        >
           <h3>Documentos do processo:</h3>
           <section class="uploaded-area">
             <li
@@ -50,6 +53,55 @@
               </div>
             </li>
           </section>
+        </div>
+
+        <div
+          class="process-documents"
+          v-if="selectedStepData.documents.some((doc) => doc.isRejected)"
+        >
+          <h3>Documentos do Recusados:</h3>
+          <section class="uploaded-area">
+            <li
+              class="row"
+              v-for="(doc, index) in selectedStepData.documents"
+              :key="index"
+            >
+              <div class="fileUpload" v-if="doc.isRejected">
+                <section class="uploaded-area">
+                  <download-file-button
+                    :fileId="doc.id"
+                    :fileType="doc.fileType"
+                    :isRejected="doc.isRejected"
+                  ></download-file-button>
+                </section>
+              </div>
+            </li>
+          </section>
+        </div>
+
+        <div
+          class="model-files"
+          v-if="
+            currentStep === Step.INTERNSHIP_START &&
+            internshipStartStepStatus === InternshipProcessStatus.REJECTED &&
+            userRole === 'STUDENT'
+          "
+        >
+          <p>
+            Utilize o modelo dos arquivos necessários para uma nova solicitação de fim de
+            estágio:
+          </p>
+          <div class="model-file-items">
+            <v-btn
+              v-for="file in modelFiles"
+              :key="file.name"
+              :href="file.url"
+              download
+              class="buttonUpload"
+            >
+              {{ file.name }}
+            </v-btn>
+          </div>
         </div>
 
         <div
@@ -122,6 +174,32 @@
             Recusar Documentos
           </button>
         </div>
+
+        <div
+          class="div-reject-button"
+          v-if="
+            currentStep === Step.INTERNSHIP_END &&
+            (userRole === 'ADMINISTRATOR' || userRole === 'EMPLOYEE') &&
+            internshipEndStepStatus !== InternshipProcessStatus.COMPLETED &&
+            internshipEndStepStatus !== InternshipProcessStatus.REJECTED
+          "
+        >
+          <v-form>
+            <v-container>
+              <v-text-field v-model="remark">
+                <template v-slot:label>
+                  <span>
+                    Descreva o motivo da <strong>Recusa</strong> dos documentos
+                    <v-icon icon="mdi-close-circle"></v-icon>
+                  </span>
+                </template>
+              </v-text-field>
+            </v-container>
+          </v-form>
+          <button class="reject-button" @click="handleRejectEndInternshipProcess">
+            Recusar Documentos
+          </button>
+        </div>
       </div>
     </v-container>
   </div>
@@ -139,6 +217,7 @@ import { InternshipProcessStatus } from "@/core/domain/entities/internshipProces
 import FormTce from "@/components/Form-TCE/form-tce.vue";
 
 import { useRouter } from "vue-router";
+import { UserRole } from "@/core/domain/entities/user.entity";
 const router = useRouter();
 const authStore = useAuthStore();
 const userRole = ref(authStore.userRole);
@@ -166,10 +245,34 @@ const registerAssignTermCommitment = async (files: File[]) => {
   await internshipProcessDetailsBloc.registerAssignTermCommitment(files, userRole.value);
 };
 
+const modelFiles = [
+  {
+    name: "Auto Avaliação do Estagiário",
+    url:
+      "https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097275&&key=bd64adf971f7a8d62aa58966f6f14f1d",
+  },
+  {
+    name: "Avaliação do Estagiário - Concedente",
+    url:
+      "https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097276&&key=ecead2273608bcb87a428cd6b737d1ef",
+  },
+  {
+    name: "Avaliação do Estagiário - Professor Orientador",
+    url:
+      "https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097278&&key=2f4cee6135e4b5e4f256fb861bc8751c",
+  },
+];
+
 const registerAssignEndInternshipProcess = async (files: File[]) => {
+  const validate =
+    userRole.value === UserRole.ADMINISTRATOR || userRole.value === UserRole.EMPLOYEE
+      ? true
+      : false;
+
   await internshipProcessDetailsBloc.registerAssignEndInternshipProcess(
-    files,
-    userRole.value
+    validate,
+    undefined,
+    files
   );
 };
 
@@ -184,6 +287,18 @@ const handleRejectTermCommitment = async () => {
     return;
   }
   await internshipProcessDetailsBloc.rejectTermCommitment(remark.value);
+  remark.value = "";
+};
+
+const handleRejectEndInternshipProcess = async () => {
+  if (remark.value.trim() === "") {
+    alert("Por favor, descreva o motivo da recusa.");
+    return;
+  }
+  await internshipProcessDetailsBloc.registerAssignEndInternshipProcess(
+    false,
+    remark.value
+  );
   remark.value = "";
 };
 

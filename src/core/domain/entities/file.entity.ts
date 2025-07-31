@@ -11,4 +11,5 @@ export interface FileEntity {
   id: string;
   filePath: string;
   fileType: FileType;
+  isRejected?: boolean;
 }

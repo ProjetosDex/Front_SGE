@@ -38,8 +38,9 @@ export class InternshipProcessApi {
 
   async assignEndInternshipProcess(
     internshipProcessId: string,
-    files: File[],
+    files?: File[],
     validate?: boolean,
+    remark?: string,
   ) {
     const formData = new FormData();
     formData.append('internshipProcessId', internshipProcessId);
@@ -48,8 +49,14 @@ export class InternshipProcessApi {
       formData.append('validate', 'true');
     }
 
-    for (const file of files) {
-      formData.append('file', file);
+    if (remark) {
+      formData.append('remark', remark);
+    }
+
+    if (files && files.length > 0) {
+      for (const file of files) {
+        formData.append('file', file);
+      }
     }
 
     await axiosBackEndClient.post(

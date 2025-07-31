@@ -1,5 +1,5 @@
 <template>
-  <div class="download-container">
+  <div class="download-container" :style="colorStyle">
     <div class="left-content">
       <v-icon class="file-icon">mdi-file</v-icon>
       <span class="file-name">{{ fileName }}</span>
@@ -24,6 +24,7 @@ import { computed, ref } from "vue";
 const props = defineProps<{
   fileId?: string;
   fileType?: string;
+  isRejected?: boolean;
 }>();
 
 const isDownloading = ref(false);
@@ -38,6 +39,12 @@ const fileName = computed(() => {
   };
 
   return fileNames[props.fileType || ""] || "arquivo.pdf";
+});
+
+const colorStyle = computed(() => {
+  return props.isRejected
+    ? "background-color: rgba(255,82,82);" // vermelho suave e transparente
+    : "background-color: rgb(162, 246, 169)";
 });
 
 const downloadFile = (filename: string, blob?: Blob) => {

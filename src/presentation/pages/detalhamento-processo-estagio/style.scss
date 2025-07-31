@@ -206,17 +206,45 @@ section .row i {
   color: #0d7904;
 }
 
+.buttonUpload {
+  display: inline-block;
+  padding: 13px 15px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  text-transform: none;
+  outline: none;
+  color: #fff;
+  background-color: #078640;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px #999;
+  margin: 10px; /* Espaçamento entre os botões */
+  min-width: 150px; /* Largura mínima para cada botão */
+  width: auto;
+}
+
+.buttonUpload:hover {
+  background-color: #3e8e41;
+}
+
+.buttonUpload:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(1px);
+}
+
 .rejection-reason {
   color: red;
   font-weight: bold;
 }
 
 .model-file-items {
-  display: flex; /* Utiliza flexbox para alinhar os itens */
-  justify-content: center; /* Centraliza os itens horizontalmente */
-  flex-wrap: wrap; /* Permite que os itens quebrem a linha, se necessário */
-  gap: 15px; /* Espaçamento entre os botões */
-  margin-bottom: 20px; /* Espaçamento inferior entre os arquivos e o próximo conteúdo */
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
 }
 
 .div-reject-button {

@@ -9,7 +9,8 @@ export interface InternshipProcessRepositoryInterface {
   getEligibleToEndInternshipProcess(): Promise<InternshipProcess[]>;
   assignEndInternshipProcess(
     internshipProcessId: string,
-    files: File[],
+    files?: File[],
     validate?: boolean,
+    remark?: string,
   ): Promise<void>;
 }

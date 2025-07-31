@@ -50,6 +50,7 @@ export class InternshipProcessDetailsBloc {
   loadHistoryDataInSteps(
     internshipProcessHistories: InternshipProcessHistory[],
   ) {
+    console.log(internshipProcessHistories);
     const latestHistories = this.getLatestProcessHistory(
       internshipProcessHistories,
     );
@@ -90,18 +91,18 @@ export class InternshipProcessDetailsBloc {
   }
 
   async registerAssignEndInternshipProcess(
-    files: File[],
-    userRole?: string | null,
+    validate: boolean,
+    remark?: string,
+    files?: File[],
   ) {
-    const validate =
-      userRole === UserRole.ADMINISTRATOR || userRole === UserRole.EMPLOYEE
-        ? true
-        : false;
     await this.assignEndInternshipProcessUseCase.handle(
       this.router.currentRoute.value.params.id as string,
       files,
       validate,
+      remark,
     );
+
+    window.location.reload();
   }
 
   getCurrentHistory(internshipProcessHistories: InternshipProcessHistory[]) {
@@ -148,6 +149,23 @@ export class InternshipProcessDetailsBloc {
     Object.keys(latestByMovement).forEach((movement) => {
       const history = latestByMovement[movement];
 
+      // NOVA REGRA: Se o status for REJECTED, marque os arquivos do underReview como rejeitados
+      if (history.status === InternshipProcessStatus.REJECTED) {
+        const underReviewHistory = internshipProcessHistories.find(
+          (h) =>
+            h.movement === movement &&
+            h.status === InternshipProcessStatus.UNDER_REVIEW,
+        );
+
+        if (underReviewHistory?.files) {
+          history.files = (underReviewHistory.files || []).map((file) => ({
+            ...file,
+            isRejected: true,
+          }));
+        }
+      }
+
+      // Regra já existente para COMPLETED
       if (history.status === InternshipProcessStatus.COMPLETED) {
         const underReviewHistory = internshipProcessHistories.find(
           (h) =>
