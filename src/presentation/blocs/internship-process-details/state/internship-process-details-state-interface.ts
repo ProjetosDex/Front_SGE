@@ -54,11 +54,21 @@ export type StepState = {
   internshipProcessId?: string;
   currentStep: Step;
   selectedStep: Step;
+  showSuccessModal: boolean;
+  showErrorModal: boolean;
+  messageError: string | null;
+  successMessage: string | null;
+  loading: boolean;
 };
 
 export interface InternshipProcessDetailsStateInterface {
   state: StepState;
   clear: () => void;
+  setMessageSuccessModal(message: string): void;
+  setShowSuccessModal(showModal: boolean): void;
+  setShowErrorModal(showModal: boolean): void;
+  setMessageError(message: string): void;
+  setLoading(loading: boolean): void;
   setInternshipProcessId: (internshipProcessId: string) => void;
   getInternshipProcessId: () => void;
   setDocumentsInStep: (documents: FileEntity[], stepIndex: string) => void;

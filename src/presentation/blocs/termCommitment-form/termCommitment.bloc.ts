@@ -34,6 +34,16 @@ export class TermCommitmentBloc {
     );
 
     try {
+      const hasEmptyField = Object.values(termCommitmentRequestBody).some(
+        (value) => value === null || value === '',
+      );
+
+      if (hasEmptyField) {
+        throw new Error(
+          'Por favor, revise os campos: todos os campos são obrigatórios e devem ser preenchidos corretamente.',
+        );
+      }
+
       this.formTermCommitmentState.setLoading(true);
 
       const { termFilePathId, internshipProcessId } =
@@ -50,7 +60,7 @@ export class TermCommitmentBloc {
     } catch (error: any) {
       this.formTermCommitmentState.setLoading(false);
       this.formTermCommitmentState.setShowErrorModal(true);
-      this.formTermCommitmentState.setMessageError(error.response.data.message);
+      this.formTermCommitmentState.setMessageError(error.message);
     }
   }
 

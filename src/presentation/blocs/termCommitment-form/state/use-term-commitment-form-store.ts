@@ -67,7 +67,7 @@ export const useTermCommitmentFormStore = defineStore(
     };
 
     const updateSectionDataBySectionIndex = (fieldEvent: FieldUpdateEvent) => {
-      const section = state.sections[fieldEvent.sectionIndex]; // é um FormSectionData<...>
+      const section = state.sections[fieldEvent.sectionIndex];
       if (!section) {
         console.warn('Seção não encontrada:', fieldEvent.sectionIndex);
         return;

@@ -49,6 +49,10 @@ export type EndInternshipProcessState = {
   headers: HeaderData[];
   data: EndInternshipProcessDataTableDto[];
   selectedProcess: EndInternshipProcessDataTableDto[];
+  showSuccessModal: boolean;
+  showErrorModal: boolean;
+  messageError: string | null;
+  loading: boolean;
 };
 
 export interface EndInternshipProcessStateInterface {
@@ -59,5 +63,9 @@ export interface EndInternshipProcessStateInterface {
   setSelectedProcess(
     endInternshipProcessDataTableDto: EndInternshipProcessDataTableDto[],
   ): void;
+  setShowSuccessModal(showModal: boolean): void;
+  setShowErrorModal(showModal: boolean): void;
+  setMessageError(message: string): void;
+  setLoading(loading: boolean): void;
   clear: () => void;
 }

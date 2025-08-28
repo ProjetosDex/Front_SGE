@@ -4,6 +4,7 @@ import { EndInternshipProcessBloc } from './end-internship-process-bloc';
 import { GetEligibleInternshipFinalizationProcessesUseCase } from '@/core/application/usecases/get-eligible-internship-finalization-processes-usecase';
 import { useEndInternshipProcessState } from './state/end-internship-process-state';
 import { AssignEndInternshipProcessUseCase } from '@/core/application/usecases/assign-end-internship-process-usecase';
+import { useRouter } from 'vue-router';
 
 export function createEndInternshipProcessBloc(): EndInternshipProcessBloc {
   const endInternshipProcessState = useEndInternshipProcessState();
@@ -19,8 +20,11 @@ export function createEndInternshipProcessBloc(): EndInternshipProcessBloc {
   const assignEndInternshipProcessUseCase =
     new AssignEndInternshipProcessUseCase(internshipProcessRepository);
 
+  const router = useRouter();
+
   const endInternshipProcessBloc = new EndInternshipProcessBloc(
     endInternshipProcessState,
+    router,
     getEligibleInternshipFinalizationProcessesUseCase,
     assignEndInternshipProcessUseCase,
   );

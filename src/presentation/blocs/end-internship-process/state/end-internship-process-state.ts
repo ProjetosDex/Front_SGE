@@ -25,6 +25,22 @@ export const useEndInternshipProcessState = defineStore(
       console.log(state.selectedProcess);
     };
 
+    const setShowSuccessModal = (showModal: boolean) => {
+      state.showSuccessModal = showModal;
+    };
+
+    const setShowErrorModal = (showModal: boolean) => {
+      state.showErrorModal = showModal;
+    };
+
+    const setMessageError = (message: string) => {
+      state.messageError = message;
+    };
+
+    const setLoading = (loading: boolean) => {
+      state.loading = loading;
+    };
+
     const clear = () => {
       Object.assign(state, getInitialState());
     };
@@ -32,6 +48,10 @@ export const useEndInternshipProcessState = defineStore(
     return {
       state,
       setSelectedProcess,
+      setShowSuccessModal,
+      setShowErrorModal,
+      setMessageError,
+      setLoading,
       setEligibleInternshipFinalizationProcesses,
       clear,
     };
@@ -53,5 +73,9 @@ function getInitialState(): EndInternshipProcessState {
     ],
     data: [],
     selectedProcess: [],
+    showSuccessModal: false,
+    showErrorModal: false,
+    messageError: null,
+    loading: false,
   };
 }

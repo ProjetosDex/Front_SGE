@@ -12,7 +12,7 @@ import {
   InternshipProcessStatus,
 } from '@/core/domain/entities/internshipProcess.entity';
 import type { AssignTermCommitmentUseCase } from '@/core/application/usecases/assign-term-commitment-usecase';
-import { UserRole } from '@/core/domain/entities/user.entity';
+import { UserRole, type User } from '@/core/domain/entities/user.entity';
 import { toRefs } from 'vue';
 import type { AssignEndInternshipProcessUseCase } from '@/core/application/usecases/assign-end-internship-process-usecase';
 
@@ -50,7 +50,6 @@ export class InternshipProcessDetailsBloc {
   loadHistoryDataInSteps(
     internshipProcessHistories: InternshipProcessHistory[],
   ) {
-    console.log(internshipProcessHistories);
     const latestHistories = this.getLatestProcessHistory(
       internshipProcessHistories,
     );
@@ -76,33 +75,117 @@ export class InternshipProcessDetailsBloc {
   }
 
   async registerAssignTermCommitment(files: File[], userRole?: string | null) {
-    const validate =
-      userRole === UserRole.ADMINISTRATOR || userRole === UserRole.EMPLOYEE
-        ? true
-        : false;
-    console.log(`validate: ${validate}`);
-    await this.assignTermCommitmentUseCase.handle({
-      internshipProcessId: this.router.currentRoute.value.params.id as string,
-      file: files[0],
-      validate,
-    });
+    try {
+      this.internshipProcessDetailsState.setLoading(true);
+      const validate =
+        userRole === UserRole.ADMINISTRATOR || userRole === UserRole.EMPLOYEE
+          ? true
+          : false;
+      await this.validateTermCommitmentAssignFiles(files, userRole);
+      await this.assignTermCommitmentUseCase.handle({
+        internshipProcessId: this.router.currentRoute.value.params.id as string,
+        file: files[0],
+        validate,
+      });
 
-    window.location.reload();
+      this.internshipProcessDetailsState.setLoading(false);
+      this.internshipProcessDetailsState.setMessageSuccessModal(
+        'Termo de compromisso enviado com sucesso.',
+      );
+      this.internshipProcessDetailsState.setShowSuccessModal(true);
+    } catch (error: any) {
+      this.internshipProcessDetailsState.setLoading(false);
+      this.internshipProcessDetailsState.setMessageError(error.message);
+      this.internshipProcessDetailsState.setShowErrorModal(true);
+    }
+  }
+
+  async validateTermCommitmentAssignFiles(
+    files: File[],
+    userRole?: string | null,
+  ) {
+    if (files[0]?.type !== 'application/pdf') {
+      throw new Error('O arquivo deve ser um PDF.');
+    }
+
+    if (userRole === UserRole.STUDENT && files.length > 1) {
+      throw new Error(
+        'Estudante só pode enviar um arquivo para o termo de compromisso.',
+      );
+    }
+
+    if (files.length === 0) {
+      throw new Error('É necessário enviar o termo de compromisso.');
+    }
+
+    if (files.length > 1) {
+      throw new Error('Só é permitido enviar um arquivo.');
+    }
+
+    if (files[0]?.name) {
+      const fileName = files[0].name.toLowerCase();
+      if (!fileName.includes('termo_compromisso')) {
+        throw new Error('O nome do arquivo deve conter "termo_compromisso".');
+      }
+    }
   }
 
   async registerAssignEndInternshipProcess(
     validate: boolean,
     remark?: string,
     files?: File[],
+    userRole?: UserRole,
   ) {
-    await this.assignEndInternshipProcessUseCase.handle(
-      this.router.currentRoute.value.params.id as string,
-      files,
-      validate,
-      remark,
-    );
+    try {
+      this.internshipProcessDetailsState.setLoading(true);
+      await this.validateEndInternshipFiles(files, userRole, validate);
+      await this.assignEndInternshipProcessUseCase.handle(
+        this.router.currentRoute.value.params.id as string,
+        files,
+        validate,
+        remark,
+      );
 
-    window.location.reload();
+      window.location.reload();
+    } catch (error: any) {
+      this.internshipProcessDetailsState.setLoading(false);
+      this.internshipProcessDetailsState.setMessageError(error.message);
+      this.internshipProcessDetailsState.setShowErrorModal(true);
+    }
+  }
+
+  async validateEndInternshipFiles(
+    files?: File[],
+    userRole?: string | null,
+    validate?: boolean,
+  ) {
+    if (files && files.some((file) => file.type !== 'application/pdf')) {
+      throw new Error('Todos os documentos devem estar em formato PDF.');
+    }
+
+    if (
+      (userRole === UserRole.ADMINISTRATOR || userRole === UserRole.EMPLOYEE) &&
+      validate &&
+      files &&
+      files?.length === 0
+    ) {
+      throw new Error(
+        'É necessário o envio do atestado de estágio para aprovação da finalização do estágio.',
+      );
+    }
+
+    if (files && files.length > 1) {
+      throw new Error('Só é permitido enviar um arquivo (certificado_estagio)');
+    }
+
+    if (files && files[0]?.name) {
+      const fileName = files[0].name.toLowerCase();
+      if (!fileName.includes('certificado_conclusao_estagio')) {
+        throw new Error(
+          'O nome do arquivo deve conter "certificado_conclusao_estagio".',
+        );
+      }
+    }
   }
 
   getCurrentHistory(internshipProcessHistories: InternshipProcessHistory[]) {

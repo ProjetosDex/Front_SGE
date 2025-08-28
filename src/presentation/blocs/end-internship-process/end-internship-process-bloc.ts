@@ -3,10 +3,12 @@ import { type EndInternshipProcessStateInterface } from './state/end-internship-
 import type { GetEligibleInternshipFinalizationProcessesUseCase } from '@/core/application/usecases/get-eligible-internship-finalization-processes-usecase';
 import type { EndInternshipProcessDataTableDto } from '@/core/application/dtos/end-internship-process-data-table-dto';
 import type { AssignEndInternshipProcessUseCase } from '@/core/application/usecases/assign-end-internship-process-usecase';
+import type { Router } from 'vue-router';
 
 export class EndInternshipProcessBloc {
   constructor(
     private readonly endInternshipProcessState: EndInternshipProcessStateInterface,
+    private readonly router: Router,
     private readonly getEligibleInternshipFinalizationProcessesUseCase: GetEligibleInternshipFinalizationProcessesUseCase,
     private readonly assignEndInternshipProcessUseCase: AssignEndInternshipProcessUseCase,
   ) {}
@@ -17,6 +19,14 @@ export class EndInternshipProcessBloc {
 
   clear() {
     this.endInternshipProcessState.clear();
+  }
+
+  navigateToInternshipProcessDetails(internshipProcessId: string) {
+    this.endInternshipProcessState.setShowSuccessModal(false);
+    this.router.push({
+      name: 'detalhamentoProcessoEstagio',
+      params: { id: internshipProcessId },
+    });
   }
 
   async getEligibleInternshipFinalizationProcesses() {
@@ -32,15 +42,33 @@ export class EndInternshipProcessBloc {
     selectedProcess: EndInternshipProcessDataTableDto[],
     files: File[],
   ) {
-    const selectedInternshipProcessId = selectedProcess[0].id;
+    this.endInternshipProcessState.setLoading(true);
+
+    const selectedInternshipProcessId = selectedProcess[0]?.id;
     if (!selectedInternshipProcessId) {
-      console.log('tu é glsk é ? seleciona um ae irmão');
+      this.endInternshipProcessState.setLoading(false);
+      this.endInternshipProcessState.setMessageError(
+        'Nenhum processo selecionado. Por favor, selecione um processo antes de enviar os arquivos.',
+      );
+      this.endInternshipProcessState.setShowErrorModal(true);
+      return;
     }
 
-    this.assignEndInternshipProcessUseCase.handle(
-      selectedInternshipProcessId,
-      files,
-    );
+    try {
+      this.validateFileNames(files);
+      await this.assignEndInternshipProcessUseCase.handle(
+        selectedInternshipProcessId,
+        files,
+      );
+
+      this.endInternshipProcessState.setLoading(false);
+
+      this.endInternshipProcessState.setShowSuccessModal(true);
+    } catch (error: any) {
+      this.endInternshipProcessState.setLoading(false);
+      this.endInternshipProcessState.setMessageError(error.message);
+      this.endInternshipProcessState.setShowErrorModal(true);
+    }
   }
 
   setSelectedProcess(
@@ -49,5 +77,22 @@ export class EndInternshipProcessBloc {
     this.endInternshipProcessState.setSelectedProcess(
       endInternshipProcessDataTableDto,
     );
+  }
+
+  validateFileNames(files: File[]): void {
+    const validFileNames = [
+      'auto_avaliacao_estagiario.pdf',
+      'avaliacao_concedente.pdf',
+      'avaliacao_professor_orientador.pdf',
+    ];
+
+    if (
+      files.length !== 3 ||
+      files.every((file) => !validFileNames.includes(file.name))
+    ) {
+      throw new Error(
+        'Os arquivos devem conter os nomes: auto_avaliacao_estagiario, avaliacao_concedente e avaliacao_professor_orientador. (deve conter os 3 arquivos em PDF)',
+      );
+    }
   }
 }

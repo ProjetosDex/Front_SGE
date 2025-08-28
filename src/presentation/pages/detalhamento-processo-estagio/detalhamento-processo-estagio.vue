@@ -1,7 +1,7 @@
 <template>
   <div class="info-processo-container">
     <h1 class="title1">Processo De Estágio</h1>
-    <v-container>
+    <v-container :loading="loading">
       <StepProgressBar
         :steps="steps"
         :currentStep="currentStep"
@@ -88,8 +88,8 @@
           "
         >
           <p>
-            Utilize o modelo dos arquivos necessários para uma nova solicitação de fim de
-            estágio:
+            Utilize o modelo dos arquivos necessários para uma nova solicitação
+            de fim de estágio:
           </p>
           <div class="model-file-items">
             <v-btn
@@ -138,7 +138,8 @@
           v-if="
             currentStep === Step.INTERNSHIP_END &&
             (((userRole === 'ADMINISTRATOR' || userRole === 'EMPLOYEE') &&
-              internshipEndStepStatus === InternshipProcessStatus.UNDER_REVIEW) ||
+              internshipEndStepStatus ===
+                InternshipProcessStatus.UNDER_REVIEW) ||
               (userRole === 'STUDENT' &&
                 internshipEndStepStatus === InternshipProcessStatus.REJECTED))
           "
@@ -196,36 +197,94 @@
               </v-text-field>
             </v-container>
           </v-form>
-          <button class="reject-button" @click="handleRejectEndInternshipProcess">
+          <button
+            class="reject-button"
+            @click="handleRejectEndInternshipProcess"
+          >
             Recusar Documentos
           </button>
         </div>
       </div>
+
+      <v-dialog
+        v-if="showSuccessModal"
+        v-model="showSuccessModal"
+        persistent
+        width="640"
+      >
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">Documento submetido!</span>
+          </v-card-title>
+          <v-card-text>
+            {{ successMessage }}
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="handleCloseSuccessModal"
+            >
+              Voltar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog
+        v-if="messageError && showErrorModal"
+        v-model="showErrorModal"
+        persistent
+        width="640"
+      >
+        <v-card>
+          <v-card-title>
+            <span class="text-h5" style="color: red">Erro!</span>
+          </v-card-title>
+          <v-card-text> {{ messageError }} </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="showErrorModal = false"
+            >
+              Ok
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </div>
 </template>
 
 <script lang="ts" setup>
-import StepProgressBar from "@/presentation/organisms/step-progress-bar/step-progress-bar.vue";
-import InputFile from "@/components/input-file/input-file.vue";
-import downloadFileButton from "@/components/download-file-button/download-file-button.vue";
-import { createInternshipProcessDetailsBloc } from "@/presentation/blocs/internship-process-details/create-internship-process-details-bloc";
-import { computed, onMounted, ref } from "vue";
-import { Step } from "@/presentation/blocs/internship-process-details/state/internship-process-details-state-interface";
-import { useAuthStore } from "@/stores/auth.store";
-import { InternshipProcessStatus } from "@/core/domain/entities/internshipProcess.entity";
-import FormTce from "@/components/Form-TCE/form-tce.vue";
+import StepProgressBar from '@/presentation/organisms/step-progress-bar/step-progress-bar.vue';
+import InputFile from '@/components/input-file/input-file.vue';
+import downloadFileButton from '@/components/download-file-button/download-file-button.vue';
+import { createInternshipProcessDetailsBloc } from '@/presentation/blocs/internship-process-details/create-internship-process-details-bloc';
+import { computed, onMounted, ref } from 'vue';
+import { Step } from '@/presentation/blocs/internship-process-details/state/internship-process-details-state-interface';
+import { useAuthStore } from '@/stores/auth.store';
+import { InternshipProcessStatus } from '@/core/domain/entities/internshipProcess.entity';
+import FormTce from '@/components/Form-TCE/form-tce.vue';
 
-import { useRouter } from "vue-router";
-import { UserRole } from "@/core/domain/entities/user.entity";
+import { useRouter } from 'vue-router';
+import { UserRole } from '@/core/domain/entities/user.entity';
 const router = useRouter();
 const authStore = useAuthStore();
 const userRole = ref(authStore.userRole);
-const remark = ref("");
+const remark = ref('');
 const internshipProcessId = router.currentRoute.value.params.id as string;
 
+const handleCloseSuccessModal = () => {
+  showSuccessModal.value = false;
+  window.location.reload();
+};
+
 const internshipStartStepStatus = computed(() => {
-  return steps.value.find((step) => step.index === Step.INTERNSHIP_START)?.status;
+  return steps.value.find((step) => step.index === Step.INTERNSHIP_START)
+    ?.status;
 });
 
 const internshipEndStepStatus = computed(() => {
@@ -233,73 +292,89 @@ const internshipEndStepStatus = computed(() => {
 });
 
 const internshipProcessDetailsBloc = createInternshipProcessDetailsBloc();
-const { steps, selectedStep, currentStep } = internshipProcessDetailsBloc.getState();
+const {
+  steps,
+  selectedStep,
+  currentStep,
+  showErrorModal,
+  messageError,
+  successMessage,
+  showSuccessModal,
+  loading,
+} = internshipProcessDetailsBloc.getState();
 
-const selectedStepIndex = computed(() => selectedStep.value ?? currentStep.value);
+const selectedStepIndex = computed(
+  () => selectedStep.value ?? currentStep.value,
+);
 
 const selectedStepData = computed(() => {
   return steps.value.find((step) => step.index === selectedStepIndex.value);
 });
 
 const registerAssignTermCommitment = async (files: File[]) => {
-  await internshipProcessDetailsBloc.registerAssignTermCommitment(files, userRole.value);
+  await internshipProcessDetailsBloc.registerAssignTermCommitment(
+    files,
+    userRole.value,
+  );
 };
 
 const modelFiles = [
   {
-    name: "Auto Avaliação do Estagiário",
-    url:
-      "https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097275&&key=bd64adf971f7a8d62aa58966f6f14f1d",
+    name: 'Auto Avaliação do Estagiário',
+    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097275&&key=bd64adf971f7a8d62aa58966f6f14f1d',
   },
   {
-    name: "Avaliação do Estagiário - Concedente",
-    url:
-      "https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097276&&key=ecead2273608bcb87a428cd6b737d1ef",
+    name: 'Avaliação do Estagiário - Concedente',
+    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097276&&key=ecead2273608bcb87a428cd6b737d1ef',
   },
   {
-    name: "Avaliação do Estagiário - Professor Orientador",
-    url:
-      "https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097278&&key=2f4cee6135e4b5e4f256fb861bc8751c",
+    name: 'Avaliação do Estagiário - Professor Orientador',
+    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097278&&key=2f4cee6135e4b5e4f256fb861bc8751c',
   },
 ];
 
+//ajustar o modal nessa rotina
 const registerAssignEndInternshipProcess = async (files: File[]) => {
   const validate =
-    userRole.value === UserRole.ADMINISTRATOR || userRole.value === UserRole.EMPLOYEE
+    userRole.value === UserRole.ADMINISTRATOR ||
+    userRole.value === UserRole.EMPLOYEE
       ? true
       : false;
 
   await internshipProcessDetailsBloc.registerAssignEndInternshipProcess(
     validate,
     undefined,
-    files
+    files,
+    userRole.value as UserRole,
   );
 };
 
 const handleUpdateSelectedStep = (stepIndex: Step) => {
-  console.log("Selected step index:", stepIndex);
+  console.log('Selected step index:', stepIndex);
   internshipProcessDetailsBloc.updateSelectedStep(stepIndex);
 };
 
 const handleRejectTermCommitment = async () => {
-  if (remark.value.trim() === "") {
-    alert("Por favor, descreva o motivo da recusa.");
+  if (remark.value.trim() === '') {
+    messageError.value = 'Por favor, descreva o motivo da recusa.';
+    showErrorModal.value = true;
     return;
   }
   await internshipProcessDetailsBloc.rejectTermCommitment(remark.value);
-  remark.value = "";
+  remark.value = '';
 };
 
 const handleRejectEndInternshipProcess = async () => {
-  if (remark.value.trim() === "") {
-    alert("Por favor, descreva o motivo da recusa.");
+  if (remark.value.trim() === '') {
+    messageError.value = 'Por favor, descreva o motivo da recusa.';
+    showErrorModal.value = true;
     return;
   }
   await internshipProcessDetailsBloc.registerAssignEndInternshipProcess(
     false,
-    remark.value
+    remark.value,
   );
-  remark.value = "";
+  remark.value = '';
 };
 
 onMounted(async () => {

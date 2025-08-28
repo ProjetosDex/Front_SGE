@@ -69,6 +69,26 @@ export const useInternshipProcessDetailsState = defineStore(
       });
     };
 
+    const setMessageSuccessModal = (message: string) => {
+      state.successMessage = message;
+    };
+
+    const setShowSuccessModal = (showModal: boolean) => {
+      state.showSuccessModal = showModal;
+    };
+
+    const setShowErrorModal = (showModal: boolean) => {
+      state.showErrorModal = showModal;
+    };
+
+    const setMessageError = (message: string) => {
+      state.messageError = message;
+    };
+
+    const setLoading = (loading: boolean) => {
+      state.loading = loading;
+    };
+
     const getDocumentsInStep = (stepIndex: string): FileEntity[] => {
       const step = state.steps.find((step) => step.index === stepIndex);
       return step ? step.documents : [];
@@ -87,6 +107,11 @@ export const useInternshipProcessDetailsState = defineStore(
       setCurrentStep,
       setSelectedStep,
       setStepData,
+      setMessageSuccessModal,
+      setShowSuccessModal,
+      setShowErrorModal,
+      setMessageError,
+      setLoading,
       clear,
     };
   },
@@ -113,5 +138,10 @@ function getInitialState(): StepState {
     ],
     currentStep: Step.INTERNSHIP_START,
     selectedStep: Step.INTERNSHIP_START,
+    loading: false,
+    showSuccessModal: false,
+    showErrorModal: false,
+    successMessage: null,
+    messageError: null,
   };
 }

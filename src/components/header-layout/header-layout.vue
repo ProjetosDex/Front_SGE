@@ -160,7 +160,7 @@ const viewNotification = async (notification: any) => {
 };
 
 async function logout() {
-  userAuthStore.clear();
+  userAuthStore.clearAuth();
   router.push('/');
 }
 </script>

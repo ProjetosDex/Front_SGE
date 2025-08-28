@@ -11,12 +11,9 @@ export const useNotificationStore = defineStore('notification', () => {
 
   async function getRecentNotifications(userUuid: string | null) {
     try {
-      //investigar o armazenamento no session storage ou substituir apenas pelo token
-      console.log(userUuid?.split('"')[1]);
       const response = await axiosBackEndInstance.post(
         '/notification/find/latest',
         {
-          id_user: userUuid?.split('"')[1],
           page: 1,
           pageSize: 5,
         },

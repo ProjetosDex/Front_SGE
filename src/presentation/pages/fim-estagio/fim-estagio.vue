@@ -1,6 +1,13 @@
 <template>
   <div class="container">
     <v-card class="table-container">
+      <v-overlay :model-value="loading" class="align-center justify-center">
+        <v-progress-circular
+          color="#078640"
+          size="64"
+          indeterminate
+        ></v-progress-circular>
+      </v-overlay>
       <div class="title">
         <h1 class="title1">Solicitação de Fim de Estágio</h1>
         <v-btn
@@ -63,12 +70,72 @@
         :actionButtonLabel="'Enviar Arquivos'"
         @uploadedFiles="registerAssignEndInternshipProcess"
       />
+
+      <v-dialog
+        v-if="showSuccessModal"
+        v-model="showSuccessModal"
+        persistent
+        width="640"
+      >
+        <v-card>
+          <v-card-title>
+            <span class="text-h5"
+              >Nova Solicitação de fim de estágio submetida!</span
+            >
+          </v-card-title>
+          <v-card-text>
+            aguarde a análise da sua solicitação para receber seu atestado de
+            estágio.
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="openInternshipProcessDetails"
+            >
+              Acompanhar Processo
+            </v-btn>
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="showSuccessModal = false"
+            >
+              Voltar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog
+        v-if="messageError && showErrorModal"
+        v-model="showErrorModal"
+        persistent
+        width="640"
+      >
+        <v-card>
+          <v-card-title>
+            <span class="text-h5" style="color: red"
+              >Erro ao solicitar finalização do processo!</span
+            >
+          </v-card-title>
+          <v-card-text> {{ messageError }} </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="showErrorModal = false"
+            >
+              Ok
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 import inputFile from '@/components/input-file/input-file.vue';
 import GuideModal from '@/presentation/organisms/guide-modal/guide-modal.vue';
 import { ref, onMounted } from 'vue';
@@ -94,7 +161,15 @@ const modelFiles = [
 
 const endInternshipProcessBloc = createEndInternshipProcessBloc();
 
-const { data, headers, selectedProcess } = endInternshipProcessBloc.getState();
+const {
+  data,
+  headers,
+  selectedProcess,
+  showSuccessModal,
+  showErrorModal,
+  messageError,
+  loading,
+} = endInternshipProcessBloc.getState();
 
 onMounted(async () => {
   await endInternshipProcessBloc.getEligibleInternshipFinalizationProcesses();
@@ -106,7 +181,15 @@ const handleSelectionChange = (
   endInternshipProcessBloc.setSelectedProcess(selectedProcess);
 };
 
+const openInternshipProcessDetails = () => {
+  if (selectedProcess.value) {
+    const processId = selectedProcess.value[0].id;
+    endInternshipProcessBloc.navigateToInternshipProcessDetails(processId);
+  }
+};
+
 const registerAssignEndInternshipProcess = async (files: File[]) => {
+  console.log('aqui');
   endInternshipProcessBloc.registerAssignEndInternshipProcess(
     selectedProcess.value,
     files,
