@@ -58,8 +58,9 @@
             <span class="text-h5">Novo Processo Gerado!</span>
           </v-card-title>
           <v-card-text>
-            Faça o download do termo de compromisso e faça upload do modelo assinado pelas
-            partes interessadas para dar prosseguimento no processo de estágio.
+            Faça o download do termo de compromisso e faça upload do modelo
+            assinado pelas partes interessadas para dar prosseguimento no
+            processo de estágio.
           </v-card-text>
           <section class="uploaded-area">
             <download-file-button
@@ -69,10 +70,18 @@
           </section>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="#078640" variant="text" @click="openInternshipProcessDetails">
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="openInternshipProcessDetails"
+            >
               Acompanhar Processo
             </v-btn>
-            <v-btn color="#078640" variant="text" @click="showSuccessModal = false">
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="showSuccessModal = false"
+            >
               Voltar
             </v-btn>
           </v-card-actions>
@@ -86,12 +95,18 @@
       >
         <v-card>
           <v-card-title>
-            <span class="text-h5" style="color: red">Erro ao gerar processo!</span>
+            <span class="text-h5" style="color: red"
+              >Erro ao gerar processo!</span
+            >
           </v-card-title>
           <v-card-text> {{ messageError }} </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="#078640" variant="text" @click="showErrorModal = false">
+            <v-btn
+              color="#078640"
+              variant="text"
+              @click="showErrorModal = false"
+            >
               Ok
             </v-btn>
           </v-card-actions>
@@ -101,12 +116,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import downloadFileButton from "../download-file-button/download-file-button.vue";
-import FormSection from "@/presentation/molecules/form-section/form-section.vue";
-import { createTermCommitmentBloc } from "@/presentation/blocs/termCommitment-form/create-term-commitment-bloc";
-import GuideModal from "@/presentation/organisms/guide-modal/guide-modal.vue";
-import { FileType } from "@/core/domain/entities/file.entity";
+import { onMounted, ref } from 'vue';
+import downloadFileButton from '../download-file-button/download-file-button.vue';
+import FormSection from '@/presentation/molecules/form-section/form-section.vue';
+import { createTermCommitmentBloc } from '@/presentation/blocs/termCommitment-form/create-term-commitment-bloc';
+import GuideModal from '@/presentation/organisms/guide-modal/guide-modal.vue';
+import { FileType } from '@/core/domain/entities/file.entity';
 
 const formTermCommitmentBloc = createTermCommitmentBloc();
 
@@ -136,7 +151,7 @@ const handleFieldUpdate = (fieldUpdateEvent: any, section: any) => {
 
 const openInternshipProcessDetails = () => {
   formTermCommitmentBloc.openInternshipProcessDetails(
-    createdInternshipProcessId.value as string
+    createdInternshipProcessId.value as string,
   );
 };
 
@@ -150,8 +165,8 @@ const registerTCE = async () => {
 
 onMounted(async () => {
   //apenas um mock para testar a criação do termo remover para produção
-  window.addEventListener("keydown", (event: any) => {
-    if (event.ctrlKey && event.key === "m") {
+  window.addEventListener('keydown', (event: any) => {
+    if (event.ctrlKey && event.key === 'm') {
       event.preventDefault();
       formTermCommitmentBloc.fillFormMock();
     }

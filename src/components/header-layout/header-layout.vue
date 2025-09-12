@@ -41,7 +41,7 @@
             <v-btn
               color="#078640"
               flat
-              @click="logout"
+              @click="showSuccessModal = !showSuccessModal"
               style="
                 text-transform: capitalize;
                 width: 100%;
@@ -98,6 +98,92 @@
           </v-list>
         </v-card>
       </v-menu>
+
+      <v-dialog
+        v-if="showSuccessModal"
+        v-model="showSuccessModal"
+        persistent
+        width="640"
+      >
+        <v-card style="width: 100%">
+          <v-card-title
+            style="display: flex; justify-content: space-between; width: 100%"
+          >
+            <span class="text-h5">Notificações</span>
+            <v-btn
+              density="compact"
+              icon="mdi-close"
+              @click="showSuccessModal = false"
+            >
+            </v-btn>
+          </v-card-title>
+          <v-card style="width: 100%; max-height: 400px; overflow-y: auto">
+            <v-list density="compact" nav style="width: 100%">
+              <template
+                v-for="notification in notifications"
+                :key="notification.id"
+              >
+                <v-list-item
+                  class="notification-item"
+                  style="
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 16px;
+                    cursor: pointer;
+                  "
+                  @click="viewNotification(notification)"
+                >
+                  <div
+                    style="width: 100%; display: flex; align-items: center"
+                    @click="viewNotification(notification)"
+                    :class="{ 'read-notification': notification.read }"
+                    flat
+                    :prepend-icon="
+                      notification.read
+                        ? 'mdi-bell-outline'
+                        : 'mdi-bell-ring-outline'
+                    "
+                    class="notification-btn"
+                  >
+                    <v-icon
+                      :icon="
+                        notification.read
+                          ? 'mdi-bell-outline'
+                          : 'mdi-bell-ring-outline'
+                      "
+                      style="margin-right: 12px; flex-shrink: 0"
+                    />
+                    <span
+                      class="notification-text"
+                      style="
+                        flex: 1;
+                        white-space: pre-line;
+                        word-break: break-word;
+                        overflow-wrap: break-word;
+                        display: block;
+                      "
+                    >
+                      {{ notification.message }}
+                    </span>
+                  </div>
+                </v-list-item>
+              </template>
+            </v-list>
+          </v-card>
+          <v-card-actions
+            style="width: 100%; display: flex; justify-content: center"
+          >
+            <!-- linkar evento do componente a requisição e receber o state com total de paginas -->
+            <v-pagination
+              style="width: 100%"
+              active-color="#078640"
+              :length="notificationsTotalPages"
+              @update:modelValue="(page) => handleUpdatePage(page)"
+            ></v-pagination>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </template>
   </v-app-bar>
 </template>
@@ -106,7 +192,7 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 import { useAuthStore } from '@/stores/auth.store';
-import { onMounted, onUpdated, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useNotificationStore } from '@/stores/notification.store';
 import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
 const userAuthStore = useAuthStore();
@@ -114,6 +200,10 @@ const notificationStore = useNotificationStore();
 const audio = new Audio('/WhatsApp Audio.mpeg');
 
 const menu = ref(false);
+
+const showSuccessModal = ref(false);
+
+const notificationsTotalPages = ref(0);
 
 const notifications = ref<Notification[]>([]);
 
@@ -123,7 +213,17 @@ interface Notification {
   read: boolean;
 }
 
-// Função para tocar o áudio
+const handleUpdatePage = async (page: number) => {
+  console.log('Página selecionada:', page);
+  try {
+    await notificationStore.getRecentNotifications(page);
+    notifications.value = notificationStore.notifications.data;
+    notificationsTotalPages.value = notificationStore.notifications.totalPages;
+  } catch (error) {
+    console.error('Erro ao buscar notificações:', error);
+  }
+};
+
 async function playNotificationSound() {
   try {
     await audio.play();
@@ -141,9 +241,9 @@ watch(
 );
 
 onMounted(async () => {
-  const userUuid = JSON.stringify(sessionStorage.getItem('uuid_user'));
-  await notificationStore.getRecentNotifications(userUuid);
-  notifications.value = notificationStore.notifications;
+  await notificationStore.getRecentNotifications();
+  notifications.value = notificationStore.notifications.data;
+  notificationsTotalPages.value = notificationStore.notifications.totalPages;
 });
 
 const viewNotification = async (notification: any) => {

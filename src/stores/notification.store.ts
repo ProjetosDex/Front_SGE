@@ -9,13 +9,13 @@ export const useNotificationStore = defineStore('notification', () => {
     notifications.value.length = 0;
   }
 
-  async function getRecentNotifications(userUuid: string | null) {
+  async function getRecentNotifications(page = 1, pageSize = 5) {
     try {
       const response = await axiosBackEndInstance.post(
         '/notification/find/latest',
         {
-          page: 1,
-          pageSize: 5,
+          page,
+          pageSize,
         },
       );
       notifications.value = response.data;
