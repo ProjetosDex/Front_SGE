@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Teste de Áudio com Baixa Latência</title>
+    <style>
+      body {
+        display: flex;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        background: #f0f0f0;
+        font-family: Arial, sans-serif;
+      }
+      button {
+        padding: 15px 25px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #0078d7;
+        color: white;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: #005ea6;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="playBtn">🔊 Tocar Som</button>
+
+    <script>
+      // Pré-carrega o áudio
+      const audio = new Audio('./public/WhatsApp Audio.mpeg');
+      audio.preload = 'auto';
+
+      document.getElementById('playBtn').addEventListener('click', () => {
+        // Reinicia o áudio do zero e toca
+        audio.currentTime = 0;
+        audio.play();
+      });
+    </script>
+  </body>
+</html>

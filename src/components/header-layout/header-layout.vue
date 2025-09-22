@@ -6,37 +6,57 @@
       <v-menu>
         <template #activator="{ props }">
           <v-btn icon class="mr-2" v-bind="props">
-            <v-badge dot color="info">
+            <v-badge
+              v-if="notifications && notifications.some((n) => !n.read)"
+              dot
+              color="info"
+            >
               <v-icon icon="mdi-bell-outline"></v-icon>
             </v-badge>
+            <v-icon v-else icon="mdi-bell-outline"></v-icon>
           </v-btn>
         </template>
 
         <v-card max-width="360px" max-height="748px">
-          <v-list
-            :lines="false"
-            density="compact"
-            nav
-            v-for="notification in notifications"
-            :key="notification.id"
-            :class="{ 'read-notification': notification.read }"
-          >
-            <v-btn
-              @click="viewNotification(notification)"
-              :class="{ 'read-notification': notification.read }"
-              flat
-              :prepend-icon="
-                notification.read ? 'mdi-bell-outline' : 'mdi-bell-ring-outline'
-              "
-              class="notification-btn"
-            >
-              <v-list-item class="notification-item">
-                <span class="notification-text">{{
-                  notification.message
-                }}</span>
+          <template v-if="notifications && notifications.length">
+            <div style="overflow-y: auto; max-height: 500px">
+              <v-list
+                :lines="false"
+                density="compact"
+                nav
+                v-for="notification in notifications"
+                :key="notification.id"
+                :class="{ 'read-notification': notification.read }"
+              >
+                <v-btn
+                  @click="viewNotification(notification)"
+                  :class="{ 'read-notification': notification.read }"
+                  flat
+                  :prepend-icon="
+                    notification.read
+                      ? 'mdi-bell-outline'
+                      : 'mdi-bell-ring-outline'
+                  "
+                  class="notification-btn"
+                >
+                  <v-list-item>
+                    <span class="notification-text">{{
+                      notification.message
+                    }}</span>
+                  </v-list-item>
+                </v-btn>
+              </v-list>
+            </div>
+          </template>
+          <template v-else>
+            <v-list>
+              <v-list-item>
+                <span style="width: 100%; text-align: center; color: #888">
+                  Não há notificações disponíveis.
+                </span>
               </v-list-item>
-            </v-btn>
-          </v-list>
+            </v-list>
+          </template>
           <div style="padding: 15px">
             <v-btn
               color="#078640"
@@ -119,54 +139,63 @@
           </v-card-title>
           <v-card style="width: 100%; max-height: 400px; overflow-y: auto">
             <v-list density="compact" nav style="width: 100%">
-              <template
-                v-for="notification in notifications"
-                :key="notification.id"
-              >
-                <v-list-item
-                  class="notification-item"
-                  style="
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    padding: 8px 16px;
-                    cursor: pointer;
-                  "
-                  @click="viewNotification(notification)"
+              <template v-if="notifications && notifications.length">
+                <template
+                  v-for="notification in notifications"
+                  :key="notification.id"
                 >
-                  <div
-                    style="width: 100%; display: flex; align-items: center"
-                    @click="viewNotification(notification)"
-                    :class="{ 'read-notification': notification.read }"
-                    flat
-                    :prepend-icon="
-                      notification.read
-                        ? 'mdi-bell-outline'
-                        : 'mdi-bell-ring-outline'
+                  <v-list-item
+                    class="notification-item"
+                    style="
+                      width: 100%;
+                      display: flex;
+                      align-items: center;
+                      padding: 8px 16px;
+                      cursor: pointer;
                     "
-                    class="notification-btn"
+                    @click="viewNotification(notification)"
                   >
-                    <v-icon
-                      :icon="
+                    <div
+                      style="width: 100%; display: flex; align-items: center"
+                      @click="viewNotification(notification)"
+                      :class="{ 'read-notification': notification.read }"
+                      flat
+                      :prepend-icon="
                         notification.read
                           ? 'mdi-bell-outline'
                           : 'mdi-bell-ring-outline'
                       "
-                      style="margin-right: 12px; flex-shrink: 0"
-                    />
-                    <span
-                      class="notification-text"
-                      style="
-                        flex: 1;
-                        white-space: pre-line;
-                        word-break: break-word;
-                        overflow-wrap: break-word;
-                        display: block;
-                      "
+                      class="notification-btn"
                     >
-                      {{ notification.message }}
-                    </span>
-                  </div>
+                      <v-icon
+                        :icon="
+                          notification.read
+                            ? 'mdi-bell-outline'
+                            : 'mdi-bell-ring-outline'
+                        "
+                        style="margin-right: 12px; flex-shrink: 0"
+                      />
+                      <span
+                        class="notification-text"
+                        style="
+                          flex: 1;
+                          white-space: pre-line;
+                          word-break: break-word;
+                          overflow-wrap: break-word;
+                          display: block;
+                        "
+                      >
+                        {{ notification.message }}
+                      </span>
+                    </div>
+                  </v-list-item>
+                </template>
+              </template>
+              <template v-else>
+                <v-list-item>
+                  <span style="width: 100%; text-align: center; color: #888">
+                    Não há notificações disponíveis.
+                  </span>
                 </v-list-item>
               </template>
             </v-list>
@@ -195,9 +224,13 @@ import { useAuthStore } from '@/stores/auth.store';
 import { onMounted, ref, watch } from 'vue';
 import { useNotificationStore } from '@/stores/notification.store';
 import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backend-client';
+import type { UserRole } from '@/core/domain/entities/user.entity';
 const userAuthStore = useAuthStore();
 const notificationStore = useNotificationStore();
-const audio = new Audio('/WhatsApp Audio.mpeg');
+const audio = window.notificationAudio || new Audio('/WhatsApp Audio.mpeg');
+
+const authStore = useAuthStore();
+const userRole = ref(authStore.userRole);
 
 const menu = ref(false);
 
@@ -211,14 +244,21 @@ interface Notification {
   id: string;
   message: string;
   read: boolean;
+  createdAt: string;
 }
 
 const handleUpdatePage = async (page: number) => {
-  console.log('Página selecionada:', page);
   try {
-    await notificationStore.getRecentNotifications(page);
+    await notificationStore.getRecentNotifications(
+      userRole.value as UserRole,
+      page,
+    );
     notifications.value = notificationStore.notifications.data;
     notificationsTotalPages.value = notificationStore.notifications.totalPages;
+    console.log(
+      'Notificações atualizadas:',
+      notificationStore.notifications.totalPages,
+    );
   } catch (error) {
     console.error('Erro ao buscar notificações:', error);
   }
@@ -226,27 +266,44 @@ const handleUpdatePage = async (page: number) => {
 
 async function playNotificationSound() {
   try {
+    console.log('Tocando som de notificação');
+    audio.currentTime = 0;
     await audio.play();
   } catch (error) {
     console.error('Erro ao tocar o som:', error);
   }
 }
 
+let lastNotificationIds: string[] = [];
+
 watch(
-  notifications,
-  (newNotifications, oldNotifications) => {
-    playNotificationSound();
+  () => notificationStore.notifications,
+  (newNotifications) => {
+    if (Array.isArray(newNotifications.data)) {
+      // Notificações novas: ids que não estavam antes
+      const novas = newNotifications.data.filter(
+        (n: Notification) => !lastNotificationIds.includes(n.id),
+      );
+      if (novas.some((n: Notification) => !n.read)) {
+        playNotificationSound();
+      }
+      // Atualiza a lista de ids para a próxima comparação
+      lastNotificationIds = newNotifications.data.map(
+        (n: Notification) => n.id,
+      );
+    }
   },
   { deep: true },
 );
 
 onMounted(async () => {
-  await notificationStore.getRecentNotifications();
+  await notificationStore.getRecentNotifications(userRole.value as UserRole);
   notifications.value = notificationStore.notifications.data;
   notificationsTotalPages.value = notificationStore.notifications.totalPages;
 });
 
 const viewNotification = async (notification: any) => {
+  console.log('Notification clicked:', notification);
   if (!notification.read) {
     try {
       await axiosBackEndInstance.patch(
@@ -257,6 +314,11 @@ const viewNotification = async (notification: any) => {
       console.error(error);
     }
   }
+
+  router.push({
+    name: 'detalhamentoProcessoEstagio',
+    params: { id: notification.id_internshipProcess },
+  });
 };
 
 async function logout() {

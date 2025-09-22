@@ -20,6 +20,7 @@ class SocketService {
     this.socket!.emit('register', userUuid);
 
     this.socket.on('notification', (data: any) => {
+      console.log('Notificação recebida:', data);
       notificationStore.addNotification(data);
     });
   }
