@@ -15,15 +15,32 @@
         typeForm === 'Register' ? 'form-register-inputs' : 'form-login-inputs'
       "
     >
-      <InputGroup
-        v-for="field in filteredInputs"
-        :key="field.id"
-        v-model="field.value"
-        :label="field.label"
-        :id="field.id"
-        :type="field.type"
-        :placeholder="field.placeholder"
-      />
+      <template v-for="field in filteredInputs" :key="field.id">
+        <!-- Campos de senha com olhinho -->
+        <v-text-field
+          v-if="field.type === 'password'"
+          v-model="field.value"
+          :label="field.label"
+          :id="field.id"
+          :type="showPassword[field.id] ? 'text' : 'password'"
+          :placeholder="field.placeholder"
+          :append-inner-icon="
+            showPassword[field.id] ? 'mdi-eye-off' : 'mdi-eye'
+          "
+          @click:append-inner="toggleShowPassword(field.id)"
+          hide-details
+          dense
+        />
+        <!-- Outros campos -->
+        <InputGroup
+          v-else
+          v-model="field.value"
+          :label="field.label"
+          :id="field.id"
+          :type="field.type"
+          :placeholder="field.placeholder"
+        />
+      </template>
     </div>
 
     <ActionButton :title="'Sign In'" :type="'submit'">
@@ -167,6 +184,16 @@ async function handleKeydownForm(event: any, executionFunction: any) {
 }
 
 const formAction = props.typeForm === 'Login' ? login : register;
+
+// Controle do olhinho para cada campo de senha
+const showPassword = reactive({
+  'input-password': false,
+  'input-confirm-password': false,
+});
+
+function toggleShowPassword(id: string) {
+  showPassword[id] = !showPassword[id];
+}
 </script>
 
 <style
