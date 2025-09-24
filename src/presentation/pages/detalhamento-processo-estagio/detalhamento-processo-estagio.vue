@@ -82,8 +82,8 @@
         <div
           class="model-files"
           v-if="
-            currentStep === Step.INTERNSHIP_START &&
-            internshipStartStepStatus === InternshipProcessStatus.REJECTED &&
+            currentStep === Step.INTERNSHIP_END &&
+            internshipEndStepStatus === InternshipProcessStatus.REJECTED &&
             userRole === 'STUDENT'
           "
         >
