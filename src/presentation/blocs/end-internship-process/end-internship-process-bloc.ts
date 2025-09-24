@@ -81,9 +81,9 @@ export class EndInternshipProcessBloc {
 
   validateFileNames(files: File[]): void {
     const validFileNames = [
-      'auto_avaliacao_estagiario.pdf',
-      'avaliacao_concedente.pdf',
-      'avaliacao_professor_orientador.pdf',
+      'AutoAvaliacaoEstagiario.pdf',
+      'AvaliacaoConcedente.pdf',
+      'AvaliacaoProfessorOrientador.pdf',
     ];
 
     if (
@@ -91,7 +91,7 @@ export class EndInternshipProcessBloc {
       files.every((file) => !validFileNames.includes(file.name))
     ) {
       throw new Error(
-        'Os arquivos devem conter os nomes: auto_avaliacao_estagiario, avaliacao_concedente e avaliacao_professor_orientador. (deve conter os 3 arquivos em PDF)',
+        'Os arquivos devem conter os nomes: AutoAvaliacaoEstagiario, AvaliacaoConcedente e AvaliacaoProfessorOrientador. (deve conter os 3 arquivos em PDF)',
       );
     }
   }

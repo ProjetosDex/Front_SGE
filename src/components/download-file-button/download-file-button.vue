@@ -17,9 +17,9 @@
 </template>
 
 <script lang="ts" setup>
-import { FileType } from "@/core/domain/entities/file.entity";
-import axiosBackEndClient from "@/core/infrastructure/interceptors/axios-backend-client";
-import { computed, ref } from "vue";
+import { FileType } from '@/core/domain/entities/file.entity';
+import axiosBackEndClient from '@/core/infrastructure/interceptors/axios-backend-client';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
   fileId?: string;
@@ -31,26 +31,26 @@ const isDownloading = ref(false);
 
 const fileName = computed(() => {
   const fileNames: Record<string, string> = {
-    [FileType.TERM_COMMITMENT]: "termo_compromisso.pdf",
-    [FileType.SUPERVISOR_EVALUATION]: "avaliacao_supervisor.pdf",
-    [FileType.INTERNSHIP_CERTIFICATE]: "certificado_estagio.pdf",
-    [FileType.INTERNSHIP_GRANTOR_EVALUATION]: "avaliacao_concedente.pdf",
-    [FileType.STUDENT_SELF_EVALUATION]: "autoavaliacao_estudante.pdf",
+    [FileType.TERM_COMMITMENT]: 'TermoCompromisso.pdf',
+    [FileType.SUPERVISOR_EVALUATION]: 'AvaliacaoSupervisor.pdf',
+    [FileType.INTERNSHIP_CERTIFICATE]: 'CertificadoConclusaoEstagio.pdf',
+    [FileType.INTERNSHIP_GRANTOR_EVALUATION]: 'AvaliacaoConcedente.pdf',
+    [FileType.STUDENT_SELF_EVALUATION]: 'AutoAvaliacaoEstagiario.pdf',
   };
 
-  return fileNames[props.fileType || ""] || "arquivo.pdf";
+  return fileNames[props.fileType || ''] || 'arquivo.pdf';
 });
 
 const colorStyle = computed(() => {
   return props.isRejected
-    ? "background-color: rgba(255,82,82);" // vermelho suave e transparente
-    : "background-color: rgb(162, 246, 169)";
+    ? 'background-color: rgba(255,82,82);' // vermelho suave e transparente
+    : 'background-color: rgb(162, 246, 169)';
 });
 
 const downloadFile = (filename: string, blob?: Blob) => {
   if (blob) {
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
@@ -64,17 +64,17 @@ const downloadFile = (filename: string, blob?: Blob) => {
 const fetchFile = async () => {
   try {
     const response = await axiosBackEndClient.post(
-      "/file/download",
+      '/file/download',
       {
         fileId: props.fileId,
         fileType: props.fileType,
       },
       {
-        responseType: "blob",
-      }
+        responseType: 'blob',
+      },
     );
 
-    return new Blob([response.data], { type: "application/pdf" });
+    return new Blob([response.data], { type: 'application/pdf' });
   } catch (error) {
     isDownloading.value = false;
   }
@@ -82,7 +82,7 @@ const fetchFile = async () => {
 
 const handleDownload = async () => {
   if (!props.fileId || !props.fileType) {
-    console.error("fileId e fileType são obrigatórios");
+    console.error('fileId e fileType são obrigatórios');
     return;
   }
 
@@ -92,7 +92,7 @@ const handleDownload = async () => {
     const blob = await fetchFile();
     downloadFile(fileName.value, blob);
   } catch (error) {
-    console.error("Erro ao fazer download do arquivo:", error);
+    console.error('Erro ao fazer download do arquivo:', error);
   } finally {
     isDownloading.value = false;
   }

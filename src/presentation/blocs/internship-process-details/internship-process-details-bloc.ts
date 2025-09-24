@@ -123,9 +123,10 @@ export class InternshipProcessDetailsBloc {
     }
 
     if (files[0]?.name) {
-      const fileName = files[0].name.toLowerCase();
-      if (!fileName.includes('termo_compromisso')) {
-        throw new Error('O nome do arquivo deve conter "termo_compromisso".');
+      const fileName = files[0].name;
+      console.log(fileName);
+      if (!fileName.includes('TermoCompromisso')) {
+        throw new Error('O nome do arquivo deve conter "TermoCompromisso".');
       }
     }
   }
@@ -179,10 +180,10 @@ export class InternshipProcessDetailsBloc {
     }
 
     if (files && files[0]?.name) {
-      const fileName = files[0].name.toLowerCase();
-      if (!fileName.includes('certificado_conclusao_estagio')) {
+      const fileName = files[0].name;
+      if (!fileName.includes('CertificadoConclusaoEstagio')) {
         throw new Error(
-          'O nome do arquivo deve conter "certificado_conclusao_estagio".',
+          'O nome do arquivo deve conter "CertificadoConclusaoEstagio".',
         );
       }
     }

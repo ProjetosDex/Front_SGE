@@ -5,7 +5,7 @@ export class GenerateTermCommitmentPdfUseCase {
   async handle(createTermCommitmentDTO: CreateTermCommitmentDTO) {
     const termBlob = await generatePDF(createTermCommitmentDTO);
     const pfFormData = new FormData();
-    pfFormData.append('file', termBlob, 'termo_compromisso.pdf');
+    pfFormData.append('file', termBlob, 'TermoCompromisso.pdf');
 
     return pfFormData;
   }
