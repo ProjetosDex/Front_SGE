@@ -67,6 +67,31 @@ export const useInternshipProcessDetailsState = defineStore(
           );
         }
       });
+
+      // Restaurar valores iniciais do step Fim de Estágio caso não tenha sido atualizado
+      const endStepIndex = Step.INTERNSHIP_END;
+      const endStep = state.steps.find((step) => step.index === endStepIndex);
+      const hasEndStepHistory = internshipProcessHistories.some(
+        (history) =>
+          MovementToStepTranslation[
+            history.movement as InternshipProcessMovement
+          ] === endStepIndex,
+      );
+      if (endStep && !hasEndStepHistory) {
+        const initialEndStep = getInitialState().steps.find(
+          (step) => step.index === endStepIndex,
+        );
+        if (initialEndStep) {
+          endStep.status = initialEndStep.status;
+          endStep.description = initialEndStep.description;
+          endStep.rejectionReason = initialEndStep.rejectionReason;
+          endStep.documents = [...initialEndStep.documents];
+          endStep.editable = initialEndStep.editable;
+          endStep.editIcon = initialEndStep.editIcon;
+          endStep.title = initialEndStep.title;
+          endStep.additionalInfo = initialEndStep.additionalInfo;
+        }
+      }
     };
 
     const setMessageSuccessModal = (message: string) => {

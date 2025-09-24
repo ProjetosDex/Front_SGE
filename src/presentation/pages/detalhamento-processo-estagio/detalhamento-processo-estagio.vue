@@ -315,6 +315,15 @@ watch(
   { deep: true },
 );
 
+watch(
+  () => router.currentRoute.value.params.id,
+  async (newId) => {
+    if (newId) {
+      await internshipProcessDetailsBloc.loadInternshipProcessDetails();
+    }
+  },
+);
+
 const handleCloseSuccessModal = async () => {
   showSuccessModal.value = false;
   await internshipProcessDetailsBloc.loadInternshipProcessDetails();
