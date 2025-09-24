@@ -117,12 +117,15 @@
         <div
           v-if="
             currentStep === Step.INTERNSHIP_START &&
-            internshipStartStepStatus !== InternshipProcessStatus.IN_PROGRESS &&
             internshipStartStepStatus !== InternshipProcessStatus.COMPLETED &&
             internshipStartStepStatus !== InternshipProcessStatus.REJECTED &&
             !(
               userRole === 'STUDENT' &&
               internshipStartStepStatus === InternshipProcessStatus.UNDER_REVIEW
+            ) &&
+            !(
+              (userRole === 'ADMINISTRATOR' || userRole === 'EMPLOYEE') &&
+              internshipStartStepStatus === InternshipProcessStatus.IN_PROGRESS
             ) &&
             (userRole === 'STUDENT' ||
               userRole === 'ADMINISTRATOR' ||
@@ -293,12 +296,13 @@ interface Notification {
 watch(
   () => notificationStore.notifications,
   async (newNotifications) => {
+    console.log('Notifications updated:', newNotifications);
     if (Array.isArray(newNotifications.data)) {
       const novas = newNotifications.data.filter(
         (n: Notification) => !lastNotificationIds.includes(n.id),
       );
       const hasRelatedNotification = novas.some(
-        (n: any) => !n.read && n.internshipProcessId === internshipProcessId,
+        (n: any) => !n.read && n.id_internshipProcess === internshipProcessId,
       );
       if (hasRelatedNotification) {
         await internshipProcessDetailsBloc.loadInternshipProcessDetails();
