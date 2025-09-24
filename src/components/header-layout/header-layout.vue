@@ -89,7 +89,6 @@
             <v-list-item>
               <v-btn
                 flat
-                to="/"
                 prepend-icon="mdi-account-outline"
                 style="
                   text-transform: capitalize;
@@ -97,7 +96,7 @@
                   display: flex;
                   justify-content: flex-start;
                 "
-                >Meu perfil</v-btn
+                >{{ userAuthStore.username }}</v-btn
               >
             </v-list-item>
 

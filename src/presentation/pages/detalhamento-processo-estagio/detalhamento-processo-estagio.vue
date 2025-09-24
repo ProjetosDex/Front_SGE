@@ -117,6 +117,7 @@
         <div
           v-if="
             currentStep === Step.INTERNSHIP_START &&
+            internshipStartStepStatus !== InternshipProcessStatus.IN_PROGRESS &&
             internshipStartStepStatus !== InternshipProcessStatus.COMPLETED &&
             internshipStartStepStatus !== InternshipProcessStatus.REJECTED &&
             !(
@@ -155,6 +156,7 @@
           v-if="
             currentStep === Step.INTERNSHIP_START &&
             (userRole === 'ADMINISTRATOR' || userRole === 'EMPLOYEE') &&
+            internshipStartStepStatus !== InternshipProcessStatus.IN_PROGRESS &&
             internshipStartStepStatus !== InternshipProcessStatus.COMPLETED &&
             internshipStartStepStatus !== InternshipProcessStatus.REJECTED
           "
@@ -263,7 +265,7 @@ import StepProgressBar from '@/presentation/organisms/step-progress-bar/step-pro
 import InputFile from '@/components/input-file/input-file.vue';
 import downloadFileButton from '@/components/download-file-button/download-file-button.vue';
 import { createInternshipProcessDetailsBloc } from '@/presentation/blocs/internship-process-details/create-internship-process-details-bloc';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { Step } from '@/presentation/blocs/internship-process-details/state/internship-process-details-state-interface';
 import { useAuthStore } from '@/stores/auth.store';
 import { InternshipProcessStatus } from '@/core/domain/entities/internshipProcess.entity';
@@ -271,15 +273,47 @@ import FormTce from '@/components/Form-TCE/form-tce.vue';
 
 import { useRouter } from 'vue-router';
 import { UserRole } from '@/core/domain/entities/user.entity';
+import { useNotificationStore } from '@/stores/notification.store';
 const router = useRouter();
 const authStore = useAuthStore();
+const notificationStore = useNotificationStore();
 const userRole = ref(authStore.userRole);
 const remark = ref('');
 const internshipProcessId = router.currentRoute.value.params.id as string;
+let lastNotificationIds: string[] = [];
 
-const handleCloseSuccessModal = () => {
+interface Notification {
+  id: string;
+  message: string;
+  read: boolean;
+
+  createdAt: string;
+}
+
+watch(
+  () => notificationStore.notifications,
+  async (newNotifications) => {
+    if (Array.isArray(newNotifications.data)) {
+      const novas = newNotifications.data.filter(
+        (n: Notification) => !lastNotificationIds.includes(n.id),
+      );
+      const hasRelatedNotification = novas.some(
+        (n: any) => !n.read && n.internshipProcessId === internshipProcessId,
+      );
+      if (hasRelatedNotification) {
+        await internshipProcessDetailsBloc.loadInternshipProcessDetails();
+      }
+      lastNotificationIds = newNotifications.data.map(
+        (n: Notification) => n.id,
+      );
+    }
+  },
+  { deep: true },
+);
+
+const handleCloseSuccessModal = async () => {
   showSuccessModal.value = false;
-  window.location.reload();
+  await internshipProcessDetailsBloc.loadInternshipProcessDetails();
 };
 
 const internshipStartStepStatus = computed(() => {

@@ -71,7 +71,7 @@ export class InternshipProcessDetailsBloc {
       validate: false,
     });
 
-    window.location.reload();
+    await this.loadInternshipProcessDetails();
   }
 
   async registerAssignTermCommitment(files: File[], userRole?: string | null) {
@@ -146,7 +146,7 @@ export class InternshipProcessDetailsBloc {
         remark,
       );
 
-      window.location.reload();
+      await this.loadInternshipProcessDetails();
     } catch (error: any) {
       this.internshipProcessDetailsState.setLoading(false);
       this.internshipProcessDetailsState.setMessageError(error.message);
