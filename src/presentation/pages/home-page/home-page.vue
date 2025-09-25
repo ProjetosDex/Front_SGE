@@ -36,14 +36,6 @@ const homeCardContent = [
     linkText: 'saiba mais',
   },
   {
-    icon: 'mdi mdi-file-check-outline',
-    title: 'CREDITAR ESTÁGIO',
-    description:
-      'Após a conclusão do estágio, solicite o crédito das horas cumpridas em seu histórico escolar. É preciso submeter a documentação comprobatória e o relatório final. Acesse o passo a passo completo clicando em "Saiba mais".',
-    linkHref: '#',
-    linkText: 'saiba mais',
-  },
-  {
     icon: 'mdi mdi-update',
     title: 'ACOMPANHAR PROCESSOS',
     description:

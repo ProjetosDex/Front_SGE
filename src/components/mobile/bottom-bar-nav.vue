@@ -23,7 +23,9 @@
       <v-btn>
         <v-icon>mdi-calendar</v-icon>
 
-        <span class="span-button">Fim de Estágio</span>
+        <router-link to="/fim/estagio" class="span-button"
+          >Fim de Estágio</router-link
+        >
       </v-btn>
 
       <v-btn>

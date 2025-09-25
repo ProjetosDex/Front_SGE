@@ -15,7 +15,7 @@
         hidden
       />
       <div class="icon" @click="openFileInput">
-        <img src="@/assets/images/cloud-uploading.png" />
+        <img src="@/assets/images/cloud-uploading.png" draggable="false"/>
       </div>
       <p style="text-align: center">Faça o Upload dos Arquivos Necessários</p>
     </form>
