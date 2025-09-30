@@ -21,8 +21,8 @@ import AuthForm from '@/presentation/organisms/auth-form/auth-form.vue';
 import FormSelector from '@/presentation/organisms/form-selector/form-selector.vue';
 
 enum AuthOption {
-  LOGIN = 'Login',
-  REGISTER = 'Register',
+  LOGIN = 'Entrar',
+  REGISTER = 'Criar Conta',
 }
 
 type AuthOptionType = {
@@ -31,8 +31,8 @@ type AuthOptionType = {
 };
 
 const authOptions: AuthOptionType[] = [
-  { value: AuthOption.LOGIN, label: 'Login' },
-  { value: AuthOption.REGISTER, label: 'Registrar' },
+  { value: AuthOption.LOGIN, label: 'Entrar' },
+  { value: AuthOption.REGISTER, label: 'Criar Conta' },
 ];
 
 const authenticationOption = ref<AuthOption>(AuthOption.LOGIN);

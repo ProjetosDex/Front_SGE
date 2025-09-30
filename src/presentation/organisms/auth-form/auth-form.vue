@@ -12,10 +12,47 @@
 
     <div
       :class="
-        typeForm === 'Register' ? 'form-register-inputs' : 'form-login-inputs'
+        typeForm === 'Criar Conta'
+          ? 'form-register-inputs'
+          : 'form-login-inputs'
       "
     >
-      <template v-for="field in filteredInputs" :key="field.id">
+      <template
+        v-if="typeForm === 'Criar Conta'"
+        v-for="field in Object.values(formRegisterInputs)"
+        :key="'register-' + field.id"
+      >
+        <!-- Campos de senha com olhinho -->
+        <v-text-field
+          v-if="field.type === 'password'"
+          v-model="field.value"
+          :label="field.label"
+          :id="field.id"
+          :type="showPassword[field.id] ? 'text' : 'password'"
+          :placeholder="field.placeholder"
+          :append-inner-icon="
+            showPassword[field.id] ? 'mdi-eye-off' : 'mdi-eye'
+          "
+          @click:append-inner="toggleShowPassword(field.id)"
+          hide-details
+          dense
+        />
+        <!-- Outros campos -->
+        <InputGroup
+          v-else
+          v-model="field.value"
+          :label="field.label"
+          :id="field.id"
+          :type="field.type"
+          :placeholder="field.placeholder"
+        />
+      </template>
+
+      <template
+        v-else
+        v-for="field in Object.values(formLoginInputs)"
+        :key="'login-' + field.id"
+      >
         <!-- Campos de senha com olhinho -->
         <v-text-field
           v-if="field.type === 'password'"
@@ -52,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, toRefs } from 'vue';
+import { computed, reactive, ref, toRefs, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { socketService } from '@/services/socketService';
 import { useRouter } from 'vue-router';
@@ -61,8 +98,8 @@ import ActionButton from '@/presentation/atoms/action-button.vue';
 
 const props = defineProps({
   typeForm: {
-    type: String as () => 'Login' | 'Register',
-    default: 'Login',
+    type: String as () => 'Entrar' | 'Criar Conta',
+    default: 'Entrar',
   },
 });
 
@@ -71,7 +108,7 @@ const { typeForm } = toRefs(props);
 const authStore = useAuthStore();
 const router = useRouter();
 const feedBack = ref('');
-const formInputs = reactive({
+const formRegisterInputs = reactive({
   email: {
     label: 'Email',
     id: 'input-email',
@@ -116,20 +153,29 @@ const formInputs = reactive({
   },
 });
 
-const filteredInputs = computed(() => {
-  if (typeForm.value === 'Login') {
-    const { email, password } = formInputs;
-    return { email, password };
-  }
-  return formInputs;
+const formLoginInputs = reactive({
+  email: {
+    label: 'Email',
+    id: 'input-email',
+    type: 'text',
+    placeholder: 'email@email.com',
+    value: '',
+  },
+  password: {
+    label: 'Senha',
+    id: 'input-password',
+    type: 'password',
+    placeholder: 'Senha',
+    value: '',
+  },
 });
 
 const title = computed(() =>
-  typeForm.value === 'Login' ? 'Faça login em sua conta!' : 'Crie sua conta!',
+  typeForm.value === 'Entrar' ? 'Faça login em sua conta!' : 'Crie sua conta!',
 );
 
 const subTitle = computed(() =>
-  typeForm.value === 'Login'
+  typeForm.value === 'Entrar'
     ? 'Faça o login para acessar o sistema'
     : 'Preencha os seguintes dados para começar a utilizar o sistema',
 );
@@ -137,8 +183,8 @@ const subTitle = computed(() =>
 const login = async () => {
   try {
     await authStore.login({
-      email: formInputs.email.value,
-      password: formInputs.password.value,
+      email: formLoginInputs.email.value,
+      password: formLoginInputs.password.value,
     });
 
     socketService.connect('ws://localhost:3002', authStore.userId);
@@ -155,26 +201,23 @@ const login = async () => {
 };
 
 const register = async () => {
-  // try {
-  //   const response = await axiosBackEndInstance.post(
-  //     'user/createAluno',
-  //     formLogin,
-  //   );
-  //   const tokens = response.data;
-  //   if (tokens && tokens.access_token && tokens.refresh_token) {
-  //     userAuthStore.setAccessToken(tokens.access_token);
-  //     userAuthStore.setRefreshToken(tokens.refresh_token);
-  //     router.push('home');
-  //   }
-  // } catch (error: any) {
-  //   if (!error.response) {
-  //     formLogin.infoLogin = 'Servidor temporariamente fora do ar';
-  //   } else if (error.response.status === 500) {
-  //     formLogin.infoLogin = 'Email ou senha Incorretos';
-  //   } else {
-  //     console.log('Erro durante a requisição de login:');
-  //   }
-  // }
+  try {
+    const response = await axiosBackEndInstance.post('user/student', formLogin);
+    const tokens = response.data;
+    if (tokens && tokens.access_token && tokens.refresh_token) {
+      userAuthStore.setAccessToken(tokens.access_token);
+      userAuthStore.setRefreshToken(tokens.refresh_token);
+      router.push('home');
+    }
+  } catch (error: any) {
+    if (!error.response) {
+      formLogin.infoLogin = 'Servidor temporariamente fora do ar';
+    } else if (error.response.status === 500) {
+      formLogin.infoLogin = 'Email ou senha Incorretos';
+    } else {
+      console.log('Erro durante a requisição de login:');
+    }
+  }
 };
 
 async function handleKeydownForm(event: any, executionFunction: any) {
@@ -183,9 +226,8 @@ async function handleKeydownForm(event: any, executionFunction: any) {
   }
 }
 
-const formAction = props.typeForm === 'Login' ? login : register;
+const formAction = props.typeForm === 'Entrar' ? login : register;
 
-// Controle do olhinho para cada campo de senha
 const showPassword = reactive({
   'input-password': false,
   'input-confirm-password': false,

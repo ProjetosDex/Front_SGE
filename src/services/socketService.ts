@@ -3,6 +3,13 @@ import { useNotificationStore } from '@/stores/notification.store';
 
 class SocketService {
   private socket: Socket | null = null;
+  private audio: HTMLAudioElement;
+
+  constructor() {
+    // Precarrega o áudio ao instanciar o serviço
+    this.audio = window.notificationAudio || new Audio('/notification.mpeg');
+    this.audio.load();
+  }
 
   connect(url: string, userUuid: string): void {
     const notificationStore = useNotificationStore();
@@ -22,6 +29,13 @@ class SocketService {
     this.socket.on('notification', (data: any) => {
       console.log('Notificação recebida:', data);
       notificationStore.addNotification(data);
+
+      // Toca o som ao receber nova notificação
+      try {
+        this.audio.play();
+      } catch (error) {
+        console.error('Erro ao tocar o som:', error);
+      }
     });
   }
 

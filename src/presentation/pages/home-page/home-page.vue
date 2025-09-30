@@ -25,7 +25,6 @@ const homeCardContent = [
     description:
       'Para iniciar seu estágio, preencha e submeta toda a documentação necessária, incluindo o Termo de Compromisso. Esse processo garante que todas as partes estejam cientes das responsabilidades e expectativas. Clique em "Saiba mais" para acessar os formulários e instruções detalhadas.',
     linkHref: '#',
-    linkText: 'saiba mais',
   },
   {
     icon: 'mdi mdi-calendar',
@@ -33,7 +32,6 @@ const homeCardContent = [
     description:
       'Ao finalizar seu estágio, é essencial concluir todas as atividades e submeter o relatório final. Esse documento é necessário para validar as horas de estágio e avaliar seu desempenho. Para mais informações e acesso ao relatório, clique em "Saiba mais".',
     linkHref: '#',
-    linkText: 'saiba mais',
   },
   {
     icon: 'mdi mdi-update',
@@ -41,7 +39,6 @@ const homeCardContent = [
     description:
       'Mantenha-se atualizado sobre o andamento dos seus processos de estágio. Acompanhe desde a aprovação da documentação até a finalização do estágio. Verifique o status de cada etapa clicando em "Saiba mais".',
     linkHref: '#',
-    linkText: 'saiba mais',
   },
 ];
 </script>

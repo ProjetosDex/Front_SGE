@@ -226,7 +226,6 @@ import axiosBackEndInstance from '@/core/infrastructure/interceptors/axios-backe
 import type { UserRole } from '@/core/domain/entities/user.entity';
 const userAuthStore = useAuthStore();
 const notificationStore = useNotificationStore();
-const audio = window.notificationAudio || new Audio('/WhatsApp Audio.mpeg');
 
 const authStore = useAuthStore();
 const userRole = ref(authStore.userRole);
@@ -262,38 +261,6 @@ const handleUpdatePage = async (page: number) => {
     console.error('Erro ao buscar notificações:', error);
   }
 };
-
-async function playNotificationSound() {
-  try {
-    console.log('Tocando som de notificação');
-    audio.currentTime = 0;
-    await audio.play();
-  } catch (error) {
-    console.error('Erro ao tocar o som:', error);
-  }
-}
-
-let lastNotificationIds: string[] = [];
-
-watch(
-  () => notificationStore.notifications,
-  (newNotifications) => {
-    if (Array.isArray(newNotifications.data)) {
-      // Notificações novas: ids que não estavam antes
-      const novas = newNotifications.data.filter(
-        (n: Notification) => !lastNotificationIds.includes(n.id),
-      );
-      if (novas.some((n: Notification) => !n.read)) {
-        playNotificationSound();
-      }
-      // Atualiza a lista de ids para a próxima comparação
-      lastNotificationIds = newNotifications.data.map(
-        (n: Notification) => n.id,
-      );
-    }
-  },
-  { deep: true },
-);
 
 onMounted(async () => {
   await notificationStore.getRecentNotifications(userRole.value as UserRole);

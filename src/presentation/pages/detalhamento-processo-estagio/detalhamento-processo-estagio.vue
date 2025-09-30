@@ -166,7 +166,10 @@
         >
           <v-form>
             <v-container>
-              <v-text-field v-model="remark">
+              <v-text-field
+                v-model="remark"
+                @keyup.enter="handleRejectTermCommitment"
+              >
                 <template v-slot:label>
                   <span>
                     Descreva o motivo da <strong>Recusa</strong> dos documentos
@@ -192,7 +195,10 @@
         >
           <v-form>
             <v-container>
-              <v-text-field v-model="remark">
+              <v-text-field
+                v-model="remark"
+                @keyup.enter="handleRejectEndInternshipProcess"
+              >
                 <template v-slot:label>
                   <span>
                     Descreva o motivo da <strong>Recusa</strong> dos documentos
