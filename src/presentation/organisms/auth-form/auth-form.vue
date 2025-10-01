@@ -109,11 +109,32 @@ const authStore = useAuthStore();
 const router = useRouter();
 const feedBack = ref('');
 const formRegisterInputs = reactive({
+  name: {
+    label: 'Nome',
+    id: 'input-name',
+    type: 'text',
+    placeholder: 'Nome',
+    value: '',
+  },
   email: {
     label: 'Email',
     id: 'input-email',
     type: 'text',
     placeholder: 'email@email.com',
+    value: '',
+  },
+  academicRegistrationCode: {
+    label: 'Matrícula',
+    id: 'input-academicRegistrationCode',
+    type: 'number',
+    placeholder: 'Matrícula',
+    value: '',
+  },
+  telephone: {
+    label: 'Telefone',
+    id: 'input-telephone',
+    type: 'text',
+    placeholder: 'Telefone',
     value: '',
   },
   password: {
@@ -130,18 +151,25 @@ const formRegisterInputs = reactive({
     placeholder: 'Confirme sua Senha',
     value: '',
   },
-  academicRegistrationCode: {
-    label: 'Matrícula',
-    id: 'input-academicRegistrationCode',
-    type: 'number',
-    placeholder: 'Matrícula',
-    value: '',
-  },
   cpf: {
     label: 'CPF',
     id: 'input-cpf',
     type: 'text',
     placeholder: 'CPF',
+    value: '',
+  },
+  rg: {
+    label: 'RG',
+    id: 'input-rg',
+    type: 'text',
+    placeholder: 'RG',
+    value: '',
+  },
+  courseStudy: {
+    label: 'Curso',
+    id: 'input-course-study',
+    type: 'text',
+    placeholder: 'Curso',
     value: '',
   },
   birthDate: {
@@ -202,21 +230,21 @@ const login = async () => {
 
 const register = async () => {
   try {
-    const response = await axiosBackEndInstance.post('user/student', formLogin);
-    const tokens = response.data;
-    if (tokens && tokens.access_token && tokens.refresh_token) {
-      userAuthStore.setAccessToken(tokens.access_token);
-      userAuthStore.setRefreshToken(tokens.refresh_token);
-      router.push('home');
-    }
+    await authStore.register({
+      email: formRegisterInputs.email.value,
+      password: formRegisterInputs.password.value,
+      confirmPassword: formRegisterInputs.confirmPassword.value,
+      academicRegistrationCode:
+        formRegisterInputs.academicRegistrationCode.value,
+      cpf: formRegisterInputs.cpf.value,
+      birthDate: new Date(formRegisterInputs.birthDate.value).toISOString(),
+      courseStudy: formRegisterInputs.courseStudy.value,
+      name: formRegisterInputs.name.value,
+      rg: formRegisterInputs.rg.value,
+      telephone: formRegisterInputs.telephone.value,
+    });
   } catch (error: any) {
-    if (!error.response) {
-      formLogin.infoLogin = 'Servidor temporariamente fora do ar';
-    } else if (error.response.status === 500) {
-      formLogin.infoLogin = 'Email ou senha Incorretos';
-    } else {
-      console.log('Erro durante a requisição de login:');
-    }
+    feedBack.value = error.response.data.message;
   }
 };
 
@@ -226,7 +254,9 @@ async function handleKeydownForm(event: any, executionFunction: any) {
   }
 }
 
-const formAction = props.typeForm === 'Entrar' ? login : register;
+const formAction = computed(() =>
+  typeForm.value === 'Entrar' ? login : register,
+);
 
 const showPassword = reactive({
   'input-password': false,

@@ -20,6 +20,15 @@ export const useAuthStore = defineStore('auth', () => {
   const userId = computed(() => user.value?.id || '');
   const isAdmin = computed(() => userRole.value === 'ADMIN');
 
+  const register = async (formRegister: any) => {
+    try {
+      await axiosBackEndInstance.post('/user/student', formRegister);
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  };
+
   const login = async (credentials: { email: string; password: string }) => {
     try {
       const { data } = await axiosBackEndInstance.post(
@@ -122,6 +131,7 @@ export const useAuthStore = defineStore('auth', () => {
     userId,
     isAdmin,
     isRefreshing,
+    register,
     login,
     logout,
     refreshToken,
