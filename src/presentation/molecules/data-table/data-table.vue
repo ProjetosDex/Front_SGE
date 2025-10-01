@@ -7,7 +7,7 @@
     item-value="id"
     :items-per-page="itemsPerPage"
     :items-per-page-options="itemsPerPageOptions"
-    items-per-page-text="Items por página"
+    items-per-page-text="Itens por página"
     return-object
     no-data-text="não há processos aptos a serem finalizados."
     style="
