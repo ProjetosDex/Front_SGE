@@ -243,6 +243,9 @@ const register = async () => {
       rg: formRegisterInputs.rg.value,
       telephone: formRegisterInputs.telephone.value,
     });
+
+    socketService.connect('ws://localhost:3002', authStore.userId);
+    await router.push('home');
   } catch (error: any) {
     feedBack.value = error.response.data.message;
   }

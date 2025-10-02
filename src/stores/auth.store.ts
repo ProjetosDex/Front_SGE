@@ -23,6 +23,10 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async (formRegister: any) => {
     try {
       await axiosBackEndInstance.post('/user/student', formRegister);
+      await login({
+        email: formRegister.email,
+        password: formRegister.password,
+      });
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
