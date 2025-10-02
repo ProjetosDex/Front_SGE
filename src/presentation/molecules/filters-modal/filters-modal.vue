@@ -33,6 +33,53 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
+              <!-- Novos campos para Status e Movimentação -->
+              <v-row>
+                <v-col cols="12" sm="6" md="4">
+                  <v-select
+                    :items="[
+                      {
+                        text: 'Em andamento',
+                        value: `${InternshipProcessStatus.IN_PROGRESS}`,
+                      },
+                      {
+                        text: 'Em Análise',
+                        value: `${InternshipProcessStatus.UNDER_REVIEW}`,
+                      },
+                      {
+                        text: 'Rejeitado',
+                        value: `${InternshipProcessStatus.REJECTED}`,
+                      },
+                      {
+                        text: 'Concluído',
+                        value: `${InternshipProcessStatus.COMPLETED}`,
+                      },
+                    ]"
+                    label="Status"
+                    v-model="filters.status"
+                    item-title="text"
+                    item-value="value"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-select
+                    :items="[
+                      {
+                        text: 'Início de Estágio',
+                        value: `${InternshipProcessMovement.STAGE_START}`,
+                      },
+                      {
+                        text: 'Fim de Estágio',
+                        value: `${InternshipProcessMovement.STAGE_END}`,
+                      },
+                    ]"
+                    label="Movimentação"
+                    v-model="filters.movement"
+                    item-title="text"
+                    item-value="value"
+                  ></v-select>
+                </v-col>
+              </v-row>
               <v-row>
                 <p>Intervalo de inicio do Processo de Estágio</p>
               </v-row>
@@ -137,6 +184,10 @@
 
 <script setup lang="ts">
 import type { InternshipProcessFilterDto } from '@/core/application/dtos/internship-process-filter-dto';
+import {
+  InternshipProcessMovement,
+  InternshipProcessStatus,
+} from '@/core/domain/entities/internshipProcess.entity';
 import { defineProps, ref } from 'vue';
 
 const props = defineProps<{
