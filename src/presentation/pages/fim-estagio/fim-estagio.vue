@@ -45,6 +45,7 @@
         select-strategy="single"
         item-value="id"
         items-per-page="5"
+        items-per-page-text="Itens por página:"
         return-object
         show-select
         no-data-text="não há processos aptos a serem finalizados."

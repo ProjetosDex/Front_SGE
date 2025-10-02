@@ -2,7 +2,7 @@
   <div class="search-data-bar">
     <div class="search-input-container">
       <v-text-field
-        label="Search"
+        label="Pesquisar"
         class="search-input-text"
         single-line
         hide-details

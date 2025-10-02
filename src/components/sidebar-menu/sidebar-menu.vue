@@ -15,7 +15,7 @@
     <v-list density="compact" nav>
       <v-list-item
         prepend-icon="mdi-home"
-        title="Home"
+        title="Tela Inicial"
         value="home"
         to="/home"
       ></v-list-item>
