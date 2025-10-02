@@ -21,12 +21,18 @@ export class InternshipProcessDataTableBloc {
     });
   }
 
+  searchByFilters(filters: any) {
+    this.internshipProcessDataTableState.state.filters = filters;
+    this.getPaginatedInternshipProcess();
+  }
+
   searchByString(searchValue: string) {
     this.internshipProcessDataTableState.state.searchValue = searchValue;
   }
 
   async getPaginatedInternshipProcess() {
     const { filters } = this.internshipProcessDataTableState.state;
+    console.log(filters);
 
     const internshipProcess =
       await this.getPaginatedInternshipProcessUseCase.handle(filters);

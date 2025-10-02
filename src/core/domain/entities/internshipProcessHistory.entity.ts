@@ -10,6 +10,7 @@ export interface InternshipProcessHistory {
   observations: string;
   fileId: string;
   files?: FileEntity[];
+  additionalInfo?: string;
   idInternshipProcess: string;
   createdAt: string;
 }

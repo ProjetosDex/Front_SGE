@@ -16,7 +16,7 @@
         <p>{{ selectedStepData.description }}</p>
 
         <div v-if="selectedStepData.additionalInfo">
-          <h3>Informações adicionais:</h3>
+          <h3>Orientações:</h3>
           <p>{{ selectedStepData.additionalInfo }}</p>
         </div>
 
@@ -311,7 +311,9 @@ watch(
         (n: any) => !n.read && n.id_internshipProcess === internshipProcessId,
       );
       if (hasRelatedNotification) {
-        await internshipProcessDetailsBloc.loadInternshipProcessDetails();
+        await internshipProcessDetailsBloc.loadInternshipProcessDetails(
+          userRole.value,
+        );
       }
       lastNotificationIds = newNotifications.data.map(
         (n: Notification) => n.id,
@@ -325,14 +327,18 @@ watch(
   () => router.currentRoute.value.params.id,
   async (newId) => {
     if (newId) {
-      await internshipProcessDetailsBloc.loadInternshipProcessDetails();
+      await internshipProcessDetailsBloc.loadInternshipProcessDetails(
+        userRole.value,
+      );
     }
   },
 );
 
 const handleCloseSuccessModal = async () => {
   showSuccessModal.value = false;
-  await internshipProcessDetailsBloc.loadInternshipProcessDetails();
+  await internshipProcessDetailsBloc.loadInternshipProcessDetails(
+    userRole.value,
+  );
 };
 
 const internshipStartStepStatus = computed(() => {
@@ -396,9 +402,9 @@ const registerAssignEndInternshipProcess = async (files: File[]) => {
 
   await internshipProcessDetailsBloc.registerAssignEndInternshipProcess(
     validate,
+    userRole.value as UserRole,
     undefined,
     files,
-    userRole.value as UserRole,
   );
 };
 
@@ -413,7 +419,10 @@ const handleRejectTermCommitment = async () => {
     showErrorModal.value = true;
     return;
   }
-  await internshipProcessDetailsBloc.rejectTermCommitment(remark.value);
+  await internshipProcessDetailsBloc.rejectTermCommitment(
+    remark.value,
+    userRole.value,
+  );
   remark.value = '';
 };
 
@@ -425,13 +434,17 @@ const handleRejectEndInternshipProcess = async () => {
   }
   await internshipProcessDetailsBloc.registerAssignEndInternshipProcess(
     false,
+    userRole.value as UserRole,
     remark.value,
+    undefined,
   );
   remark.value = '';
 };
 
 onMounted(async () => {
-  await internshipProcessDetailsBloc.loadInternshipProcessDetails();
+  await internshipProcessDetailsBloc.loadInternshipProcessDetails(
+    userRole.value,
+  );
 });
 </script>
 

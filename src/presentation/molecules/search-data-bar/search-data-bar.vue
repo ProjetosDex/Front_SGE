@@ -32,13 +32,14 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'set-search-filters', filters: string): void;
+  (e: 'set-search-filters', filters: InternshipProcessFilterDto): void;
   (e: 'search-by-string', searchValue: string): void;
   (e: 'clear-filters'): void;
 }>();
 
-const onSearchFiltersChange = () => {
-  emit('set-search-filters', 'change filters');
+const onSearchFiltersChange = (filters: InternshipProcessFilterDto) => {
+  console.log(`change filters ${JSON.stringify(filters)}`);
+  emit('set-search-filters', filters);
 };
 
 const searchItemsByString = (searchValue: string) => {

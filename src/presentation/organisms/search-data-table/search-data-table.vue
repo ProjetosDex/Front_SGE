@@ -2,6 +2,7 @@
   <SearchDataBar
     @search-by-string="searchByString"
     @clear-filters="clearFilters"
+    @set-search-filters="searchByFilters"
     :filters="state.filters"
   />
 
@@ -39,6 +40,11 @@ const onOpenRegisterDetails = (internshipProcessId: string) => {
   internshipProcessDataTableBloc.openInternshipProcessDetails(
     internshipProcessId,
   );
+};
+
+const searchByFilters = (filters: any) => {
+  console.log(`search by filters ${JSON.stringify(filters)}`);
+  internshipProcessDataTableBloc.searchByFilters(filters);
 };
 
 const searchByString = (searchValue: string) => {

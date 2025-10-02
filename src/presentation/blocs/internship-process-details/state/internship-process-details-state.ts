@@ -59,6 +59,7 @@ export const useInternshipProcessDetailsState = defineStore(
         if (history) {
           step.status = history.status;
           step.description = history.description;
+          step.additionalInfo = history.additionalInfo;
           step.rejectionReason = history.observations;
           step.documents.splice(
             0,
@@ -68,7 +69,6 @@ export const useInternshipProcessDetailsState = defineStore(
         }
       });
 
-      // Restaurar valores iniciais do step Fim de Estágio caso não tenha sido atualizado
       const endStepIndex = Step.INTERNSHIP_END;
       const endStep = state.steps.find((step) => step.index === endStepIndex);
       const hasEndStepHistory = internshipProcessHistories.some(
@@ -148,8 +148,6 @@ function getInitialState(): StepState {
       {
         title: 'Início de Estágio',
         status: 'Em andamento',
-        additionalInfo:
-          'Este é o primeiro estágio do processo de estágio. Ao concluir esta etapa, seu estágio estará em vigor.',
         index: Step.INTERNSHIP_START,
         editable: true,
         editIcon: 'mdi-file-document',
@@ -157,8 +155,6 @@ function getInitialState(): StepState {
       },
       {
         title: 'Fim de Estágio',
-        additionalInfo:
-          'Este é o último estágio do processo de estágio. Ao concluir esta etapa, seu estágio será finalizado.',
         index: Step.INTERNSHIP_END,
         editIcon: 'mdi-file-document',
         documents: [],

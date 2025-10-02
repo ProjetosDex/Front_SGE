@@ -27,7 +27,7 @@ export class InternshipProcessDetailsBloc {
     private readonly assignEndInternshipProcessUseCase: AssignEndInternshipProcessUseCase,
   ) {}
 
-  async loadInternshipProcessDetails() {
+  async loadInternshipProcessDetails(userRole: string | null) {
     const internshipProcessId = this.router.currentRoute.value.params
       .id as string;
     if (internshipProcessId) {
@@ -35,7 +35,7 @@ export class InternshipProcessDetailsBloc {
         await this.getHistoriesByInternshipProcessIdUseCase.handle(
           internshipProcessId,
         );
-      this.loadHistoryDataInSteps(internShipProcessHistoryData);
+      this.loadHistoryDataInSteps(internShipProcessHistoryData, userRole);
     }
   }
 
@@ -49,10 +49,15 @@ export class InternshipProcessDetailsBloc {
 
   loadHistoryDataInSteps(
     internshipProcessHistories: InternshipProcessHistory[],
+    userRole: string | null,
   ) {
-    const latestHistories = this.getLatestProcessHistory(
+    let latestHistories = this.getLatestProcessHistory(
       internshipProcessHistories,
     );
+
+    latestHistories = this.getDescription(latestHistories);
+
+    latestHistories = this.setDynamicAdditionalInfo(latestHistories, userRole);
 
     const currentHistory = this.getCurrentHistory(latestHistories);
     const currentStep =
@@ -64,14 +69,209 @@ export class InternshipProcessDetailsBloc {
     this.internshipProcessDetailsState.setStepData(latestHistories);
   }
 
-  async rejectTermCommitment(rejectionReason: string) {
+  async rejectTermCommitment(rejectionReason: string, userRole: string | null) {
     await this.assignTermCommitmentUseCase.handle({
       internshipProcessId: this.router.currentRoute.value.params.id as string,
       remark: rejectionReason,
       validate: false,
     });
 
-    await this.loadInternshipProcessDetails();
+    await this.loadInternshipProcessDetails(userRole);
+  }
+
+  setDynamicAdditionalInfo(
+    latestHistories: InternshipProcessHistory[],
+    userRole: string | null,
+  ): InternshipProcessHistory[] {
+    if (userRole === UserRole.STUDENT) {
+      return this.getAdditionalInfoForStudent(latestHistories);
+    }
+
+    if (userRole === UserRole.EMPLOYEE || userRole === UserRole.ADMINISTRATOR) {
+      return this.getAdditionalInfoForEmployee(latestHistories);
+    }
+
+    return latestHistories;
+  }
+
+  getAdditionalInfoForStudent(latestHistories: InternshipProcessHistory[]) {
+    return latestHistories.map((history) => {
+      if (
+        history.movement === InternshipProcessMovement.STAGE_START &&
+        history.status === InternshipProcessStatus.IN_PROGRESS
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Nesta etapa do processo você deve realizar o download do termo de compromisso gerado e preenchê-lo com a sua assinatura (Aluno) e assinatura da concedente de estágio.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_START &&
+        history.status === InternshipProcessStatus.UNDER_REVIEW
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Aguarde a análise do termo de compromisso por parte do departamento de estágio, você será notificado quando seu termo de compromisso for aprovado.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_START &&
+        history.status === InternshipProcessStatus.REJECTED
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Seu termo de compromisso foi rejeitado. Realize as correções no formulário abaixo gere o documento e realize o upload com sua assinatura e assinatura da concedente de estágio novamente.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_START &&
+        history.status === InternshipProcessStatus.COMPLETED
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Seu Termo de compromisso foi aprovado. estágio em vigor.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_END &&
+        history.status === InternshipProcessStatus.UNDER_REVIEW
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Aguarde a análise dos documentos enviados por parte do departamento de estágio, você será notificado quando seu certificado de conclusão de estágio for gerado.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_END &&
+        history.status === InternshipProcessStatus.REJECTED
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Realize o download dos modelos e corrija as informações conforme as orientações.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_END &&
+        history.status === InternshipProcessStatus.COMPLETED
+      ) {
+        return {
+          ...history,
+          additionalInfo: 'Seu processo de estágio foi concluido com sucesso.',
+        };
+      }
+
+      return history;
+    });
+  }
+
+  getDescription(latestHistories: InternshipProcessHistory[]) {
+    return latestHistories.map((history) => {
+      let description = '';
+      if (history.movement === InternshipProcessMovement.STAGE_START) {
+        description =
+          'Esta etapa refere-se ao início do estágio, incluindo a geração e assinatura do termo de compromisso.';
+      } else if (history.movement === InternshipProcessMovement.STAGE_END) {
+        description =
+          'Esta etapa refere-se à conclusão do estágio, incluindo o envio e validação do certificado de conclusão.';
+      }
+      return {
+        ...history,
+        description,
+      };
+    });
+  }
+
+  getAdditionalInfoForEmployee(latestHistories: InternshipProcessHistory[]) {
+    return latestHistories.map((history) => {
+      if (
+        history.movement === InternshipProcessMovement.STAGE_START &&
+        history.status === InternshipProcessStatus.IN_PROGRESS
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'O aluno realizou a geração de um termo de compromisso aguarde a submissão do documento assinado para realizar a análise.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_START &&
+        history.status === InternshipProcessStatus.UNDER_REVIEW
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Realize o download do termo de compromisso para realizar a análise, com todas as informações validadas realize a assinatura e submissão do documento para o aluno.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_START &&
+        history.status === InternshipProcessStatus.REJECTED
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Aguarde a correção do termo de compromisso pelo aluno para prosseguir com a análise.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_START &&
+        history.status === InternshipProcessStatus.COMPLETED
+      ) {
+        return {
+          ...history,
+          additionalInfo: 'Termo de compromisso aprovado. estágio em vigor.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_END &&
+        history.status === InternshipProcessStatus.UNDER_REVIEW
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Realize o download dos documentos para realizar a análise, com todas as informações validadas realize a assinatura e submissão dos documentos para o aluno.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_END &&
+        history.status === InternshipProcessStatus.REJECTED
+      ) {
+        return {
+          ...history,
+          additionalInfo:
+            'Aguarde a correção dos documentos pelo aluno para prosseguir com a análise.',
+        };
+      }
+
+      if (
+        history.movement === InternshipProcessMovement.STAGE_END &&
+        history.status === InternshipProcessStatus.COMPLETED
+      ) {
+        return {
+          ...history,
+          additionalInfo: 'Processo de Estágio concluído.',
+        };
+      }
+
+      return history;
+    });
   }
 
   async registerAssignTermCommitment(files: File[], userRole?: string | null) {
@@ -133,9 +333,9 @@ export class InternshipProcessDetailsBloc {
 
   async registerAssignEndInternshipProcess(
     validate: boolean,
+    userRole: string | null,
     remark?: string,
     files?: File[],
-    userRole?: UserRole,
   ) {
     try {
       this.internshipProcessDetailsState.setLoading(true);
@@ -147,7 +347,7 @@ export class InternshipProcessDetailsBloc {
         remark,
       );
 
-      await this.loadInternshipProcessDetails();
+      await this.loadInternshipProcessDetails(userRole);
     } catch (error: any) {
       this.internshipProcessDetailsState.setLoading(false);
       this.internshipProcessDetailsState.setMessageError(error.message);
