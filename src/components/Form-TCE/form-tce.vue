@@ -58,9 +58,7 @@
             <span class="text-h5">Novo Processo Gerado!</span>
           </v-card-title>
           <v-card-text>
-            Faça o download do termo de compromisso e faça upload do modelo
-            assinado pelas partes interessadas para dar prosseguimento no
-            processo de estágio.
+            Para dar início ao seu estágio, faça o download do Termo de Compromisso. Depois, envie o documento assinado por você e pelo responsável na empresa.
           </v-card-text>
           <section class="uploaded-area">
             <download-file-button
