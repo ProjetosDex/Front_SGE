@@ -103,7 +103,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Nesta etapa do processo você deve realizar o download do termo de compromisso gerado e preenchê-lo com a sua assinatura (Aluno) e assinatura da concedente de estágio.',
+            'Seu Termo de Compromisso foi gerado. O próximo passo é: 1. Fazer o download do documento. 2. Assinar e coletar a assinatura da empresa/instituição concedente. 3. Fazer o upload do termo assinado nesta mesma tela.',
         };
       }
 
@@ -114,7 +114,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Aguarde a análise do termo de compromisso por parte do departamento de estágio, você será notificado quando seu termo de compromisso for aprovado.',
+            'Seu Termo de Compromisso foi enviado e está em análise pelo setor de estágios. Você receberá uma notificação assim que o processo for concluído. Por favor, aguarde.',
         };
       }
 
@@ -125,7 +125,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Seu termo de compromisso foi rejeitado. Realize as correções no formulário abaixo gere o documento e realize o upload com sua assinatura e assinatura da concedente de estágio novamente.',
+            'Seu Termo de Compromisso foi recusado. Verifique o motivo da recusa. Siga os passos: 1. Corrija as informações necessárias. 2. Gere um novo documento. 3. Faça o upload do novo termo com as devidas assinaturas.',
         };
       }
 
@@ -136,7 +136,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Seu Termo de compromisso foi aprovado. estágio em vigor.',
+            'Parabéns! Seu Termo de Compromisso foi aprovado e seu estágio está oficialmente ativo.',
         };
       }
 
@@ -147,7 +147,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Aguarde a análise dos documentos enviados por parte do departamento de estágio, você será notificado quando seu certificado de conclusão de estágio for gerado.',
+            'Os documentos de finalização do estágio foram enviados e estão em análise pelo setor responsável. Você será notificado sobre a emissão do seu certificado de conclusão.',
         };
       }
 
@@ -158,7 +158,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Realize o download dos modelos e corrija as informações conforme as orientações.',
+            'Houve um problema com seus documentos de finalização.  Por favor, verifique o motivo da recusa e reenvie os arquivos corrigidos.',
         };
       }
 
@@ -168,7 +168,7 @@ export class InternshipProcessDetailsBloc {
       ) {
         return {
           ...history,
-          additionalInfo: 'Seu processo de estágio foi concluido com sucesso.',
+          additionalInfo: 'Processo finalizado com sucesso! Seu Certificado de Conclusão de Estágio está disponível para download.',
         };
       }
 
@@ -202,7 +202,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'O aluno realizou a geração de um termo de compromisso aguarde a submissão do documento assinado para realizar a análise.',
+            'O aluno gerou o Termo de Compromisso. Aguarde o envio do documento assinado para iniciar a análise.',
         };
       }
 
@@ -213,7 +213,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Realize o download do termo de compromisso para realizar a análise, com todas as informações validadas realize a assinatura e submissão do documento para o aluno.',
+            'O aluno enviou o Termo de Compromisso para análise. Sua ação é necessária: faça o download, verifique as informações e, se estiver tudo correto, assine e faça o upload do documento para aprovação.',
         };
       }
 
@@ -224,7 +224,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Aguarde a correção do termo de compromisso pelo aluno para prosseguir com a análise.',
+            'O Termo de Compromisso foi devolvido ao aluno para correção. Aguarde o reenvio do documento para uma nova análise.',
         };
       }
 
@@ -234,7 +234,7 @@ export class InternshipProcessDetailsBloc {
       ) {
         return {
           ...history,
-          additionalInfo: 'Termo de compromisso aprovado. estágio em vigor.',
+          additionalInfo: 'Termo de Compromisso aprovado com sucesso. O estágio do aluno foi oficialmente iniciado no sistema.',
         };
       }
 
@@ -245,7 +245,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Realize o download dos documentos para realizar a análise, com todas as informações validadas realize a assinatura e submissão dos documentos para o aluno.',
+            'O aluno enviou os documentos para finalizar o estágio. Faça o download para análise e, se estiverem corretos, realize o envio do certificado de conclusão.',
         };
       }
 
@@ -256,7 +256,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Aguarde a correção dos documentos pelo aluno para prosseguir com a análise.',
+            'Os documentos de finalização foram devolvidos ao aluno para correção. Aguarde um novo envio para prosseguir com a análise.',
         };
       }
 
@@ -266,7 +266,7 @@ export class InternshipProcessDetailsBloc {
       ) {
         return {
           ...history,
-          additionalInfo: 'Processo de Estágio concluído.',
+          additionalInfo: 'Processo de estágio finalizado com sucesso. O certificado de conclusão foi emitido para o aluno.',
         };
       }
 
