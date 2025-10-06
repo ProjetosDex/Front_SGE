@@ -364,6 +364,29 @@ export class InternshipProcessDetailsBloc {
       throw new Error('Todos os documentos devem estar em formato PDF.');
     }
 
+    // Validação específica para estudante: deve enviar 3 arquivos PDF com nomes específicos
+    if (userRole === UserRole.STUDENT) {
+      const requiredFiles = [
+        'AvaliacaoProfessorOrientador.pdf',
+        'AvaliacaoConcedente.pdf',
+        'AutoAvaliacaoEstagiario.pdf',
+      ];
+      if (!files || files.length !== 3) {
+        throw new Error(
+          'É obrigatório fazer o upload dos 3 arquivos PDF: AvaliacaoSupervisor.pdf, AvaliacaoConcedente.pdf e AutoAvaliacaoEstagiario.pdf.',
+        );
+      }
+      // Verifica se cada arquivo obrigatório está presente (um de cada)
+      for (const requiredName of requiredFiles) {
+        if (!files.some((file) => file.name === requiredName)) {
+          throw new Error(
+            'É obrigatório fazer o upload dos 3 arquivos PDF: AvaliacaoSupervisor.pdf, AvaliacaoConcedente.pdf e AutoAvaliacaoEstagiario.pdf.',
+          );
+        }
+      }
+      return;
+    }
+
     if (
       (userRole === UserRole.ADMINISTRATOR || userRole === UserRole.EMPLOYEE) &&
       validate &&

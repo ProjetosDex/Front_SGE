@@ -141,15 +141,25 @@
         <div
           v-if="
             currentStep === Step.INTERNSHIP_END &&
-            (((userRole === 'ADMINISTRATOR' || userRole === 'EMPLOYEE') &&
-              internshipEndStepStatus ===
-                InternshipProcessStatus.UNDER_REVIEW) ||
-              (userRole === 'STUDENT' &&
-                internshipEndStepStatus === InternshipProcessStatus.REJECTED))
+            (userRole === 'ADMINISTRATOR' || userRole === 'EMPLOYEE') &&
+            internshipEndStepStatus === InternshipProcessStatus.UNDER_REVIEW
           "
         >
           <input-file
             :actionButtonLabel="'Enviar Certificado de Estágio'"
+            @uploadedFiles="registerAssignEndInternshipProcess"
+          />
+        </div>
+
+        <div
+          v-if="
+            currentStep === Step.INTERNSHIP_END &&
+            userRole === 'STUDENT' &&
+            internshipEndStepStatus === InternshipProcessStatus.REJECTED
+          "
+        >
+          <input-file
+            :actionButtonLabel="'Enviar Arquivos'"
             @uploadedFiles="registerAssignEndInternshipProcess"
           />
         </div>
