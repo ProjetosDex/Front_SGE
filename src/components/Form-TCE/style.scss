@@ -1,7 +1,14 @@
-@import '../../assets/scss/colors.scss';
-@import '../../assets/scss/buttons.scss';
+@import '@/assets/styles/scss/colors.scss';
+@import '@/assets/styles/scss/buttons.scss';
+
+.form {
+  padding: 1.5rem;
+}
 
 .title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
   padding-top: 20px;
   padding-bottom: 20px;
   border-bottom: 2px solid #979996;

@@ -1,4 +1,4 @@
-import './assets/main.css';
+import '@/assets/styles/main.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
@@ -11,9 +11,13 @@ import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VStepperVertical,
+  },
   directives,
 });
 

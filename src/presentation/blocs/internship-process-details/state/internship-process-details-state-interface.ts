@@ -1,0 +1,79 @@
+import type { FileEntity } from '@/core/domain/entities/file.entity';
+import { FileType } from '@/core/domain/entities/file.entity';
+import {
+  InternshipProcessMovement,
+  InternshipProcessStatus,
+} from '@/core/domain/entities/internshipProcess.entity';
+import type { InternshipProcessHistory } from '@/core/domain/entities/internshipProcessHistory.entity';
+
+export enum Step {
+  INTERNSHIP_START = '1',
+  INTERNSHIP_END = '2',
+}
+
+export const MovementToStepTranslation: Record<
+  InternshipProcessMovement,
+  Step
+> = {
+  [InternshipProcessMovement.STAGE_START]: Step.INTERNSHIP_START,
+  [InternshipProcessMovement.STAGE_END]: Step.INTERNSHIP_END,
+};
+
+//faça um record que traduza o status do processo para pt-bt
+export const StatusTranslation: Record<InternshipProcessStatus, string> = {
+  [InternshipProcessStatus.IN_PROGRESS]: 'Em andamento',
+  [InternshipProcessStatus.UNDER_REVIEW]: 'Em análise',
+  [InternshipProcessStatus.COMPLETED]: 'Concluído',
+  [InternshipProcessStatus.REJECTED]: 'Rejeitado',
+};
+
+export const FileTypeToFileName: Record<FileType, string> = {
+  [FileType.TERM_COMMITMENT]: 'TermoCompromisso',
+  [FileType.STUDENT_SELF_EVALUATION]: 'AutoAvaliacaoEstudante',
+  [FileType.INTERNSHIP_GRANTOR_EVALUATION]: 'AvaliacaoConcedente',
+  [FileType.SUPERVISOR_EVALUATION]: 'AvaliacaoSupervisor',
+  [FileType.RENEWAL_DOCUMENT]: 'DocumentoRenovacao',
+  [FileType.INTERNSHIP_CERTIFICATE]: 'CertificadoEstagio',
+};
+
+export type StepData = {
+  title: string;
+  status?: string;
+  index: Step;
+  editable?: true;
+  editIcon: string;
+  description?: string;
+  additionalInfo?: string;
+  rejectionReason?: string;
+  actionRequired?: string;
+  documents: FileEntity[];
+};
+
+export type StepState = {
+  steps: StepData[];
+  internshipProcessId?: string;
+  currentStep: Step;
+  selectedStep: Step;
+  showSuccessModal: boolean;
+  showErrorModal: boolean;
+  messageError: string | null;
+  successMessage: string | null;
+  loading: boolean;
+};
+
+export interface InternshipProcessDetailsStateInterface {
+  state: StepState;
+  clear: () => void;
+  setMessageSuccessModal(message: string): void;
+  setShowSuccessModal(showModal: boolean): void;
+  setShowErrorModal(showModal: boolean): void;
+  setMessageError(message: string): void;
+  setLoading(loading: boolean): void;
+  setInternshipProcessId: (internshipProcessId: string) => void;
+  getInternshipProcessId: () => void;
+  setDocumentsInStep: (documents: FileEntity[], stepIndex: string) => void;
+  setCurrentStep: (stepIndex: string) => void;
+  setSelectedStep: (stepIndex: Step) => void;
+  setStepData: (internshipProcessHistories: InternshipProcessHistory[]) => void;
+  getDocumentsInStep: (stepIndex: string) => FileEntity[];
+}
