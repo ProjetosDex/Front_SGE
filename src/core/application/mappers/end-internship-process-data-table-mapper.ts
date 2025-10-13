@@ -28,11 +28,16 @@ export class EndInternshipProcessDataTableMapper {
             internshipProcess.termCommitment.grantingCompanyName,
         },
         movement:
-          InternshipProcessMovementTranslations[internshipProcess.movement],
+          InternshipProcessMovementTranslations[
+            internshipProcess.movement as keyof typeof InternshipProcessMovementTranslations
+          ],
         startDateProcess: formatDateToDDMMYYYY(
           internshipProcess.termCommitment.internshipStartDate,
         ),
-        status: InternshipProcessStatusTranslations[internshipProcess.status],
+        status:
+          InternshipProcessStatusTranslations[
+            internshipProcess.status as keyof typeof InternshipProcessStatusTranslations
+          ],
       };
     });
   }

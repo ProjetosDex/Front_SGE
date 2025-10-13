@@ -69,7 +69,7 @@ function getInitialState(): EndInternshipProcessState {
       { title: 'Movimentação', align: 'end', key: 'movement' },
       { title: 'Inicio Processo', align: 'end', key: 'startDateProcess' },
       { title: 'Status', align: 'end', key: 'status' },
-      { title: 'Detalhes', align: 'center', value: 'actions' },
+      { title: 'Detalhes', align: 'center', key: 'actions' },
     ],
     data: [],
     selectedProcess: [],

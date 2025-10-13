@@ -5,7 +5,7 @@ export type FieldValue =
   | null
   | undefined
   | string[]
-  | null[];
+  | (string | null)[];
 
 export type SectionData<V = FieldValue, R = (value: V) => string | boolean> = {
   type: string;

@@ -188,7 +188,7 @@ import {
   InternshipProcessMovement,
   InternshipProcessStatus,
 } from '@/core/domain/entities/internshipProcess.entity';
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps<{
   filters: InternshipProcessFilterDto;

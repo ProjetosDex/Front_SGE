@@ -28,10 +28,16 @@
           v-model="field.value"
           :label="field.label"
           :id="field.id"
-          :type="showPassword[field.id] ? 'text' : 'password'"
+          :type="
+            showPassword[field.id as keyof typeof showPassword]
+              ? 'text'
+              : 'password'
+          "
           :placeholder="field.placeholder"
           :append-inner-icon="
-            showPassword[field.id] ? 'mdi-eye-off' : 'mdi-eye'
+            showPassword[field.id as keyof typeof showPassword]
+              ? 'mdi-eye-off'
+              : 'mdi-eye'
           "
           @click:append-inner="toggleShowPassword(field.id)"
           hide-details
@@ -59,10 +65,16 @@
           v-model="field.value"
           :label="field.label"
           :id="field.id"
-          :type="showPassword[field.id] ? 'text' : 'password'"
+          :type="
+            showPassword[field.id as keyof typeof showPassword]
+              ? 'text'
+              : 'password'
+          "
           :placeholder="field.placeholder"
           :append-inner-icon="
-            showPassword[field.id] ? 'mdi-eye-off' : 'mdi-eye'
+            showPassword[field.id as keyof typeof showPassword]
+              ? 'mdi-eye-off'
+              : 'mdi-eye'
           "
           @click:append-inner="toggleShowPassword(field.id)"
           hide-details
@@ -267,7 +279,8 @@ const showPassword = reactive({
 });
 
 function toggleShowPassword(id: string) {
-  showPassword[id] = !showPassword[id];
+  showPassword[id as keyof typeof showPassword] =
+    !showPassword[id as keyof typeof showPassword];
 }
 </script>
 

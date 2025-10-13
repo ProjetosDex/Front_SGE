@@ -33,18 +33,16 @@
             <label>{{ sectionData[key].label }}</label>
 
             <template
-              v-for="(fields, subInputIndex) in sectionData[key].fieldValue"
+              v-for="(fields, subInputIndex) in Array.isArray(
+                sectionData[key].fieldValue,
+              )
+                ? sectionData[key].fieldValue
+                : []"
               :key="subInputIndex"
             >
               <v-text-field
                 variant="underlined"
-                :model-value="
-                  Array.isArray(sectionData[key].fieldValue) &&
-                  sectionData[key].fieldValue.length > subInputIndex &&
-                  typeof sectionData[key].fieldValue[subInputIndex] === 'string'
-                    ? sectionData[key].fieldValue[subInputIndex]
-                    : ''
-                "
+                :model-value="typeof fields === 'string' ? fields : ''"
                 type="text"
                 :counter="100"
                 :label="
@@ -78,7 +76,7 @@
                 sectionData[key].fieldValue,
               )
             "
-            @blur="sectionData[key].onBlur ? sectionData[key].onBlur() : null"
+            @blur="sectionData[key].onBlur?.()"
             @update:modelValue="(value) => handleFieldUpdate(key, value)"
           ></v-text-field>
         </v-col>
@@ -88,7 +86,14 @@
 </template>
 
 <script setup lang="ts">
-type FieldValue = string | number | boolean | null | undefined | string[];
+export type FieldValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | string[]
+  | (string | null)[];
 
 type FieldUpdateEvent = {
   fieldIndex: string;

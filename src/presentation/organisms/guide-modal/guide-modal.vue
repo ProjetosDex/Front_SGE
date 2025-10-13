@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import StepGuide from '@/presentation/organisms/step-guide/step-guide.vue';
-import { defineProps, defineEmits, computed } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps<{
   dialog: boolean;

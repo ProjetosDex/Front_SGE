@@ -40,7 +40,7 @@ export const FileTypeToFileName: Record<FileType, string> = {
 
 export type HeaderData = {
   title: string;
-  align: string;
+  align: 'start' | 'center' | 'end';
   key?: string;
   value?: string;
 };

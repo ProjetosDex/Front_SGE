@@ -67,7 +67,10 @@ export const useTermCommitmentFormStore = defineStore(
     };
 
     const updateSectionDataBySectionIndex = (fieldEvent: FieldUpdateEvent) => {
-      const section = state.sections[fieldEvent.sectionIndex];
+      const section =
+        state.sections[
+          fieldEvent.sectionIndex as keyof FormTceData['sections']
+        ];
       if (!section) {
         console.warn('Seção não encontrada:', fieldEvent.sectionIndex);
         return;
@@ -78,9 +81,13 @@ export const useTermCommitmentFormStore = defineStore(
       if (
         fieldEvent.fieldIndex &&
         sectionData &&
-        sectionData[fieldEvent.fieldIndex]
+        sectionData[fieldEvent.fieldIndex as keyof typeof sectionData]
       ) {
-        sectionData[fieldEvent.fieldIndex].fieldValue = fieldEvent.value;
+        (
+          sectionData[fieldEvent.fieldIndex as keyof typeof sectionData] as {
+            fieldValue: FieldValue;
+          }
+        ).fieldValue = fieldEvent.value;
       } else {
         console.warn(
           'Campo não encontrado na seção',
@@ -742,7 +749,11 @@ export const formTermCommitmentInitialState: FormTceData = {
         },
         internshipActivityPlan: {
           type: 'multi-text-field',
-          fieldValue: ['', '', '', '', ''],
+          fieldValue: [null, null, null, null, null] as
+            | (string | null)[]
+            | string[]
+            | string
+            | null,
           labelFields: 'Atividade',
           label: 'Plano de atividades de Estágio',
           rules: [(v: FieldValue) => !!v || 'Este campo é obrigatório'],
