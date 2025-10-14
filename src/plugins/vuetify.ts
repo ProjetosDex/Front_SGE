@@ -4,10 +4,9 @@ import {
   VDataTable,
   VDataTableServer,
   VDataTableVirtual,
-} from 'vuetify/labs/VDataTable';
+} from 'vuetify/components';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 
 export default createVuetify({
   components: {
@@ -15,7 +14,6 @@ export default createVuetify({
     VDataTable,
     VDataTableServer,
     VDataTableVirtual,
-    VStepperVertical,
   },
   directives,
   icons: {

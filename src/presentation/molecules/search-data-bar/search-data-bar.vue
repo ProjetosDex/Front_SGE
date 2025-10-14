@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import type { InternshipProcessFilterDto } from '@/core/application/dtos/internship-process-filter-dto';
 import FiltersModal from '../filters-modal/filters-modal.vue';
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 
 const searchValue = ref('');
 

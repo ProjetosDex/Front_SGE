@@ -7,9 +7,8 @@
       :key="index"
       :icon="card.icon"
       :title="card.title"
-      :description="card.description"
+      :description="card.description as string"
       :linkHref="card.linkHref"
-      :linkText="card.linkText"
     />
   </div>
 </template>

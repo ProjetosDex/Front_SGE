@@ -1,6 +1,6 @@
 <template>
   <div class="title-container">
-    <BaseIcon :class="iconClass" />
+    <BaseIcon :iconClass="iconClass" />
     <BaseTitle :text="text" />
   </div>
 </template>

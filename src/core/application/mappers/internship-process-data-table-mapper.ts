@@ -34,8 +34,13 @@ export class InternshipProcessDataTableMapper {
           internshipProcess.termCommitment.internshipEndDate,
         ),
         movement:
-          InternshipProcessMovementTranslations[internshipProcess.movement],
-        status: InternshipProcessStatusTranslations[internshipProcess.status],
+          InternshipProcessMovementTranslations[
+            internshipProcess.movement as keyof typeof InternshipProcessMovementTranslations
+          ],
+        status:
+          InternshipProcessStatusTranslations[
+            internshipProcess.status as keyof typeof InternshipProcessStatusTranslations
+          ],
         course: internshipProcess.user.courseStudy,
       };
     });

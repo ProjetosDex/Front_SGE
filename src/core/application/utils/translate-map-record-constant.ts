@@ -18,7 +18,5 @@ export const InternshipProcessMovementTranslations: Record<
   string
 > = {
   [InternshipProcessMovement.STAGE_START]: 'INÍCIO DE ESTÁGIO',
-  [InternshipProcessMovement.RENEWAL]: 'RENOVAÇÃO DE ESTÁGIO',
   [InternshipProcessMovement.STAGE_END]: 'FIM DE ESTÁGIO',
-  [InternshipProcessMovement.CREDIT]: 'CRÉDITAÇÃO',
 };
