@@ -242,23 +242,13 @@ const login = async () => {
 
 const register = async () => {
   try {
-    await authStore.register({
-      email: formRegisterInputs.email.value,
-      password: formRegisterInputs.password.value,
-      confirmPassword: formRegisterInputs.confirmPassword.value,
-      academicRegistrationCode:
-        formRegisterInputs.academicRegistrationCode.value,
-      cpf: formRegisterInputs.cpf.value,
-      birthDate: new Date(formRegisterInputs.birthDate.value).toISOString(),
-      courseStudy: formRegisterInputs.courseStudy.value,
-      name: formRegisterInputs.name.value,
-      rg: formRegisterInputs.rg.value,
-      telephone: formRegisterInputs.telephone.value,
-    });
+    await authStore.register(formRegisterInputs);
 
-    socketService.connect('ws://localhost:3002', authStore.userId);
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3002';
+    socketService.connect(wsUrl, authStore.userId);
     await router.push('home');
   } catch (error: any) {
+    console.log('Erro durante a requisição de registro:', error);
     feedBack.value = error.response.data.message;
   }
 };

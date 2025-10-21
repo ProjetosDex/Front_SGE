@@ -22,10 +22,11 @@ export const useAuthStore = defineStore('auth', () => {
 
   const register = async (formRegister: any) => {
     try {
-      await axiosBackEndInstance.post('/user/student', formRegister);
+      const validatedFields = await validateFormFields(formRegister);
+      await axiosBackEndInstance.post('/user/student', validatedFields);
       await login({
-        email: formRegister.email,
-        password: formRegister.password,
+        email: validatedFields.email,
+        password: validatedFields.password,
       });
     } catch (error) {
       console.error('Registration error:', error);
@@ -44,6 +45,21 @@ export const useAuthStore = defineStore('auth', () => {
       clearAuth();
       throw error;
     }
+  };
+
+  const validateFormFields = async (form: any) => {
+    return {
+      email: form.email.value,
+      password: form.password.value,
+      confirmPassword: form.confirmPassword.value,
+      academicRegistrationCode: form.academicRegistrationCode.value,
+      cpf: form.cpf.value,
+      birthDate: new Date(form.birthDate.value).toISOString(),
+      courseStudy: form.courseStudy.value,
+      name: form.name.value,
+      rg: form.rg.value,
+      telephone: form.telephone.value,
+    };
   };
 
   const refreshToken = async () => {
