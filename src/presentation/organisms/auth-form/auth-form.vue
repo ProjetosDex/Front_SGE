@@ -227,7 +227,8 @@ const login = async () => {
       password: formLoginInputs.password.value,
     });
 
-    socketService.connect('ws://localhost:3002', authStore.userId);
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3002';
+    socketService.connect(wsUrl, authStore.userId);
     await router.push('home');
   } catch (error: any) {
     if (!error.response) {
