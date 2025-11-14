@@ -221,51 +221,51 @@ import StepItem from '@/presentation/atoms/step-item/step-item.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 const stepNavigationTermRegisterImagesDesktop = [
-  '/src/assets/images/guia_menu_inicio_estagio_desktop.png',
-  '/src/assets/images/guia_menu_inicio_estagio_cadastrar_desktop.png',
-  '/src/assets/images/popup_termo_desktop.png',
+  '/images/guia_menu_inicio_estagio_desktop.png',
+  '/images/guia_menu_inicio_estagio_cadastrar_desktop.png',
+  '/images/popup_termo_desktop.png',
 ];
 
 const stepNavigationMyProcessImagesDesktop = [
-  '/src/assets/images/guia_meus_processos_desktop.png',
-  '/src/assets/images/guia_detetalhamento_processo_desktop.png',
-  '/src/assets/images/upload_arquivos_detalhamento_processos_desktop.png',
-  '/src/assets/images/enviar_tce_detalhamento_processo_desktop.png',
+  '/images/guia_meus_processos_desktop.png',
+  '/images/guia_detetalhamento_processo_desktop.png',
+  '/images/upload_arquivos_detalhamento_processos_desktop.png',
+  '/images/enviar_tce_detalhamento_processo_desktop.png',
 ];
 
 const stepNavigationInternshipEndImagesDesktop = [
-  '/src/assets/images/guia_sidebar_fim_estagio.png',
-  '/src/assets/images/download_modelols_fim_estagio_desktop.png',
+  '/images/guia_sidebar_fim_estagio.png',
+  '/images/download_modelols_fim_estagio_desktop.png',
 ];
 
 const stepNavigationInternshipEndUploadFilesImagesDesktop = [
-  '/src/assets/images/selecao_processo_desejado_fim_estagio.png',
-  '/src/assets/images/upload_arquivos_fim_estagio.png',
-  '/src/assets/images/realizar_solicitacao_fim_estagio.png',
+  '/images/selecao_processo_desejado_fim_estagio.png',
+  '/images/upload_arquivos_fim_estagio.png',
+  '/images/realizar_solicitacao_fim_estagio.png',
 ];
 
 const stepNavigationTermRegisterImagesMobile = [
-  '/src/assets/images/guia_menu_inicio_estagio_mobile.png',
-  '/src/assets/images/guia_menu_inicio_estagio_cadastrar_mobile.png',
-  '/src/assets/images/popup_termo_mobile.png',
+  '/images/guia_menu_inicio_estagio_mobile.png',
+  '/images/guia_menu_inicio_estagio_cadastrar_mobile.png',
+  '/images/popup_termo_mobile.png',
 ];
 
 const stepNavigationMyProcessImagesMobile = [
-  '/src/assets/images/guia_meus_processos_mobile.png',
-  '/src/assets/images/guia_detetalhamento_processo_mobile.png',
-  '/src/assets/images/upload_arquivos_detalhamento_processos_mobile.png',
-  '/src/assets/images/enviar_tce_detalhamento_processo_mobile.png',
+  '/images/guia_meus_processos_mobile.png',
+  '/images/guia_detetalhamento_processo_mobile.png',
+  '/images/upload_arquivos_detalhamento_processos_mobile.png',
+  '/images/enviar_tce_detalhamento_processo_mobile.png',
 ];
 
 const stepNavigationInternshipEndImagesMobile = [
-  '/src/assets/images/guia_sidebar_fim_estagio_mobile.png',
-  '/src/assets/images/download_modelos_fim_estagio_mobile.png',
+  '/images/guia_sidebar_fim_estagio_mobile.png',
+  '/images/download_modelos_fim_estagio_mobile.png',
 ];
 
 const stepNavigationInternshipEndUploadFilesImagesMobile = [
-  '/src/assets/images/selecao_processo_desejado_fim_estagio_mobile.png',
-  '/src/assets/images/upload_arquivos_fim_estagio_mobile.png',
-  '/src/assets/images/realizar_solicitacao_fim_estagio_mobile.png',
+  '/images/selecao_processo_desejado_fim_estagio_mobile.png',
+  '/images/upload_arquivos_fim_estagio_mobile.png',
+  '/images/realizar_solicitacao_fim_estagio_mobile.png',
 ];
 
 const isSmallScreen = ref(false);

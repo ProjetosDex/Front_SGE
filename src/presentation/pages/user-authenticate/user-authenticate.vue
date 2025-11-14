@@ -1,7 +1,7 @@
 <template>
   <div class="authenticate-container">
     <div class="system-title">
-      <img src="@/assets/images/Logo-IFPA.png" alt="" class="logo-ifpa" />
+      <img src="/images/Logo-IFPA.png" alt="" class="logo-ifpa" />
       <h1>Bem vindo ao sistema de gerenciamento de estágio do IFPA</h1>
     </div>
     <div class="form-authenticate">

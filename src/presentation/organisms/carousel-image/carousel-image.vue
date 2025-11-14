@@ -38,18 +38,10 @@ import { ref } from 'vue';
 
 const dialog = ref(false);
 const items = [
-  {
-    src: 'src/assets/images/ifpa-front.png',
-  },
-  {
-    src: 'src/assets/images/ifpa-fachada.png',
-  },
-  {
-    src: 'src/assets/images/biblioteca-ifpa.png',
-  },
-  {
-    src: 'src/assets/images/fachada-dti.png',
-  },
+  { src: '/images/ifpa-front.png' },
+  { src: '/images/ifpa-fachada.png' },
+  { src: '/images/biblioteca-ifpa.png' },
+  { src: '/images/fachada-dti.png' },
 ];
 </script>
 
