@@ -15,9 +15,11 @@
         hidden
       />
       <div class="icon" @click="openFileInput">
-        <img src="@/assets/images/cloud-uploading.png" draggable="false"/>
+        <img src="/images/cloud-uploading.png" draggable="false" />
       </div>
-      <p style="text-align: center">Arraste e solte os arquivos aqui ou clique para selecionar</p>
+      <p style="text-align: center">
+        Arraste e solte os arquivos aqui ou clique para selecionar
+      </p>
     </form>
 
     <v-alert
