@@ -72,7 +72,6 @@ export const useTermCommitmentFormStore = defineStore(
           fieldEvent.sectionIndex as keyof FormTceData['sections']
         ];
       if (!section) {
-        console.warn('Seção não encontrada:', fieldEvent.sectionIndex);
         return;
       }
 
@@ -83,11 +82,19 @@ export const useTermCommitmentFormStore = defineStore(
         sectionData &&
         sectionData[fieldEvent.fieldIndex as keyof typeof sectionData]
       ) {
-        (
-          sectionData[fieldEvent.fieldIndex as keyof typeof sectionData] as {
-            fieldValue: FieldValue;
-          }
-        ).fieldValue = fieldEvent.value;
+        if (fieldEvent.subInputIndex !== undefined) {
+          (
+            sectionData[fieldEvent.fieldIndex as keyof typeof sectionData] as {
+              fieldValue: unknown[];
+            }
+          ).fieldValue[fieldEvent.subInputIndex] = fieldEvent.value;
+        } else {
+          (
+            sectionData[fieldEvent.fieldIndex as keyof typeof sectionData] as {
+              fieldValue: FieldValue;
+            }
+          ).fieldValue = fieldEvent.value;
+        }
       } else {
         console.warn(
           'Campo não encontrado na seção',
@@ -774,14 +781,12 @@ export const formTermCommitmentInitialState: FormTceData = {
 //transformar numa util
 const validateCnpj = (cnpj: string) => {
   if (!cnpj) {
-    console.log('minha rola é obrigatória');
     return 'cnpj é obrigatório';
   }
 
   cnpj = cnpj.replace(/[^\d]+/g, '');
 
   if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) {
-    console.log('minha rola é deve ter 14 cm');
     return 'cnpj deve ter 14 digitos';
   }
 
