@@ -249,8 +249,11 @@ const register = async () => {
     socketService.connect(wsUrl, authStore.userId);
     await router.push('home');
   } catch (error: any) {
-    console.log('Erro durante a requisição de registro:', error);
-    feedBack.value = error.response.data.message;
+    feedBack.value =
+      error.response?.data?.message ||
+      error.message ||
+      error ||
+      'Erro ao registrar usuário';
   }
 };
 

@@ -48,17 +48,91 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const validateFormFields = async (form: any) => {
+    function isValidCPF(cpf: string): boolean {
+      cpf = cpf.replace(/[\D]/g, '');
+      if (cpf.length !== 11 || /^([0-9])\1+$/.test(cpf)) return false;
+      let sum = 0,
+        rest;
+      for (let i = 1; i <= 9; i++)
+        sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+      rest = (sum * 10) % 11;
+      if (rest === 10 || rest === 11) rest = 0;
+      if (rest !== parseInt(cpf.substring(9, 10))) return false;
+      sum = 0;
+      for (let i = 1; i <= 10; i++)
+        sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+      rest = (sum * 10) % 11;
+      if (rest === 10 || rest === 11) rest = 0;
+      if (rest !== parseInt(cpf.substring(10, 11))) return false;
+      return true;
+    }
+
+    function isValidPhone(phone: string): boolean {
+      return /^(\(?\d{2}\)?\s?)?(9?\d{4})-?\d{4}$/.test(
+        phone.replace(/\D/g, ''),
+      );
+    }
+
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+    const academicRegistrationCode = form.academicRegistrationCode.value;
+    const cpf = form.cpf.value;
+    const birthDateRaw = form.birthDate.value;
+    const courseStudy = form.courseStudy.value;
+    const name = form.name.value;
+    const rg = form.rg.value;
+    const telephone = form.telephone.value;
+
+    const requiredFields = [
+      email,
+      password,
+      confirmPassword,
+      academicRegistrationCode,
+      cpf,
+      birthDateRaw,
+      courseStudy,
+      name,
+      rg,
+      telephone,
+    ];
+    const hasEmpty = requiredFields.some(
+      (v) => v === undefined || v === null || v === '',
+    );
+    if (hasEmpty) {
+      throw new Error('Todos os campos são obrigatórios');
+    }
+
+    let birthDate: string;
+    try {
+      birthDate = new Date(birthDateRaw).toISOString();
+    } catch {
+      throw new Error('Data de nascimento inválida.');
+    }
+
+    if (!isValidCPF(cpf)) {
+      throw new Error('CPF inválido.');
+    }
+
+    if (!isValidPhone(telephone)) {
+      throw new Error('Telefone inválido.');
+    }
+
+    if (password !== confirmPassword) {
+      throw new Error('As senhas não coincidem.');
+    }
+
     return {
-      email: form.email.value,
-      password: form.password.value,
-      confirmPassword: form.confirmPassword.value,
-      academicRegistrationCode: form.academicRegistrationCode.value,
-      cpf: form.cpf.value,
-      birthDate: new Date(form.birthDate.value).toISOString(),
-      courseStudy: form.courseStudy.value,
-      name: form.name.value,
-      rg: form.rg.value,
-      telephone: form.telephone.value,
+      email,
+      password,
+      confirmPassword,
+      academicRegistrationCode,
+      cpf,
+      birthDate,
+      courseStudy,
+      name,
+      rg,
+      telephone,
     };
   };
 
