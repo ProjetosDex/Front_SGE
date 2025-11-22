@@ -8,7 +8,7 @@
     hide-delimiters
   >
     <div class="text_overlay">
-      <h1>SEJA BEM VINDO AO ESTÁGIO LEGAL</h1>
+      <h1>SEJA BEM VINDO AO SYSTAGIO</h1>
       <h2>
         Este sistema foi desenvolvido para simplificar e centralizar todas as
         etapas do seu estágio. Desde o início do processo, com a geração do
