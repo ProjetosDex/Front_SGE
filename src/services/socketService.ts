@@ -17,6 +17,7 @@ class SocketService {
     this.socket = io(url, {
       transports: ['websocket'],
       withCredentials: false,
+      path: '/api',
     });
 
     this.socket.on('connect', () => {
