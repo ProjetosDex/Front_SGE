@@ -16,7 +16,8 @@ async function checkAuth(): Promise<any> {
 
 // Função para conectar ao WebSocket
 function connectWebSocket(userId: string) {
-  socketService.connect('ws://localhost:3002', userId);
+  const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3002';
+  socketService.connect(wsUrl, userId);
 }
 
 onMounted(async () => {
