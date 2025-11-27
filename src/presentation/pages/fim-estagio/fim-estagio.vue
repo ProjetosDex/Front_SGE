@@ -16,7 +16,7 @@
           color="#078640"
           @click="dialog = !dialog"
         ></v-btn>
-        <GuideModal v-model:dialog="dialog" :initial-step="'2'" />
+        <GuideModal v-if="dialog" v-model:dialog="dialog" :initial-step="'2'" />
       </div>
       <!-- <p>Faça Upload dos Arquivos Preenchidos para Solicitar o Atestado de Estágio</p> -->
 
@@ -33,6 +33,31 @@
           >
             {{ file.name }}
           </v-btn>
+        </div>
+        <div></div>
+        <div
+          style="
+            background: #fef450;
+            border: 1px solid #fef450;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+          "
+        >
+          <v-icon style="color: #faad14; font-size: 28px; margin-right: 8px"
+            >mdi-alert</v-icon
+          >
+          <div>
+            <strong style="color: #333; font-size: 18px">Atenção!</strong>
+            <div style="color: #333; margin-top: 4px">
+              Os arquivos devem conter os nomes: AutoAvaliacaoEstagiario,
+              AvaliacaoConcedente e AvaliacaoProfessorOrientador. (todos em
+              formato PDF)
+            </div>
+          </div>
         </div>
       </div>
 
@@ -142,6 +167,8 @@ import GuideModal from '@/presentation/organisms/guide-modal/guide-modal.vue';
 import { ref, onMounted } from 'vue';
 import { createEndInternshipProcessBloc } from '@/presentation/blocs/end-internship-process/create-end-internship-process-bloc';
 import type { EndInternshipProcessDataTableDto } from '@/core/application/dtos/end-internship-process-data-table-dto';
+import { usePageNavigationStore } from '@/stores/page-navitagion/page-navigation.store';
+const pageNavigationStore = usePageNavigationStore();
 const dialog = ref(false);
 
 // Arquivos modelo
@@ -174,6 +201,7 @@ const {
 
 onMounted(async () => {
   await endInternshipProcessBloc.getEligibleInternshipFinalizationProcesses();
+  pageNavigationStore.setLoading(false);
 });
 
 const handleSelectionChange = (

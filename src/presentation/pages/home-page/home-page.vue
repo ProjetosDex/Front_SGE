@@ -18,9 +18,16 @@ import { UserRole } from '@/core/domain/entities/user.entity';
 import CardInfo from '@/presentation/organisms/card-info/card-info.vue';
 import CarouselImage from '@/presentation/organisms/carousel-image/carousel-image.vue';
 import { useAuthStore } from '@/stores/auth.store';
+import { usePageNavigationStore } from '@/stores/page-navitagion/page-navigation.store';
+import { onMounted } from 'vue';
 
 const useAuth = useAuthStore();
 const userRole = useAuth.userRole;
+const pageNavigationStore = usePageNavigationStore();
+
+onMounted(() => {
+  pageNavigationStore.setLoading(false);
+});
 
 const homeCardContent = [
   {

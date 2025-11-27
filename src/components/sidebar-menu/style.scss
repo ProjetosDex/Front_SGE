@@ -1,45 +1,52 @@
-.sidebar-expanded{
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: #078640;
-    min-width: 200px;
-    align-items: center;
+.page-overlay {
+  z-index: 1 !important;
+}
+.sidebar {
+  z-index: 2;
+  position: relative;
+}
+.sidebar-expanded {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #078640;
+  min-width: 200px;
+  align-items: center;
 }
 
-.header-sidebar{
-    min-height: 10px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 1px solid #fff;
+.header-sidebar {
+  min-height: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #fff;
 }
 
-.logo-ifpa{
-    width: 2.4rem;
-    height: 4rem;
+.logo-ifpa {
+  width: 2.4rem;
+  height: 4rem;
 }
 
-.sidebar{
-    color: #fff;
-    background-color: #078640;
+.sidebar {
+  color: #fff;
+  background-color: #078640;
 }
 
-.header-sidebar{
-    width:100%;
-    display:flex;
-    justify-content: center;
+.header-sidebar {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-.footer-sidebar{
-    padding: 0.4rem;
-    width:100%;
-    display:flex;
-    justify-content: center;
-    border-top: 2px solid #ffffff83;
+.footer-sidebar {
+  padding: 0.4rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-top: 2px solid #ffffff83;
 }
 
-.expand-control-btn{
-    background-color: #5d7f5d;
+.expand-control-btn {
+  background-color: #5d7f5d;
 }

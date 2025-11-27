@@ -11,7 +11,7 @@
         color="#078640"
         @click="dialog = !dialog"
       ></v-btn>
-      <GuideModal v-model:dialog="dialog" />
+      <GuideModal v-if="dialog" v-model:dialog="dialog" />
     </div>
     <div class="form">
       <v-form>
