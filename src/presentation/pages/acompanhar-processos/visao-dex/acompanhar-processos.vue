@@ -19,9 +19,16 @@
 import { UserRole } from '@/core/domain/entities/user.entity';
 import SearchDataTable from '@/presentation/organisms/search-data-table/search-data-table.vue';
 import { useAuthStore } from '@/stores/auth.store';
-import { ref } from 'vue';
+import { usePageNavigationStore } from '@/stores/page-navitagion/page-navigation.store';
+import { onMounted, ref } from 'vue';
+const pageNavigationStore = usePageNavigationStore();
+
 const authStore = useAuthStore();
 const userRole = ref(authStore.userRole);
+
+onMounted(() => {
+  pageNavigationStore.setLoading(false);
+});
 </script>
 
 <style lang="scss" scoped>

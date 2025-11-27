@@ -86,10 +86,13 @@ export class EndInternshipProcessBloc {
       'AvaliacaoProfessorOrientador.pdf',
     ];
 
-    if (
-      files.length !== 3 ||
-      files.every((file) => !validFileNames.includes(file.name))
-    ) {
+    const fileNames = files.map((file) => file.name);
+
+    const isValid =
+      fileNames.length === validFileNames.length &&
+      validFileNames.every((name) => fileNames.includes(name));
+
+    if (!isValid) {
       throw new Error(
         'Os arquivos devem conter os nomes: AutoAvaliacaoEstagiario, AvaliacaoConcedente e AvaliacaoProfessorOrientador. (deve conter os 3 arquivos em PDF)',
       );

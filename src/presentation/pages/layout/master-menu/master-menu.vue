@@ -13,7 +13,20 @@
 
   <v-main>
     <div id="app-content">
-      <router-view></router-view>
+      <Suspense>
+        <template #default>
+          <router-view />
+        </template>
+        <template #fallback>
+          <v-overlay :model-value="true" class="align-center justify-center">
+            <v-progress-circular
+              color="#078640"
+              size="64"
+              indeterminate
+            ></v-progress-circular>
+          </v-overlay>
+        </template>
+      </Suspense>
     </div>
 
     <FooterLayout />

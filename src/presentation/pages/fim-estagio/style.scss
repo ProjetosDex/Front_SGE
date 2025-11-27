@@ -72,3 +72,9 @@ p {
 .data-table {
   max-height: 400px;
 }
+
+@media screen and (max-width: 668px) {
+  .title {
+    flex-direction: column;
+  }
+}

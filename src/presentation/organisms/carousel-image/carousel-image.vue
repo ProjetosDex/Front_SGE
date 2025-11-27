@@ -2,13 +2,13 @@
   <v-carousel
     :show-arrows="false"
     cycle
-    height="350"
+    height="385"
     width="100vh"
     hide-delimiter-background
     hide-delimiters
   >
     <div class="text_overlay">
-      <h1>SEJA BEM VINDO AO SYSTAGIO</h1>
+      <h1 style="padding-top: 10px">SEJA BEM VINDO AO SYSTAGIO</h1>
       <h2>
         Este sistema foi desenvolvido para simplificar e centralizar todas as
         etapas do seu estágio. Desde o início do processo, com a geração do

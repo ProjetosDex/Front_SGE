@@ -1,4 +1,10 @@
 <template>
+  <v-overlay
+    :model-value="pageNavigationStore.loading"
+    class="align-center justify-center page-overlay"
+  >
+    <v-progress-circular color="#078640" size="64" indeterminate />
+  </v-overlay>
   <v-navigation-drawer
     class="sidebar"
     v-model="drawer"
@@ -17,22 +23,22 @@
         prepend-icon="mdi-home"
         title="Tela Inicial"
         value="home"
-        to="/home"
+        @click="goTo('/home')"
       ></v-list-item>
 
       <v-list-item
         prepend-icon="mdi-file"
         title="Inicio de Estágio"
         value="inicioEstagio"
-        to="/inicio/estagio"
         v-if="userRole == UserRole.STUDENT"
+        @click="goTo('/inicio/estagio')"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-calendar"
         title="Fim de Estágio"
         value="fimEstagio"
-        to="/fim/estagio"
         v-if="userRole == UserRole.STUDENT"
+        @click="goTo('/fim/estagio')"
       ></v-list-item>
 
       <v-list-item
@@ -43,7 +49,7 @@
             : 'Acompanhar Processos'
         "
         value="acompanharProcessos"
-        to="/acompanhar/processos"
+        @click="goTo('/acompanhar/processos')"
       ></v-list-item>
     </v-list>
     <template v-slot:append>
@@ -63,13 +69,24 @@
 import { ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { UserRole } from '@/core/domain/entities/user.entity';
+import { usePageNavigationStore } from '@/stores/page-navitagion/page-navigation.store';
+import { useRoute, useRouter } from 'vue-router';
+
 const authStore = useAuthStore();
 const userRole = ref(authStore.userRole);
-console.log('eu sou a role');
-console.log(userRole.value);
 const drawer = ref(true);
 const rail = ref(true);
 const setaMenu = ref('mdi-chevron-right');
+const pageNavigationStore = usePageNavigationStore();
+const route = useRoute();
+const router = useRouter();
+
+function goTo(path: string) {
+  if (route.path !== path && !pageNavigationStore.loading) {
+    pageNavigationStore.setLoading(true);
+    router.push(path);
+  }
+}
 
 watch(rail, () => {
   setaMenu.value = rail.value ? 'mdi-chevron-right' : 'mdi-chevron-left';

@@ -1,4 +1,10 @@
 <template>
+  <v-overlay
+    :model-value="pageNavigationStore.loading"
+    class="align-center justify-center page-overlay"
+  >
+    <v-progress-circular color="#078640" size="64" indeterminate />
+  </v-overlay>
   <div class="info-processo-container">
     <h1 class="title1">Processo De Estágio</h1>
     <v-container :loading="loading">
@@ -293,9 +299,11 @@ import FormTce from '@/components/Form-TCE/form-tce.vue';
 import { useRouter } from 'vue-router';
 import { UserRole } from '@/core/domain/entities/user.entity';
 import { useNotificationStore } from '@/stores/notification.store';
+import { usePageNavigationStore } from '@/stores/page-navitagion/page-navigation.store';
 const router = useRouter();
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
+const pageNavigationStore = usePageNavigationStore();
 const userRole = ref(authStore.userRole);
 const remark = ref('');
 const internshipProcessId = router.currentRoute.value.params.id as string;
@@ -312,7 +320,6 @@ interface Notification {
 watch(
   () => notificationStore.notifications,
   async (newNotifications) => {
-    console.log('Notifications updated:', newNotifications);
     if (Array.isArray(newNotifications.data)) {
       const novas = newNotifications.data.filter(
         (n: Notification) => !lastNotificationIds.includes(n.id),
@@ -321,9 +328,11 @@ watch(
         (n: any) => !n.read && n.id_internshipProcess === internshipProcessId,
       );
       if (hasRelatedNotification) {
+        pageNavigationStore.setLoading(true); // Ativa o loading
         await internshipProcessDetailsBloc.loadInternshipProcessDetails(
           userRole.value,
         );
+        pageNavigationStore.setLoading(false); // Desativa o loading
       }
       lastNotificationIds = newNotifications.data.map(
         (n: Notification) => n.id,
