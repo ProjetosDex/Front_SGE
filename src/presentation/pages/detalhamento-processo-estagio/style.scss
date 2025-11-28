@@ -282,3 +282,10 @@ section .row i {
   text-align: center;
   margin-bottom: 50px;
 }
+
+@media (max-width: 1025px) {
+  .model-file-items {
+    display: flex;
+    flex-direction: column;
+  }
+}

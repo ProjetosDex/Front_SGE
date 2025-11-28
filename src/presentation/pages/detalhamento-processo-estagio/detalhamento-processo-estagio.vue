@@ -94,9 +94,33 @@
           "
         >
           <p>
-            Utilize o modelo dos arquivos necessários para uma nova solicitação
-            de fim de estágio:
+            Utilize o modelo dos arquivos necessários para atualizar sua
+            solicitação de fim de estágio:
           </p>
+          <div
+            style="
+              background: #fef450;
+              border: 1px solid #fef450;
+              border-radius: 8px;
+              padding: 16px;
+              margin-top: 16px;
+              display: flex;
+              align-items: flex-start;
+              gap: 12px;
+            "
+          >
+            <v-icon style="color: #faad14; font-size: 28px; margin-right: 8px"
+              >mdi-alert</v-icon
+            >
+            <div>
+              <strong style="color: #333; font-size: 18px">Atenção!</strong>
+              <div style="color: #333; margin-top: 4px">
+                Os arquivos devem conter os nomes: AutoAvaliacaoEstagiario,
+                AvaliacaoConcedente e AvaliacaoProfessorOrientador. (todos em
+                formato PDF)
+              </div>
+            </div>
+          </div>
           <div class="model-file-items">
             <v-btn
               v-for="file in modelFiles"
