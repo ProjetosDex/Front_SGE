@@ -127,4 +127,15 @@ const handleDownload = async () => {
   cursor: pointer; /* Mostra que o ícone é clicável */
   color: #1aaa4c; /* Cor do ícone */
 }
+
+@media (max-width: 600px) {
+  .download-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .download-icon {
+    margin-top: 12px;
+  }
+}
 </style>
