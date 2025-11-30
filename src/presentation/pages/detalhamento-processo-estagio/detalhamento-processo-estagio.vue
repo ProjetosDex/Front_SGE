@@ -121,6 +121,9 @@
               </div>
             </div>
           </div>
+          <h2 style="margin-top: 10px">
+            Faça o download dos arquivos necessários:
+          </h2>
           <div class="model-file-items">
             <v-btn
               v-for="file in modelFiles"
@@ -425,15 +428,15 @@ const registerAssignTermCommitment = async (files: File[]) => {
 const modelFiles = [
   {
     name: 'Auto Avaliação do Estagiário',
-    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097275&&key=bd64adf971f7a8d62aa58966f6f14f1d',
+    url: '/model-files/Auto Avaliação do Estagiário.doc',
   },
   {
     name: 'Avaliação do Estagiário - Concedente',
-    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097276&&key=ecead2273608bcb87a428cd6b737d1ef',
+    url: '/model-files/Avaliação do Estagiário - Concedente.doc',
   },
   {
     name: 'Avaliação do Estagiário - Professor Orientador',
-    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097278&&key=2f4cee6135e4b5e4f256fb861bc8751c',
+    url: '/model-files/Avaliação do Estagiário - Professor Orientador.doc',
   },
 ];
 

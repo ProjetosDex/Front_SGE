@@ -22,7 +22,7 @@
 
       <!-- Seção para mostrar os arquivos modelo -->
       <div class="model-files">
-        <p>Modelo dos arquivos necessários:</p>
+        <p>Faça o download dos arquivos necessários:</p>
         <div class="model-file-items">
           <v-btn
             v-for="file in modelFiles"
@@ -175,15 +175,15 @@ const dialog = ref(false);
 const modelFiles = [
   {
     name: 'Auto Avaliação do Estagiário',
-    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097275&&key=bd64adf971f7a8d62aa58966f6f14f1d',
+    url: '/model-files/Auto Avaliação do Estagiário.doc',
   },
   {
     name: 'Avaliação do Estagiário - Concedente',
-    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097276&&key=ecead2273608bcb87a428cd6b737d1ef',
+    url: '/model-files/Avaliação do Estagiário - Concedente.doc',
   },
   {
     name: 'Avaliação do Estagiário - Professor Orientador',
-    url: 'https://sigaa.ifpa.edu.br/sigaa/verProducao?idProducao=1097278&&key=2f4cee6135e4b5e4f256fb861bc8751c',
+    url: '/model-files/Avaliação do Estagiário - Professor Orientador.doc',
   },
 ];
 
