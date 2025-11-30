@@ -60,7 +60,8 @@ export class TermCommitmentBloc {
     } catch (error: any) {
       this.formTermCommitmentState.setLoading(false);
       this.formTermCommitmentState.setShowErrorModal(true);
-      this.formTermCommitmentState.setMessageError(error.message);
+      const errorMessage = error.response?.data?.message || error.message;
+      this.formTermCommitmentState.setMessageError(errorMessage);
     }
   }
 
