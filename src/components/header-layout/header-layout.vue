@@ -253,10 +253,6 @@ const handleUpdatePage = async (page: number) => {
     );
     notifications.value = notificationStore.notifications.data;
     notificationsTotalPages.value = notificationStore.notifications.totalPages;
-    console.log(
-      'Notificações atualizadas:',
-      notificationStore.notifications.totalPages,
-    );
   } catch (error) {
     console.error('Erro ao buscar notificações:', error);
   }
@@ -269,7 +265,6 @@ onMounted(async () => {
 });
 
 const viewNotification = async (notification: any) => {
-  console.log('Notification clicked:', notification);
   if (!notification.read) {
     try {
       await axiosBackEndInstance.patch(

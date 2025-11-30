@@ -38,7 +38,6 @@ const emit = defineEmits<{
 }>();
 
 const onSearchFiltersChange = (filters: InternshipProcessFilterDto) => {
-  console.log(`change filters ${JSON.stringify(filters)}`);
   emit('set-search-filters', filters);
 };
 

@@ -26,7 +26,6 @@ onMounted(async () => {
   audio.load();
   window.notificationAudio = audio;
   const userInfo = await checkAuth();
-  console.log('User Info:', userInfo);
   if (userInfo) {
     connectWebSocket(userInfo.sub);
   }

@@ -22,7 +22,6 @@ export const useEndInternshipProcessState = defineStore(
       endInternshipProcessDataTableDto: EndInternshipProcessDataTableDto[],
     ) => {
       state.selectedProcess = endInternshipProcessDataTableDto;
-      console.log(state.selectedProcess);
     };
 
     const setShowSuccessModal = (showModal: boolean) => {

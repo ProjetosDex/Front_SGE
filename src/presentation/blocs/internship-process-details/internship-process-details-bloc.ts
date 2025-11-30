@@ -168,7 +168,8 @@ export class InternshipProcessDetailsBloc {
       ) {
         return {
           ...history,
-          additionalInfo: 'Processo finalizado com sucesso! Seu Certificado de Conclusão de Estágio está disponível para download.',
+          additionalInfo:
+            'Processo finalizado com sucesso! Seu Certificado de Conclusão de Estágio está disponível para download.',
         };
       }
 
@@ -234,7 +235,8 @@ export class InternshipProcessDetailsBloc {
       ) {
         return {
           ...history,
-          additionalInfo: 'Termo de Compromisso aprovado com sucesso. O estágio do aluno foi oficialmente iniciado no sistema.',
+          additionalInfo:
+            'Termo de Compromisso aprovado com sucesso. O estágio do aluno foi oficialmente iniciado no sistema.',
         };
       }
 
@@ -266,7 +268,8 @@ export class InternshipProcessDetailsBloc {
       ) {
         return {
           ...history,
-          additionalInfo: 'Processo de estágio finalizado com sucesso. O certificado de conclusão foi emitido para o aluno.',
+          additionalInfo:
+            'Processo de estágio finalizado com sucesso. O certificado de conclusão foi emitido para o aluno.',
         };
       }
 
@@ -324,7 +327,6 @@ export class InternshipProcessDetailsBloc {
 
     if (files[0]?.name) {
       const fileName = files[0].name;
-      console.log(fileName);
       if (!fileName.includes('TermoCompromisso')) {
         throw new Error('O nome do arquivo deve conter "TermoCompromisso".');
       }
@@ -416,9 +418,7 @@ export class InternshipProcessDetailsBloc {
     if (!internshipProcessHistories || internshipProcessHistories.length === 0)
       return null;
 
-    console.log(internshipProcessHistories);
     const ongoing = internshipProcessHistories.find((h) => !h.endDate);
-    console.log(ongoing);
     if (ongoing) return ongoing;
 
     return internshipProcessHistories

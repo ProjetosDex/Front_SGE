@@ -32,7 +32,6 @@ export class InternshipProcessDataTableBloc {
 
   async getPaginatedInternshipProcess() {
     const { filters } = this.internshipProcessDataTableState.state;
-    console.log(filters);
 
     const internshipProcess =
       await this.getPaginatedInternshipProcessUseCase.handle(filters);
