@@ -19,15 +19,9 @@ class SocketService {
       withCredentials: false,
     });
 
-    this.socket.on('connect', () => {
-      console.log('Conectado ao servidor WebSocket');
-      console.log('ID da sessão do socket:', this.socket!.id);
-    });
-
     this.socket!.emit('register', userUuid);
 
     this.socket.on('notification', (data: any) => {
-      console.log('Notificação recebida:', data);
       notificationStore.addNotification(data);
 
       // Toca o som ao receber nova notificação

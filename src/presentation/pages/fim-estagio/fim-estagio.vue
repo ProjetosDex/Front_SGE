@@ -218,7 +218,6 @@ const openInternshipProcessDetails = () => {
 };
 
 const registerAssignEndInternshipProcess = async (files: File[]) => {
-  console.log('aqui');
   endInternshipProcessBloc.registerAssignEndInternshipProcess(
     selectedProcess.value,
     files,

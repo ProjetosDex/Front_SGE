@@ -803,7 +803,6 @@ const validateCnpj = (cnpj: string) => {
 
   let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
   if (resultado !== parseInt(digitos.charAt(0))) {
-    console.log('rola inválida');
     return 'cnpj inválido';
   }
 

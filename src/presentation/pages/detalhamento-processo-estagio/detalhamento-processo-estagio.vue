@@ -414,10 +414,12 @@ const selectedStepData = computed(() => {
 });
 
 const registerAssignTermCommitment = async (files: File[]) => {
+  pageNavigationStore.setLoading(true);
   await internshipProcessDetailsBloc.registerAssignTermCommitment(
     files,
     userRole.value,
   );
+  pageNavigationStore.setLoading(false);
 };
 
 const modelFiles = [
@@ -437,6 +439,7 @@ const modelFiles = [
 
 //ajustar o modal nessa rotina
 const registerAssignEndInternshipProcess = async (files: File[]) => {
+  pageNavigationStore.setLoading(true);
   const validate =
     userRole.value === UserRole.ADMINISTRATOR ||
     userRole.value === UserRole.EMPLOYEE
@@ -449,14 +452,18 @@ const registerAssignEndInternshipProcess = async (files: File[]) => {
     undefined,
     files,
   );
+
+  pageNavigationStore.setLoading(false);
 };
 
 const handleUpdateSelectedStep = (stepIndex: Step) => {
-  console.log('Selected step index:', stepIndex);
+  pageNavigationStore.setLoading(true);
   internshipProcessDetailsBloc.updateSelectedStep(stepIndex);
+  pageNavigationStore.setLoading(false);
 };
 
 const handleRejectTermCommitment = async () => {
+  pageNavigationStore.setLoading(true);
   if (remark.value.trim() === '') {
     messageError.value = 'Por favor, descreva o motivo da recusa.';
     showErrorModal.value = true;
@@ -466,10 +473,12 @@ const handleRejectTermCommitment = async () => {
     remark.value,
     userRole.value,
   );
+  pageNavigationStore.setLoading(false);
   remark.value = '';
 };
 
 const handleRejectEndInternshipProcess = async () => {
+  pageNavigationStore.setLoading(true);
   if (remark.value.trim() === '') {
     messageError.value = 'Por favor, descreva o motivo da recusa.';
     showErrorModal.value = true;
@@ -481,13 +490,16 @@ const handleRejectEndInternshipProcess = async () => {
     remark.value,
     undefined,
   );
+  pageNavigationStore.setLoading(false);
   remark.value = '';
 };
 
 onMounted(async () => {
+  pageNavigationStore.setLoading(true);
   await internshipProcessDetailsBloc.loadInternshipProcessDetails(
     userRole.value,
   );
+  pageNavigationStore.setLoading(false);
 });
 </script>
 

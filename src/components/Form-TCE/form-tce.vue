@@ -33,7 +33,6 @@
             >
           </div>
           <div v-else class="main-btn">
-            <v-btn class="buttonTCE" to="/inicio/estagio">Voltar</v-btn>
             <v-btn type="submit" class="buttonTCE" @click.prevent="registerTCE"
               >Cadastrar</v-btn
             >
@@ -142,7 +141,6 @@ const {
 } = formTermCommitmentBloc.getState();
 
 const handleFieldUpdate = (fieldUpdateEvent: any, section: any) => {
-  console.log('Evento de atualização de campo recebido:', fieldUpdateEvent);
   formTermCommitmentBloc.updateFormField({
     value: fieldUpdateEvent.value,
     fieldIndex: fieldUpdateEvent.fieldIndex,

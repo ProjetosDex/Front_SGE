@@ -43,7 +43,6 @@ const onOpenRegisterDetails = (internshipProcessId: string) => {
 };
 
 const searchByFilters = (filters: any) => {
-  console.log(`search by filters ${JSON.stringify(filters)}`);
   internshipProcessDataTableBloc.searchByFilters(filters);
 };
 
