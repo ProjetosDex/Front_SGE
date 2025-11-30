@@ -18,6 +18,7 @@
         </template>
 
         <v-card max-width="360px" max-height="748px">
+          <h1 class="title-notification">Notificações</h1>
           <template v-if="notifications && notifications.length">
             <div style="overflow-y: auto; max-height: 500px">
               <v-list
