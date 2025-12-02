@@ -103,7 +103,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Seu Termo de Compromisso foi gerado. O próximo passo é: 1. Fazer o download do documento. 2. Assinar e coletar a assinatura da empresa/instituição concedente. 3. Fazer o upload do termo assinado nesta mesma tela.',
+            'Seu Termo de Compromisso foi gerado. O próximo passo é:\n 1. Fazer o download do documento.\n 2. Assinar e coletar a assinatura da empresa/instituição concedente.\n 3. Fazer o upload do termo assinado nesta mesma tela.',
         };
       }
 
@@ -125,7 +125,7 @@ export class InternshipProcessDetailsBloc {
         return {
           ...history,
           additionalInfo:
-            'Seu Termo de Compromisso foi recusado. Verifique o motivo da recusa. Siga os passos: 1. Corrija as informações necessárias. 2. Gere um novo documento. 3. Faça o upload do novo termo com as devidas assinaturas.',
+            'Seu Termo de Compromisso foi recusado. Verifique o motivo da recusa. Siga os passos:\n 1. Corrija as informações necessárias.\n 2. Gere um novo documento.\n 3. Faça o upload do novo termo com as devidas assinaturas.',
         };
       }
 

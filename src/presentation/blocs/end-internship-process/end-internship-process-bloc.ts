@@ -42,6 +42,7 @@ export class EndInternshipProcessBloc {
     selectedProcess: EndInternshipProcessDataTableDto[],
     files: File[],
   ) {
+    console.log('registerAssignEndInternshipProcess called');
     this.endInternshipProcessState.setLoading(true);
 
     const selectedInternshipProcessId = selectedProcess[0]?.id;
@@ -66,7 +67,8 @@ export class EndInternshipProcessBloc {
       this.endInternshipProcessState.setShowSuccessModal(true);
     } catch (error: any) {
       this.endInternshipProcessState.setLoading(false);
-      this.endInternshipProcessState.setMessageError(error.message);
+      const message = error.response?.data?.message || error.message;
+      this.endInternshipProcessState.setMessageError(message);
       this.endInternshipProcessState.setShowErrorModal(true);
     }
   }
