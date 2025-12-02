@@ -39,7 +39,7 @@
 
 .read-notification {
   background-color: #eaedee;
-  color: #888;
+  color: #616161;
 }
 
 .title-notification {
@@ -47,4 +47,8 @@
   font-size: 1.2rem;
   font-weight: bold;
   padding: 16px;
+}
+
+.notification-list-item {
+  padding: 6px 14px !important;
 }

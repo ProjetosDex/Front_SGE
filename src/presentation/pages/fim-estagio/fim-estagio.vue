@@ -175,15 +175,15 @@ const dialog = ref(false);
 const modelFiles = [
   {
     name: 'Auto Avaliação do Estagiário',
-    url: '/model-files/Auto Avaliação do Estagiário.doc',
+    url: '/model-files/AutoAvaliacaoEstagiario.doc',
   },
   {
     name: 'Avaliação do Estagiário - Concedente',
-    url: '/model-files/Avaliação do Estagiário - Concedente.doc',
+    url: '/model-files/AvaliacaoConcedente.doc',
   },
   {
     name: 'Avaliação do Estagiário - Professor Orientador',
-    url: '/model-files/Avaliação do Estagiário - Professor Orientador.doc',
+    url: '/model-files/AvaliacaoProfessorOrientador.doc',
   },
 ];
 

@@ -18,34 +18,51 @@
         </template>
 
         <v-card max-width="360px" max-height="748px">
-          <h1 class="title-notification">Notificações</h1>
+          <div style="display: flex; align-items: center; padding: 0 10px">
+            <v-icon icon="mdi-bell-outline"></v-icon>
+            <h1 class="title-notification">Notificações</h1>
+          </div>
+
           <template v-if="notifications && notifications.length">
             <div style="overflow-y: auto; max-height: 500px">
-              <v-list
-                :lines="false"
-                density="compact"
-                nav
-                v-for="notification in notifications"
-                :key="notification.id"
-                :class="{ 'read-notification': notification.read }"
-              >
-                <v-btn
-                  @click="viewNotification(notification)"
-                  :class="{ 'read-notification': notification.read }"
-                  flat
-                  :prepend-icon="
-                    notification.read
-                      ? 'mdi-bell-outline'
-                      : 'mdi-bell-ring-outline'
-                  "
-                  class="notification-btn"
+              <v-list :lines="false" density="compact" nav>
+                <template
+                  v-for="(notification, idx) in notifications"
+                  :key="notification.id"
                 >
-                  <v-list-item>
-                    <span class="notification-text">{{
-                      notification.message
-                    }}</span>
+                  <v-list-item
+                    :class="[
+                      'notification-list-item',
+                      { 'read-notification': notification.read },
+                    ]"
+                    class="pa-0"
+                  >
+                    <v-btn
+                      @click="viewNotification(notification)"
+                      :class="{ 'read-notification': notification.read }"
+                      flat
+                      :prepend-icon="
+                        notification.read
+                          ? 'mdi-bell-outline'
+                          : 'mdi-bell-ring-outline'
+                      "
+                      class="notification-btn"
+                      style="width: 100%; justify-content: flex-start"
+                    >
+                      <span class="notification-text">{{
+                        notification.message
+                      }}</span>
+                    </v-btn>
                   </v-list-item>
-                </v-btn>
+                  <v-divider
+                    v-if="
+                      idx < notifications.length - 1 ||
+                      idx === notifications.length - 1
+                    "
+                    class="border-opacity-100"
+                    color="#a5a5a5"
+                  ></v-divider>
+                </template>
               </v-list>
             </div>
           </template>
@@ -141,7 +158,7 @@
             <v-list density="compact" nav style="width: 100%">
               <template v-if="notifications && notifications.length">
                 <template
-                  v-for="notification in notifications"
+                  v-for="(notification, idx) in notifications"
                   :key="notification.id"
                 >
                   <v-list-item
@@ -189,6 +206,11 @@
                       </span>
                     </div>
                   </v-list-item>
+                  <v-divider
+                    v-if="idx < notifications.length - 1"
+                    class="border-opacity-100"
+                    color="#a5a5a5"
+                  ></v-divider>
                 </template>
               </template>
               <template v-else>
