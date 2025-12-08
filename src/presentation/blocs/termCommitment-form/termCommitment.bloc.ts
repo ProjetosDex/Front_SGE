@@ -60,7 +60,26 @@ export class TermCommitmentBloc {
     } catch (error: any) {
       this.formTermCommitmentState.setLoading(false);
       this.formTermCommitmentState.setShowErrorModal(true);
-      const errorMessage = error.response?.data?.message || error.message;
+      let errorMessage = error.response?.data?.message || error.message;
+
+      if (
+        Array.isArray(errorMessage) &&
+        errorMessage.some((msg: string) =>
+          msg.includes('internshipActivityPlan'),
+        )
+      ) {
+        errorMessage =
+          'O preenchimento do plano de atividades de estágio é obrigatório, com no mínimo 5 atividades e até 200 caracteres cada.';
+      }
+
+      if (
+        error.message === 'Network Error' ||
+        error.code === 'ECONNABORTED' ||
+        (!error.response && error.message)
+      ) {
+        errorMessage = 'Erro ao enviar as informações. Tente novamente.';
+      }
+
       this.formTermCommitmentState.setMessageError(errorMessage);
     }
   }
