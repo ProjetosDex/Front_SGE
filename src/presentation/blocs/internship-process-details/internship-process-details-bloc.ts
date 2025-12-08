@@ -298,7 +298,15 @@ export class InternshipProcessDetailsBloc {
       this.internshipProcessDetailsState.setShowSuccessModal(true);
     } catch (error: any) {
       this.internshipProcessDetailsState.setLoading(false);
-      this.internshipProcessDetailsState.setMessageError(error.message);
+      let errorMessage = error.message;
+      if (
+        error.message === 'Network Error' ||
+        error.code === 'ECONNABORTED' ||
+        (!error.response && error.message)
+      ) {
+        errorMessage = 'Erro ao enviar as informações. Tente novamente.';
+      }
+      this.internshipProcessDetailsState.setMessageError(errorMessage);
       this.internshipProcessDetailsState.setShowErrorModal(true);
     }
   }
@@ -352,7 +360,15 @@ export class InternshipProcessDetailsBloc {
       await this.loadInternshipProcessDetails(userRole);
     } catch (error: any) {
       this.internshipProcessDetailsState.setLoading(false);
-      this.internshipProcessDetailsState.setMessageError(error.message);
+      let errorMessage = error.message;
+      if (
+        error.message === 'Network Error' ||
+        error.code === 'ECONNABORTED' ||
+        (!error.response && error.message)
+      ) {
+        errorMessage = 'Erro ao enviar as informações. Tente novamente.';
+      }
+      this.internshipProcessDetailsState.setMessageError(errorMessage);
       this.internshipProcessDetailsState.setShowErrorModal(true);
     }
   }
