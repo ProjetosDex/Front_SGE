@@ -245,11 +245,11 @@ export const useTermCommitmentFormStore = defineStore(
       state.sections.condicoesEstagio.sectionData[
         'internshipActivityPlan'
       ].fieldValue = [
-        'atividade 1',
-        'atividade 2',
-        'atividade 3',
-        'atividade 4',
-        'atividade 5',
+        'Gestão de sistemas',
+        'Suporte Técnico',
+        'Controle de Acesso',
+        'Apoio Operacional',
+        'Contratos e Compras de TI',
       ];
     };
 
